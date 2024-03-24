@@ -4,6 +4,7 @@ import router from "./router";
 import axios from "axios";
 
 const app = createApp(App);
+// app.config.globalProperties.$apiBaseUrl = "https://restapi.store";
 app.config.globalProperties.$apiBaseUrl = "http://localhost:8080";
 app.config.globalProperties.$axios = axios;
 

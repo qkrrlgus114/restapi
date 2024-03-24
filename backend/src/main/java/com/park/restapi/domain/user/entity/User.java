@@ -38,7 +38,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<ApiRequestRecord> apiRequestRecordList = new ArrayList<>();
     @Column(nullable = false)
-    private int token = 5;
+    private int token = 2;
 
     @Builder
     public User(String email, String password, String nickname, LocalDateTime loginLastDate) {
@@ -62,5 +62,9 @@ public class User {
 
     public void useToken(){
         this.token -= 1;
+    }
+
+    public void resetToken(){
+        this.token = 2;
     }
 }

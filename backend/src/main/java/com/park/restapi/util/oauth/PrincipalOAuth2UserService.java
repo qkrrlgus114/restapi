@@ -1,7 +1,11 @@
 package com.park.restapi.util.oauth;
 
+import com.park.restapi.domain.auth.entity.RefreshToken;
+import com.park.restapi.domain.auth.repository.RefreshTokenRepository;
+import com.park.restapi.domain.user.entity.Role;
 import com.park.restapi.domain.user.entity.SocialType;
 import com.park.restapi.domain.user.entity.User;
+import com.park.restapi.domain.user.entity.UserRole;
 import com.park.restapi.domain.user.repository.UserRepository;
 import com.park.restapi.domain.user.repository.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +30,7 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
@@ -55,8 +60,16 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
          * */
         if(byUser.isEmpty()){
             User user = User.toEntity(email, nickname, SocialType.KAKAO);
-            userRepository.save(user);
+            User save = userRepository.save(user);
 
+            UserRole userRole = UserRole.builder()
+                    .user(save)
+                    .role(Role.USER).build();
+            userRoleRepository.save(userRole);
+
+            RefreshToken refreshToken = RefreshToken.builder()
+                    .user(save).build();
+            refreshTokenRepository.save(refreshToken);
         }
 
         return oAuth2User;

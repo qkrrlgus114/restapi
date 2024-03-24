@@ -8,7 +8,7 @@ import Success from "../views/Success.vue";
 
 const routes = [
   {
-    path: "/login",
+    path: "/loginview",
     name: "Login",
     component: LoginView,
     meta: { hideNavbar: true },

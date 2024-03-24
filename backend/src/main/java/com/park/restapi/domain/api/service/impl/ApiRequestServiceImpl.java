@@ -45,30 +45,26 @@ public class ApiRequestServiceImpl implements ApiRequestService {
         }
 
 
-        String operation = dto.getOperation();
         String model = dto.getModel();
         String method = dto.getMethodType().toString();
         String content = dto.getContent();
         String resource = dto.getResource();
 
-        // 프롬프트 생성
+        // 프롬프트
         String prompt = String.format(
-                        "수행 작업 : '%s'\n" +
-                        "수행 메서드 : '%s' \n" +
-                        "수행 주체 : '%s' \n"+
-                        "추가 설명 : '%s' \n" +
-                        "위의 4가지 정보를 이용해서 최대한 restFul한 API 경로를 3개 뽑아줘.\n" +
-                                "RESTAPI는 아래 8가지 규칙을 지켜서 만들어줘.\n" +
-                                "1.자원을 명사로 나타내라\n" +
-                                "2.URI의 마지막에 ‘/’를 사용 하지 않는다.\n" +
-                                "3.‘-’(하이픈)을 사용하여 가독성을 높인다.\n" +
-                                "4.‘_’(언더스코어)는 사용하지 않는다.\n" +
-                                "5.소문자를 사용 한다.\n" +
-                                "6. 파일의 확장자는 사용하지 않는다.\n" +
-                                "7. CRUD함수 명을 사용하지 않는다. \n" +
-                                "8. 자원의 필터링을 위해서는 쿼리 파라미터를 사용한다." +
-                "해당 결과는 쉼표로 구분해서 api 경로만 응답으로 돌려주면 돼.",
-                operation, method, resource, content
+                "다음 정보를 바탕으로 최대한 RESTful한 API 경로를 3개 제안해주세요:\n\n" +
+                        "- HTTP 메서드: %s\n" +
+                        "- 주체가 되는 자원: %s\n" +
+                        "- 작업 설명: %s\n\n" +
+                        "제안할 API 경로는 다음 RESTful 디자인 규칙을 따라야 합니다:\n" +
+                        "1. 자원을 명사로 나타내고, URI의 마지막에 슬래시(/)는 사용하지 않습니다.\n" +
+                        "2. 가독성을 위해 하이픈(-)을 사용하고, 언더스코어(_)는 사용하지 않습니다.\n" +
+                        "3. 모두 소문자를 사용합니다.\n" +
+                        "4. URI에 파일 확장자는 포함하지 않습니다.\n" +
+                        "5. CRUD 함수 이름을 URI에 포함하지 않고, 대신 적절한 HTTP 메서드를 사용합니다.\n" +
+                        "6. 자원의 필터링을 위해서는 쿼리 파라미터를 사용합니다.\n\n" +
+                        "제안된 API 경로는 쉼표(,)로 구분해서 나열해주세요. 예: [POST] /users, [POST] /users/{id}/posts, [POST] /posts/{id}/comments",
+                method, resource, content
         );
 
         Message message = Message.builder()

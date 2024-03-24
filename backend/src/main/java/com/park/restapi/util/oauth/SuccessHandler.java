@@ -63,6 +63,8 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
 
         // 리프레시 토큰 생성
         String refreshToken = jwtService.createRefreshToken(user.getId(), true);
+        System.out.println(accessToken);
+        System.out.println(refreshToken);
 
         // 액세스 토큰을 위한 쿠키 생성(세션쿠키)
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
@@ -86,6 +88,13 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
         redirectStrategy.sendRedirect(request, response, url);
 
     }
+
+    // 리다이렉트 주소
+//    private String makeRedirectUrl() {
+//        return UriComponentsBuilder.fromUriString("https://restapi.store/success")
+//                .encode(StandardCharsets.UTF_8)
+//                .build().toUriString();
+//    }
 
     // 리다이렉트 주소
     private String makeRedirectUrl() {
