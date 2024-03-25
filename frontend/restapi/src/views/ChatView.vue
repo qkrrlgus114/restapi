@@ -174,12 +174,7 @@ export default {
             }
           })
           .catch((error) => {
-            console.log(error);
-            if (error.response.data.status == "1004") {
-              alert("토큰이 부족합니다.");
-            } else {
-              alert("문제 발생");
-            }
+            alert(error.response.data.message);
           })
           .finally(() => {
             this.isLoading = false;

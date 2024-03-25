@@ -43,6 +43,9 @@ dependencies {
 	// ghat gpt
 	implementation 'io.github.flashvayne:chatgpt-spring-boot-starter:1.0.4'
 	implementation 'org.springframework.boot:spring-boot-starter-tomcat'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+
 }
 
 tasks.named('test') {
