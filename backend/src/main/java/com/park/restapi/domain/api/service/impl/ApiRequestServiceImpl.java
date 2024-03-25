@@ -12,8 +12,9 @@ import com.park.restapi.domain.exception.info.UserExceptionInfo;
 import com.park.restapi.domain.user.entity.User;
 import com.park.restapi.domain.user.repository.UserRepository;
 import com.park.restapi.util.jwt.JwtService;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -25,6 +26,7 @@ import java.util.concurrent.Semaphore;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ApiRequestServiceImpl implements ApiRequestService {
 
     private final RestTemplate restTemplate;
@@ -42,14 +44,14 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     @Transactional
     public ChatGPTResponseDTO chatGpt(ApiRequestDTO dto) {
 
-        try{
+        try {
             semaphore.acquire();
 
             Long currentUserId = JwtService.getCurrentUserId();
             User user = userRepository.findById(currentUserId)
                     .orElseThrow(() -> new UserException(UserExceptionInfo.NOT_FOUND_USER, "유저 데이터 없음"));
 
-            if(user.getToken() <= 0){
+            if (user.getToken() <= 0) {
                 throw new UserException(UserExceptionInfo.NO_REMAINING_USES, "토큰 부족");
             }
 
@@ -98,11 +100,11 @@ public class ApiRequestServiceImpl implements ApiRequestService {
             user.useToken();
 
             return chatGPTResponseDTO;
-        }catch (InterruptedException e){
-            throw new GPTException(GPTExceptionInfo.);
-        }catch (HttpClientErrorException.TooManyRequests  e){
-            throw new GPTException(GPTExceptionInfo.FAIL_REQUEST_GPT, "GPT 요청 에러");
-        } finally{
+        } catch (InterruptedException e) {
+            throw new GPTException(GPTExceptionInfo.FAIL_INTERRUPTED, e.getMessage());
+        } catch (HttpClientErrorException.TooManyRequests e) {
+            throw new GPTException(GPTExceptionInfo.FAIL_REQUEST_GPT, e.getMessage());
+        } finally {
             semaphore.release();
         }
     }

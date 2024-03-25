@@ -16,11 +16,11 @@ import com.park.restapi.domain.user.service.UserService;
 import com.park.restapi.util.jwt.JwtService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
     // 회원가입
     @Override
     @Transactional
-    public void signUp(SignUpRequstDTO dto) throws IOException{
+    public void signUp(SignUpRequstDTO dto) throws IOException, InterruptedException {
         // 기존에 데이터가 있는지 확인
         if(userRepository.existsByEmail(dto.getEmail())){
             throw new UserException(UserExceptionInfo.EXIST_USER_SIGNUP_DATA, "회원가입 중복 데이터 발생");

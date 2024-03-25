@@ -17,7 +17,7 @@ public class GlobalExceptionHandler {
     // 이메일 예외처리
     @ExceptionHandler(EmailException.class)
     public ResponseEntity<ApiResponse<Void>> handleEmailException(EmailException e , HttpServletRequest request){
-        log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}", request.getRequestURI(), e.getException().getMessage());
+        log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(), e.getLog());
 
         return ResponseEntity.status(e.getException().getStatus()).body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
     }
@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     // 유저 예외처리
     @ExceptionHandler(UserException.class)
     public ResponseEntity<ApiResponse<Void>> handleUserException(UserException e , HttpServletRequest request){
-        log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}", request.getRequestURI(), e.getException().getMessage());
+        log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(), e.getLog());
 
         return ResponseEntity.status(e.getException().getStatus()).body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
     }
@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
     // GPT 예외처리
     @ExceptionHandler(GPTException.class)
     public ResponseEntity<ApiResponse<Void>> handleGPTException(GPTException e , HttpServletRequest request){
-        log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}", request.getRequestURI(), e.getException().getMessage());
+        log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(), e.getLog());
 
         return ResponseEntity.status(e.getException().getStatus()).body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
     }

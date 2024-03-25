@@ -1,5 +1,6 @@
 package com.park.restapi.domain.user.service.impl;
 
+import com.park.restapi.domain.api.service.impl.ApiRequestServiceImpl;
 import com.park.restapi.domain.exception.exception.EmailException;
 import com.park.restapi.domain.exception.info.EmailExceptionInfo;
 import com.park.restapi.domain.user.entity.EmailConfirm;
@@ -10,11 +11,12 @@ import com.park.restapi.domain.user.service.EmailService;
 import jakarta.mail.Message;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.Duration;
@@ -23,11 +25,13 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender emailSender;
     private final EmailConfirmRepository emailConfirmRepository;
     private final UserRepository userRepository;
+    private final ApiRequestServiceImpl apiRequestService;
 
 
     private MimeMessage createMessageChange(String to, String authCode)throws Exception{
@@ -158,6 +162,5 @@ public class EmailServiceImpl implements EmailService {
         // 사용 체크
         confirm.changedUsing();
     }
-
 
 }

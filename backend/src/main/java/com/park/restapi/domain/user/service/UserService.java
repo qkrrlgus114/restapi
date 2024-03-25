@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public interface UserService {
     // 회원가입
-    void signUp(SignUpRequstDTO signUpRequstDTO) throws IOException;
+    void signUp(SignUpRequstDTO signUpRequstDTO) throws IOException, InterruptedException;
     // 이메일 중복 확인
     boolean existEmailCheck(String email);
     // 로그인
@@ -20,5 +20,4 @@ public interface UserService {
     void logout(HttpServletResponse response);
     // 소셜로그인
     LoginInfoResponseDTO socialLogin(HttpServletResponse response);
-
 }

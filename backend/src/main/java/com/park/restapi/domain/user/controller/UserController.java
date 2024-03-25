@@ -25,7 +25,7 @@ public class UserController {
 
     // 회원가입
     @PostMapping("signup")
-    public ResponseEntity<ApiResponse<?>> signUp(@RequestBody SignUpRequstDTO dto) throws IOException {
+    public ResponseEntity<ApiResponse<?>> signUp(@RequestBody SignUpRequstDTO dto) throws IOException, InterruptedException {
         userService.signUp(dto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.createSuccessNoContent("회원가입 완료"));
