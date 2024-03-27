@@ -1,6 +1,10 @@
 # RESTFUL하게 API를 만들어보자 - RESFUL API 추천 서비스
 <br>
 
+사이트 주소 : https://restapi.store/
+<br>
+(api 가격이 무서워 하루 1개로 제한을 두었습니다.)
+
 # 1️⃣ **프로젝트 개요**
 
 ### **개발 기간**
@@ -54,7 +58,6 @@
 - ## KAKAO API
   - 카카오 로그인(Security Oauth2를 사용하여 BackEnd에서 로그인 로직 구현 / 클라이언트 <-> 백엔드 <-> 카카오서버 )
     
-
 - ## Chat-GPT API
   - API에 필요한 model, message를 생성하여 GPT로부터 응답 데이터 반환.
   - 자체 제작 프롬프트의 RESTFUL API 정의를 바탕으로 데이터 생성.
@@ -95,6 +98,10 @@
 - JWT
 - Spring-oauth2-client
 
+- ## 📁 Frontend
+
+- Vue3
+
 ## 💾 Database
 - MySQL
 
@@ -103,6 +110,7 @@
 - SSL
 - CertBot
 - Nginx
+- EC2
 
 ## 외부 API
 - Kakao Developer API
@@ -111,9 +119,10 @@
 
 # 5️⃣ **사용 영상**
 
-![녹화_2024_03_27_22_35_42_710](https://github.com/qkrrlgus114/restapi/assets/121294224/bbd9877f-f701-4197-adb5-b104ed323220)
+![녹화_2024_03_27_23_06_42_125](https://github.com/qkrrlgus114/restapi/assets/121294224/1793b28d-1691-4482-b7c7-01930a6d2406)
 
-![녹화_2024_03_27_22_36_10_416](https://github.com/qkrrlgus114/restapi/assets/121294224/74b54c25-f2b7-4ea5-beba-7b667b404fce)
+
+![녹화_2024_03_27_23_07_00_651](https://github.com/qkrrlgus114/restapi/assets/121294224/95bb2f77-0ff2-4cb6-8908-40514be2e12f)
 
 
 <hr>
