@@ -3,6 +3,7 @@ package com.park.restapi.domain.api.entity;
 import com.park.restapi.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ApiRequestRecord {
+public class ApiRequestHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,11 +25,20 @@ public class ApiRequestRecord {
     @CreatedDate
     private LocalDateTime requestDate;
     @Column(nullable = false)
-    private LocalDateTime responseDate;
-    @Column(nullable = false)
     private boolean request_status;
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private MethodType methodType;
     @Column(nullable = false)
-    private String content;
+    private String requestContent;
+    private String responseContent;
+
+    @Builder
+    public ApiRequestHistory(User user, boolean request_status, MethodType methodType, String requestContent, String responseContent) {
+        this.user = user;
+        this.request_status = request_status;
+        this.methodType = methodType;
+        this.requestContent = requestContent;
+        this.responseContent = responseContent;
+    }
 }

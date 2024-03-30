@@ -3,7 +3,6 @@
 </template>
 
 <script>
-import { onMounted } from "vue";
 export default {
   name: "SuccessPage",
   mounted() {
