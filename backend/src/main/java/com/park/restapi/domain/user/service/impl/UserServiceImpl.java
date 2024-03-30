@@ -67,7 +67,6 @@ public class UserServiceImpl implements UserService {
                 .expireDate(null)
                 .value(null).build();
         refreshTokenRepository.save(refreshToken);
-
     }
 
     // 이메일 중복 확인
@@ -85,6 +84,7 @@ public class UserServiceImpl implements UserService {
         if(!encoder.matches(dto.getPassword(), user.getPassword())){
             throw new UserException(UserExceptionInfo.FAIL_LOGIN, "로그인 실패");
         }
+        user.updateLoginDate();
 
         String accessToken = jwtService.createAccessToken(user.getId());
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
@@ -100,17 +100,19 @@ public class UserServiceImpl implements UserService {
 
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
-
 
         return LoginInfoResponseDTO.fromEntity(user);
     }
 
     // 소셜로그인
     @Override
+    @Transactional
     public LoginInfoResponseDTO socialLogin(HttpServletResponse response) {
         Long currentUserId = JwtService.getCurrentUserId();
         User user = userRepository.findById(currentUserId)
                 .orElseThrow(() -> new UserException(UserExceptionInfo.FAIL_LOGIN, "로그인 실패"));
+        user.updateLoginDate();
+
         String accessToken = jwtService.createAccessToken(user.getId());
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
         accessTokenCookie.setHttpOnly(true);
@@ -122,6 +124,7 @@ public class UserServiceImpl implements UserService {
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setSecure(true);
         refreshTokenCookie.setPath("/");
+
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
 
@@ -129,6 +132,7 @@ public class UserServiceImpl implements UserService {
         return LoginInfoResponseDTO.fromEntity(user);
     }
 
+    // 토큰 조회
     @Override
     public int getToken() {
         Long currentUserId = JwtService.getCurrentUserId();
@@ -138,6 +142,7 @@ public class UserServiceImpl implements UserService {
         return user.getToken();
     }
 
+    // 로그아웃
     @Override
     public void logout(HttpServletResponse response) {
         Cookie accessTokenCookie = new Cookie("accessToken", null);

@@ -1,6 +1,6 @@
 package com.park.restapi.domain.user.entity;
 
-import com.park.restapi.domain.api.entity.ApiRequestRecord;
+import com.park.restapi.domain.api.entity.ApiRequestHistory;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -34,11 +34,10 @@ public class User {
     @Column(nullable = false)
     @CreatedDate
     private LocalDateTime createDate;
-    private LocalDateTime withdrawDate;
     @OneToMany(mappedBy = "user")
-    private List<ApiRequestRecord> apiRequestRecordList = new ArrayList<>();
+    private List<ApiRequestHistory> apiRequestHistoryList = new ArrayList<>();
     @Column(nullable = false)
-    private int token = 2;
+    private int token = 1;
 
     @Builder
     public User(String email, String password, String nickname, LocalDateTime loginLastDate) {
@@ -65,6 +64,15 @@ public class User {
     }
 
     public void resetToken(){
-        this.token = 2;
+        this.token = token < 2 ? 2 : this.token;
+    }
+
+    public void updateLoginDate(){
+        this.loginLastDate = LocalDateTime.now();
+    }
+
+    // 토큰 획득
+    public void increasedToken(){
+        this.token++;
     }
 }

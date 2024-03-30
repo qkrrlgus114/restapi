@@ -1,5 +1,6 @@
 package com.park.restapi.domain.exception.handler;
 
+import com.park.restapi.domain.exception.exception.CouponException;
 import com.park.restapi.domain.exception.exception.EmailException;
 import com.park.restapi.domain.exception.exception.GPTException;
 import com.park.restapi.domain.exception.exception.UserException;
@@ -33,6 +34,14 @@ public class GlobalExceptionHandler {
     // GPT 예외처리
     @ExceptionHandler(GPTException.class)
     public ResponseEntity<ApiResponse<Void>> handleGPTException(GPTException e , HttpServletRequest request){
+        log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(), e.getLog());
+
+        return ResponseEntity.status(e.getException().getStatus()).body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
+    }
+
+    // 쿠폰 예외처리
+    @ExceptionHandler(CouponException.class)
+    public ResponseEntity<ApiResponse<Void>> handleCouponException(CouponException e , HttpServletRequest request){
         log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(), e.getLog());
 
         return ResponseEntity.status(e.getException().getStatus()).body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));

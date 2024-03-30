@@ -152,7 +152,7 @@ export default {
       if (currentToken > 0) {
         this.isLoading = true;
         this.$axios
-          .post(`${this.$apiBaseUrl}/api/write`, this.formData, {
+          .post(`${this.$apiBaseUrl}/api/gpt/recommendations`, this.formData, {
             withCredentials: true, // 쿠키 포함하기 위해
           })
           .then((response) => {
