@@ -1,4 +1,4 @@
-package com.park.restapi.util.scheduler;
+package com.park.restapi.domain.user.scheduler;
 
 import com.park.restapi.domain.user.entity.User;
 import com.park.restapi.domain.user.repository.UserRepository;
@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class SchedulerService {
+public class UserSchedulerService {
 
     private final UserRepository userRepository;
 

@@ -20,10 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -167,13 +165,6 @@ public class JwtFilter extends OncePerRequestFilter {
             e.printStackTrace();
         }
 
-    }
-
-    // 리다이렉트 주소
-    private String makeRedirectUrl() {
-        return UriComponentsBuilder.fromUriString("http://localhost:3000/refreshToken")
-                .encode(StandardCharsets.UTF_8)
-                .build().toUriString();
     }
 
     // 공통 응답 메시지

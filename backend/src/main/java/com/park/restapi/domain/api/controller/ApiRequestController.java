@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApiRequestController {
     private final ApiRequestServiceImpl apiRequestService;
 
-    @PostMapping("write")
+    @PostMapping("gpt/recommendations")
     public ResponseEntity<ApiResponse<?>> chatGpt(@RequestBody ApiRequestDTO dto){
         ChatGPTResponseDTO chatGPTResponseDTO = apiRequestService.chatGpt(dto);
 

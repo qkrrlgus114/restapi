@@ -4,6 +4,8 @@ import com.park.restapi.domain.api.dto.request.ApiRequestDTO;
 import com.park.restapi.domain.api.dto.request.ChatGPTRequestDTO;
 import com.park.restapi.domain.api.dto.request.Message;
 import com.park.restapi.domain.api.dto.response.ChatGPTResponseDTO;
+import com.park.restapi.domain.api.entity.ApiRequestHistory;
+import com.park.restapi.domain.api.repository.ApiRequestHistoryRepository;
 import com.park.restapi.domain.api.service.ApiRequestService;
 import com.park.restapi.domain.exception.exception.GPTException;
 import com.park.restapi.domain.exception.exception.UserException;
@@ -37,6 +39,7 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     @Value("${chat-gpt.api-key}")
     private String apiKey;
     private final UserRepository userRepository;
+    private final ApiRequestHistoryRepository apiRequestHistoryRepository;
 
     private final Semaphore semaphore = new Semaphore(5);
 
@@ -44,11 +47,13 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     @Transactional
     public ChatGPTResponseDTO chatGpt(ApiRequestDTO dto) {
 
+        User user = null;
+
         try {
             semaphore.acquire();
 
             Long currentUserId = JwtService.getCurrentUserId();
-            User user = userRepository.findById(currentUserId)
+            user = userRepository.findById(currentUserId)
                     .orElseThrow(() -> new UserException(UserExceptionInfo.NOT_FOUND_USER, "유저 데이터 없음"));
 
             if (user.getToken() <= 0) {
@@ -88,14 +93,15 @@ public class ApiRequestServiceImpl implements ApiRequestService {
             ChatGPTRequestDTO requestDTO = ChatGPTRequestDTO.builder()
                     .model(model)
                     .messages(messages).build();
-
-
+            
             ChatGPTResponseDTO chatGPTResponseDTO = restTemplate.postForObject(
                     URL
                     , requestDTO
                     , ChatGPTResponseDTO.class);
-
-            System.out.println(chatGPTResponseDTO.toString());
+            
+            // 응답이 왔다면
+            ApiRequestHistory apiRequestHistory = dto.toEntity(chatGPTResponseDTO, user, true);
+            apiRequestHistoryRepository.save(apiRequestHistory);
 
             user.useToken();
 
@@ -103,6 +109,8 @@ public class ApiRequestServiceImpl implements ApiRequestService {
         } catch (InterruptedException e) {
             throw new GPTException(GPTExceptionInfo.FAIL_INTERRUPTED, e.getMessage());
         } catch (HttpClientErrorException.TooManyRequests e) {
+            ApiRequestHistory entity = dto.toEntity(null, user, false);
+            apiRequestHistoryRepository.save(entity);
             throw new GPTException(GPTExceptionInfo.FAIL_REQUEST_GPT, e.getMessage());
         } finally {
             semaphore.release();
