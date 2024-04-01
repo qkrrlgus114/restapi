@@ -13,8 +13,8 @@
 <br>
 
 ### 역할 분담
-- **박기현**: 백엔드, 인프라
-- **Chat-GPT**: 프론트엔드
+- **박기현**: 백엔드, 프론트엔드(30%), 인프라
+- **Chat-GPT**: 프론트엔드(70%)
 <br>
 
 ### 기획 배경
@@ -71,6 +71,9 @@
   - RESTFUL API의 필수 원칙을 정의하여 프롬프트로 제작.
   ![image](https://github.com/qkrrlgus114/restapi/assets/121294224/1845f065-9811-4a46-b6ea-5d198cccf460)
 
+- ## Vuex
+  - data로 관리하기에 번거로움을 느껴 Vuex를 도입하여 전역으로 데이터 관리.
+
 
 <hr>
 
@@ -102,6 +105,7 @@
 - ## 📁 Frontend
 
 - Vue3
+- Vuex
 
 ## 💾 Database
 - MySQL
