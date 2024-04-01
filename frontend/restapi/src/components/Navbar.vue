@@ -1,15 +1,13 @@
 <template>
   <nav class="navbar" v-if="!shouldHideNavbar">
     <a @click="navigateHome" class="navbar-brand">REST API 추천 서비스</a>
-    <div v-if="isLoggedIn" class="user-info">
+    <div class="user-info">
       <h2>{{ nickname }}</h2>
       <h2>토큰 개수 : {{ token }}</h2>
       <button @click="refreshTokenCount" class="refresh-button">
         토큰 갱신
       </button>
-      <button v-if="isLoggedIn" @click="logout" class="logout-button">
-        로그아웃
-      </button>
+      <button @click="logout" class="logout-button">로그아웃</button>
     </div>
   </nav>
 </template>
@@ -22,7 +20,6 @@ export default {
   },
   data() {
     return {
-      isLoggedIn: false,
       nickname: "",
       token: 0,
     };
@@ -35,7 +32,7 @@ export default {
           withCredentials: true,
         })
         .then((response) => {
-          localStorage.removeItem("isLoggedIn");
+          localStorage.removeItem("loginState");
           localStorage.removeItem("nickname");
           localStorage.removeItem("token");
           this.$router.push("/");
@@ -64,25 +61,9 @@ export default {
         });
     },
     // 로고 클릭
-    navigateHome() {
-      const isLoggedIn = localStorage.getItem("isLoggedIn");
-      if (isLoggedIn) {
-        this.$router.push("/chat");
-      } else {
-        this.$router.push("/");
-      }
-    },
+    navigateHome() {},
     // 정보 업데이트
-    checkLoginStatus() {
-      const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-      const nickname = localStorage.getItem("nickname");
-      const token = localStorage.getItem("token");
-      if (isLoggedIn) {
-        this.isLoggedIn = true;
-        this.nickname = nickname;
-        this.token = token;
-      }
-    },
+    checkLoginStatus() {},
   },
   computed: {
     shouldHideNavbar() {

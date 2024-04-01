@@ -1,59 +1,66 @@
 <template>
-  <nav class="navbar" v-if="!shouldHideNavbar">
-    <a @click="navigateHome" class="navbar-brand">REST API 추천 서비스</a>
-    <div v-if="isLoggedIn" class="user-info">
-      <h2>{{ nickname }}</h2>
-      <h2>토큰 개수 : {{ token }}</h2>
-      <button @click="refreshTokenCount" class="refresh-button">
-        토큰 갱신
-      </button>
-      <button v-if="isLoggedIn" @click="logout" class="logout-button">
-        로그아웃
-      </button>
-    </div>
-  </nav>
-  <div class="api-container">
-    <h1>REST API 생성하기</h1>
-    <div v-if="isLoading" class="overlay">restapi 생성중...</div>
-    <div class="form-wrapper">
-      <div class="form-group">
-        <label for="model">GPT 모델 선택</label>
-        <select v-model="formData.model" id="model">
-          <option disabled value="">모델 선택</option>
-          <option value="gpt-3.5-turbo">GPT-3.5</option>
-          <option value="gpt-4">GPT-4</option>
-        </select>
+  <div class="container">
+    <div>
+      <div class="coupon-info">
+        <h2>오늘의 선착순 쿠폰(토큰) : {{ coupon }}개</h2>
+        <button class="receive-button" @click="acquiredToken">토큰 받기</button>
       </div>
-      <div class="form-group">
-        <label for="methodType">메서드 타입</label>
-        <select v-model="formData.methodType" id="methodType">
-          <option disabled value="">메서드 타입 선택</option>
-          <option value="GET">GET</option>
-          <option value="POST">POST</option>
-          <option value="PUT">PUT</option>
-          <option value="PATCH">PATCH</option>
-          <option value="DELETE">DELETE</option>
-        </select>
+
+      <div class="api-container">
+        <h1>REST API 생성하기</h1>
+        <div v-if="isLoading" class="overlay">restapi 생성중...</div>
+        <div class="form-wrapper">
+          <div class="form-group">
+            <label for="model">GPT 모델 선택</label>
+            <select v-model="formData.model" id="model">
+              <option disabled value="">모델 선택</option>
+              <option value="gpt-3.5-turbo">GPT-3.5</option>
+              <option value="gpt-4">GPT-4</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="methodType">메서드 타입</label>
+            <select v-model="formData.methodType" id="methodType">
+              <option disabled value="">메서드 타입 선택</option>
+              <option value="GET">GET</option>
+              <option value="POST">POST</option>
+              <option value="PUT">PUT</option>
+              <option value="PATCH">PATCH</option>
+              <option value="DELETE">DELETE</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="resource">자원(ex user, hotel, room)</label>
+            <p2></p2>
+            <input
+              type="text"
+              v-model="formData.resource"
+              id="resource"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="content">설명(상세할수록 좋습니다.)</label>
+            <textarea
+              v-model="formData.content"
+              id="content"
+              required
+            ></textarea>
+          </div>
+          <div class="form-actions">
+            <button :disabled="!isFormValid" @click="submitForm">제출</button>
+            <button type="button" @click="resetForm">초기화</button>
+          </div>
+        </div>
+        <div v-if="contentItems.length > 0">
+          <h2>추천 결과:</h2>
+          <ul>
+            <li v-for="(item, index) in contentItems" :key="index">
+              {{ item }}
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="form-group">
-        <label for="resource">자원(ex user, hotel, room)</label>
-        <p2></p2>
-        <input type="text" v-model="formData.resource" id="resource" required />
-      </div>
-      <div class="form-group">
-        <label for="content">설명(상세할수록 좋습니다.)</label>
-        <textarea v-model="formData.content" id="content" required></textarea>
-      </div>
-      <div class="form-actions">
-        <button :disabled="!isFormValid" @click="submitForm">제출</button>
-        <button type="button" @click="resetForm">초기화</button>
-      </div>
-    </div>
-    <div v-if="contentItems.length > 0">
-      <h2>추천 결과:</h2>
-      <ul>
-        <li v-for="(item, index) in contentItems" :key="index">{{ item }}</li>
-      </ul>
     </div>
   </div>
 </template>
@@ -74,9 +81,9 @@ export default {
       },
       isLoading: false,
       contentItems: [],
-      isLoggedIn: false,
       nickname: "",
       token: 0,
+      coupon: 0,
     };
   },
   computed: {
@@ -97,7 +104,7 @@ export default {
           withCredentials: true,
         })
         .then((response) => {
-          localStorage.removeItem("isLoggedIn");
+          localStorage.removeItem("loginState");
           localStorage.removeItem("nickname");
           localStorage.removeItem("token");
           this.$router.push("/");
@@ -117,8 +124,6 @@ export default {
           // 로컬 스토리지에도 토큰 개수 저장
           localStorage.setItem("token", newTokenCount);
 
-          this.token = newTokenCount;
-
           alert("갱신 성공");
         })
         .catch((error) => {
@@ -126,29 +131,75 @@ export default {
         });
     },
     // 로고 클릭
-    navigateHome() {
-      const isLoggedIn = localStorage.getItem("isLoggedIn");
-      if (isLoggedIn) {
-        this.$router.push("/chat");
-      } else {
-        this.$router.push("/");
-      }
-    },
-    // 정보 업데이트
+    navigateHome() {},
+    // 유저 정보 가져오기(쿠폰, 토큰, 이름)
     checkLoginStatus() {
-      const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-      const nickname = localStorage.getItem("nickname");
-      const token = localStorage.getItem("token");
-      if (isLoggedIn) {
-        this.isLoggedIn = true;
-        this.nickname = nickname;
-        this.token = token;
+      this.$axios
+        .get(`${this.$apiBaseUrl}/api/users`, {
+          withCredentials: true,
+        })
+        .then((response) => {
+          this.token = response.data.data.token;
+          this.nickname = response.data.data.nickname;
+          this.coupon = response.data.data.remainingQuantity;
+
+          alert("갱신 성공");
+        })
+        .catch((error) => {
+          console.error("토큰 개수 갱신 중 오류 발생:", error);
+        });
+    },
+    // 토큰 가져오기
+    getToken() {
+      this.$axios
+        .get(`${this.$apiBaseUrl}/api/tokens`, {
+          withCredentials: true, // 쿠키 포함하기 위해
+        })
+        .then((response) => {
+          this.token = response.data.data;
+        })
+        .catch((error) => {
+          alert(error.response.data.message);
+        });
+    },
+    // 쿠폰 가져오기
+    getCoupon() {
+      this.$axios
+        .get(`${this.$apiBaseUrl}/api/coupons`, {
+          withCredentials: true, // 쿠키 포함하기 위해
+        })
+        .then((response) => {
+          this.coupon = response.data.data;
+        })
+        .catch((error) => {
+          alert(error.response.data.message);
+        });
+    },
+    // 토큰 획득하기
+    acquiredToken() {
+      if (this.coupon <= 0) {
+        alert("쿠폰이 전부 소진되었습니다.");
+      } else {
+        this.$axios
+          .post(
+            `${this.$apiBaseUrl}/api/coupons`,
+            {},
+            {
+              withCredentials: true,
+            }
+          )
+          .then((response) => {
+            alert(response.data.message);
+            this.coupon--;
+          })
+          .catch((error) => {
+            alert(error.response.data.message);
+          });
       }
     },
     // 제출
     submitForm() {
       const currentToken = parseInt(localStorage.getItem("token"), 10);
-
       if (currentToken > 0) {
         this.isLoading = true;
         this.$axios
@@ -197,9 +248,27 @@ export default {
 </script>
 
 <style scoped>
+.container {
+  text-align: center;
+  padding-top: 70px;
+  display: flex;
+  justify-content: center;
+}
+.receive-button {
+  padding: 10px 20px; /* 버튼 내부의 상하좌우 여백 */
+  background-color: #4caf50; /* 버튼 배경 색상 */
+  color: white; /* 버튼 텍스트 색상 */
+  border: none; /* 테두리 제거 */
+  cursor: pointer; /* 마우스 오버 시 커서 변경 */
+  border-radius: 5px; /* 버튼 모서리 둥글게 */
+}
+
+.receive-button:hover {
+  background-color: #45a049; /* 버튼 마우스 오버 시 배경 색상 변경 */
+}
 .api-container {
   max-width: 500px;
-  margin: 100px auto;
+  margin: 50px auto;
   padding: 20px;
   background-color: #f9f9f9;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -315,53 +384,5 @@ li {
     width: 100%;
     margin-bottom: 1rem; /* 버튼 사이의 간격 조정 */
   }
-}
-
-.navbar {
-  position: fixed; /* 네비게이션 바를 상단에 고정 */
-  top: 0; /* 상단에 맞춤 */
-  left: 0; /* 왼쪽에 맞춤 */
-  width: 100%; /* 전체 너비 */
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #333;
-  color: white;
-  padding: 1rem;
-  z-index: 1000; /* 다른 요소들 위에 나타나도록 z-index 설정 */
-}
-
-.navbar-brand {
-  font-weight: bold;
-  color: white;
-  text-decoration: none;
-}
-
-.user-info h2 {
-  display: inline;
-  margin-right: 20px;
-  color: white;
-}
-
-button {
-  padding: 8px 20px;
-  margin-left: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-.refresh-button {
-  /* 추가적인 스타일링이 필요하다면 여기에 작성 */
-}
-
-.logout-button {
-  margin-right: 50px;
 }
 </style>
