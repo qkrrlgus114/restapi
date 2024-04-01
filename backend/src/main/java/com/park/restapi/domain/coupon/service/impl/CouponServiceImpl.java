@@ -40,14 +40,14 @@ public class CouponServiceImpl implements CouponService {
         // 오늘 획득한 이력이 있으면 중복 불가.
         LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
         LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
-//        CouponHistory byCouponHistory = couponHistoryRepository.findByCouponHistory(startOfDay, endOfDay, user);
-//
-//        if(byCouponHistory != null){
-//            throw new UserException(UserExceptionInfo.ALREADY_GET_COUPON, "이미 쿠폰 획득 완료.");
-//        }
+        CouponHistory byCouponHistory = couponHistoryRepository.findByCouponHistory(startOfDay, endOfDay, user);
+
+        if(byCouponHistory != null){
+            throw new UserException(UserExceptionInfo.ALREADY_GET_COUPON, "이미 쿠폰 획득 완료.");
+        }
 
         // 쿠폰이 남아있는지 확인
-        Coupon coupon = couponRepository.findByCoupon(startOfDay, endOfDay)
+        Coupon coupon = couponRepository.findByCouponForWrite(startOfDay, endOfDay)
                 .orElseThrow(() -> new CouponException(CouponExceptionInfo.FAIL_COUPON_DATA, "DB에 쿠폰 데이터 존재하지 않음."));
 
         if(coupon.getRemainingQuantity() < 1){
@@ -63,5 +63,21 @@ public class CouponServiceImpl implements CouponService {
                 .user(user).build();
         couponHistoryRepository.save(couponHistory);
         log.info("쿠폰 획득 성공");
+    }
+
+    // 남은 선착순 쿠폰 조회
+    @Override
+    @Transactional(readOnly = true)
+    public int getCoupons(){
+        LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+
+        log.info("시작 시간 {}", startOfDay);
+        log.info("끝 시간 {}", endOfDay);
+
+        Coupon coupon = couponRepository.findCouponForRead(startOfDay, endOfDay)
+                .orElseThrow(() -> new CouponException(CouponExceptionInfo.FAIL_COUPON_DATA, "DB에 쿠폰 데이터 존재하지 않음."));
+
+        return coupon.getRemainingQuantity();
     }
 }

@@ -1,22 +1,17 @@
 package com.park.restapi.domain.user.entity;
 
-import com.park.restapi.domain.api.entity.ApiRequestHistory;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class User {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,8 +29,6 @@ public class User {
     @Column(nullable = false)
     @CreatedDate
     private LocalDateTime createDate;
-    @OneToMany(mappedBy = "user")
-    private List<ApiRequestHistory> apiRequestHistoryList = new ArrayList<>();
     @Column(nullable = false)
     private int token = 1;
 

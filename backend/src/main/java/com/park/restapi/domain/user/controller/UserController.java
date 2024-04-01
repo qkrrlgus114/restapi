@@ -2,7 +2,7 @@ package com.park.restapi.domain.user.controller;
 
 import com.park.restapi.domain.user.dto.request.LoginInfoRequestDTO;
 import com.park.restapi.domain.user.dto.request.SignUpRequstDTO;
-import com.park.restapi.domain.user.dto.response.LoginInfoResponseDTO;
+import com.park.restapi.domain.user.dto.response.UserInfoResponseDTO;
 import com.park.restapi.domain.user.service.impl.UserServiceImpl;
 import com.park.restapi.util.response.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
@@ -42,17 +42,17 @@ public class UserController {
     // 로그인
     @PostMapping("login")
     public ResponseEntity<ApiResponse<?>> login(@RequestBody LoginInfoRequestDTO dto, HttpServletResponse response){
-        LoginInfoResponseDTO login = userService.login(dto, response);
+        userService.login(dto, response);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(login, "로그인 성공"));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("로그인 성공"));
     }
 
     // 소셜로그인
     @PostMapping("social-login")
     public ResponseEntity<ApiResponse<?>> socialLogin(HttpServletResponse response){
-        LoginInfoResponseDTO login = userService.socialLogin(response);
+        userService.socialLogin(response);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(login, "소셜 로그인 성공"));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("소셜 로그인 성공"));
     }
 
     // 토큰 조회
@@ -69,6 +69,14 @@ public class UserController {
         userService.logout(response);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("로그아웃 성공"));
+    }
+
+    // 유저 정보 조회
+    @GetMapping("users")
+    public ResponseEntity<ApiResponse<?>> getUserInfo(){
+        UserInfoResponseDTO userInfo = userService.getUserInfo();
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(userInfo, "유저 정보"));
     }
 
 }

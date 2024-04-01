@@ -40,10 +40,8 @@ export default {
           }
         )
         .then((response) => {
-          console.log(response);
-          window.localStorage.setItem("nickname", response.data.data.nickname);
-          window.localStorage.setItem("token", response.data.data.token);
-          window.localStorage.setItem("isLoggedIn", true);
+          // 스토어의 로그인 액션 호출
+          this.$store.dispatch("login", { loginState: true });
           this.$router.push("/chat");
         })
         .catch((error) => {
