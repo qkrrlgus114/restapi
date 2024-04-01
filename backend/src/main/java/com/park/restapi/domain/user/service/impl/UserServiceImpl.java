@@ -2,11 +2,15 @@ package com.park.restapi.domain.user.service.impl;
 
 import com.park.restapi.domain.auth.entity.RefreshToken;
 import com.park.restapi.domain.auth.repository.RefreshTokenRepository;
+import com.park.restapi.domain.coupon.entity.Coupon;
+import com.park.restapi.domain.coupon.repository.CouponRepository;
+import com.park.restapi.domain.exception.exception.CouponException;
 import com.park.restapi.domain.exception.exception.UserException;
+import com.park.restapi.domain.exception.info.CouponExceptionInfo;
 import com.park.restapi.domain.exception.info.UserExceptionInfo;
 import com.park.restapi.domain.user.dto.request.LoginInfoRequestDTO;
 import com.park.restapi.domain.user.dto.request.SignUpRequstDTO;
-import com.park.restapi.domain.user.dto.response.LoginInfoResponseDTO;
+import com.park.restapi.domain.user.dto.response.UserInfoResponseDTO;
 import com.park.restapi.domain.user.entity.Role;
 import com.park.restapi.domain.user.entity.User;
 import com.park.restapi.domain.user.entity.UserRole;
@@ -23,7 +27,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 
 @Service
@@ -36,6 +42,7 @@ public class UserServiceImpl implements UserService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtService jwtService;
     private final BCryptPasswordEncoder encoder;
+    private final CouponRepository couponRepository;
 
     // 회원가입
     @Override
@@ -78,7 +85,7 @@ public class UserServiceImpl implements UserService {
     // 로그인
     @Override
     @Transactional
-    public LoginInfoResponseDTO login(LoginInfoRequestDTO dto, HttpServletResponse response) {
+    public void login(LoginInfoRequestDTO dto, HttpServletResponse response) {
         User user = userRepository.findByUserLogin(dto.getEmail())
                 .orElseThrow(() -> new UserException(UserExceptionInfo.FAIL_LOGIN, "로그인 실패"));
         if(!encoder.matches(dto.getPassword(), user.getPassword())){
@@ -100,14 +107,12 @@ public class UserServiceImpl implements UserService {
 
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
-
-        return LoginInfoResponseDTO.fromEntity(user);
     }
 
     // 소셜로그인
     @Override
     @Transactional
-    public LoginInfoResponseDTO socialLogin(HttpServletResponse response) {
+    public void socialLogin(HttpServletResponse response) {
         Long currentUserId = JwtService.getCurrentUserId();
         User user = userRepository.findById(currentUserId)
                 .orElseThrow(() -> new UserException(UserExceptionInfo.FAIL_LOGIN, "로그인 실패"));
@@ -127,9 +132,22 @@ public class UserServiceImpl implements UserService {
 
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
+    }
 
+    // 유저 정보 조회
+    @Override
+    public UserInfoResponseDTO getUserInfo() {
+        Long currentUserId = JwtService.getCurrentUserId();
+        User user = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new UserException(UserExceptionInfo.NOT_FOUND_USER, "유저 데이터 없음"));
 
-        return LoginInfoResponseDTO.fromEntity(user);
+        LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+
+        Coupon coupon = couponRepository.findCouponForRead(startOfDay, endOfDay)
+                .orElseThrow(() -> new CouponException(CouponExceptionInfo.FAIL_COUPON_DATA, "DB에 쿠폰 데이터 존재하지 않음."));
+
+        return UserInfoResponseDTO.fromEntity(user, coupon);
     }
 
     // 토큰 조회

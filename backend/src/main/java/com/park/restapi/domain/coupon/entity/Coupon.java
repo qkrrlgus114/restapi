@@ -27,9 +27,10 @@ public class Coupon {
     private LocalDateTime createDate;
 
     @Builder
-    public Coupon(Integer remainingQuantity, Integer totalQuantity) {
+    public Coupon(Integer remainingQuantity, Integer totalQuantity, LocalDateTime createDate) {
         this.remainingQuantity = remainingQuantity;
         this.totalQuantity = totalQuantity;
+        this.createDate = LocalDateTime.now();
     }
 
     public void decreasedCoupon(){

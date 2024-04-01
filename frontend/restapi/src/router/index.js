@@ -52,8 +52,8 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    if (!isLoggedIn) {
+    const loginState = localStorage.getItem("loginState") === "true";
+    if (!loginState) {
       alert("로그인이 필요합니다.");
       next({ name: "Login" });
     } else {
