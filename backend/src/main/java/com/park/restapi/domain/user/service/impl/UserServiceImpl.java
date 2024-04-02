@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 
 
 @Service
@@ -144,13 +143,6 @@ public class UserServiceImpl implements UserService {
 
         LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
         LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
-
-        log.info("시작 시간 {}", startOfDay);
-        log.info("끝 시간 {}", endOfDay);
-        List<Coupon> all = couponRepository.findAll();
-        for(Coupon c : all){
-            System.out.println(c.toString());
-        }
 
         Coupon coupon = couponRepository.findCouponForRead(startOfDay, endOfDay)
                 .orElseThrow(() -> new CouponException(CouponExceptionInfo.FAIL_COUPON_DATA, "DB에 쿠폰 데이터 존재하지 않음."));
