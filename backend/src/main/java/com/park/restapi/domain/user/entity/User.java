@@ -30,7 +30,7 @@ public class User {
     @CreatedDate
     private LocalDateTime createDate;
     @Column(nullable = false)
-    private int token = 1;
+    private Integer token = 3;
 
     @Builder
     public User(String email, String password, String nickname, LocalDateTime loginLastDate) {
@@ -57,7 +57,7 @@ public class User {
     }
 
     public void resetToken(){
-        this.token = token < 2 ? 2 : this.token;
+        this.token = token < 4 ? 3 : this.token;
     }
 
     public void updateLoginDate(){
