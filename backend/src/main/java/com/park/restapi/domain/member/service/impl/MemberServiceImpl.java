@@ -151,7 +151,6 @@ public class MemberServiceImpl implements MemberService {
         for(Coupon c : all){
             System.out.println(c.toString());
         }
-        // 테스트
 
         Coupon coupon = couponRepository.findCouponForRead(startOfDay, endOfDay)
                 .orElseThrow(() -> new CouponException(CouponExceptionInfo.FAIL_COUPON_DATA, "DB에 쿠폰 데이터 존재하지 않음."));
