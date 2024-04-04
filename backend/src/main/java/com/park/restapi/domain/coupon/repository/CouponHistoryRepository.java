@@ -1,7 +1,7 @@
 package com.park.restapi.domain.coupon.repository;
 
 import com.park.restapi.domain.coupon.entity.CouponHistory;
-import com.park.restapi.domain.user.entity.User;
+import com.park.restapi.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,9 +12,9 @@ import java.time.LocalDateTime;
 @Repository
 public interface CouponHistoryRepository extends JpaRepository<CouponHistory, Long> {
 
-    @Query("select ch from CouponHistory ch where ch.createDate >= :startOfDay and ch.createDate <= :endOfDay and ch.user = :user")
+    @Query("select ch from CouponHistory ch where ch.createDate >= :startOfDay and ch.createDate <= :endOfDay and ch.member = :member")
     CouponHistory findByCouponHistory(@Param("startOfDay")LocalDateTime startOfDay,
                                       @Param("endOfDay")LocalDateTime endOfDay,
-                                      @Param("user") User user);
+                                      @Param("member") Member member);
 
 }

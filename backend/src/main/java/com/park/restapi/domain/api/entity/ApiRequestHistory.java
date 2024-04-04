@@ -1,6 +1,6 @@
 package com.park.restapi.domain.api.entity;
 
-import com.park.restapi.domain.user.entity.User;
+import com.park.restapi.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -20,8 +20,8 @@ public class ApiRequestHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
     @CreatedDate
     private LocalDateTime requestDate;
     @Column(nullable = false)
@@ -34,8 +34,8 @@ public class ApiRequestHistory {
     private String responseContent;
 
     @Builder
-    public ApiRequestHistory(User user, boolean request_status, MethodType methodType, String requestContent, String responseContent) {
-        this.user = user;
+    public ApiRequestHistory(Member member, boolean request_status, MethodType methodType, String requestContent, String responseContent) {
+        this.member = member;
         this.request_status = request_status;
         this.methodType = methodType;
         this.requestContent = requestContent;

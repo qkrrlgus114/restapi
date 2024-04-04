@@ -3,7 +3,7 @@ package com.park.restapi.domain.exception.handler;
 import com.park.restapi.domain.exception.exception.CouponException;
 import com.park.restapi.domain.exception.exception.EmailException;
 import com.park.restapi.domain.exception.exception.GPTException;
-import com.park.restapi.domain.exception.exception.UserException;
+import com.park.restapi.domain.exception.exception.MemberException;
 import com.park.restapi.util.response.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +24,8 @@ public class GlobalExceptionHandler {
     }
 
     // 유저 예외처리
-    @ExceptionHandler(UserException.class)
-    public ResponseEntity<ApiResponse<Void>> handleUserException(UserException e , HttpServletRequest request){
+    @ExceptionHandler(MemberException.class)
+    public ResponseEntity<ApiResponse<Void>> handleUserException(MemberException e , HttpServletRequest request){
         log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(), e.getLog());
 
         return ResponseEntity.status(e.getException().getStatus()).body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
