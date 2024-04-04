@@ -5,7 +5,7 @@ import com.park.restapi.domain.coupon.repository.CouponHistoryRepository;
 import com.park.restapi.domain.coupon.repository.CouponRepository;
 import com.park.restapi.domain.coupon.service.impl.CouponServiceImpl;
 import com.park.restapi.domain.exception.exception.CouponException;
-import com.park.restapi.domain.user.repository.UserRepository;
+import com.park.restapi.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class CouponServiceImplTest {
     @Mock
     private CouponHistoryRepository couponHistoryRepository;
     @Mock
-    private UserRepository userRepository;
+    private MemberRepository memberRepository;
 
     @InjectMocks
     private CouponServiceImpl couponService;

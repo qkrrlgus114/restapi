@@ -3,7 +3,7 @@ package com.park.restapi.domain.api.dto.request;
 import com.park.restapi.domain.api.dto.response.ChatGPTResponseDTO;
 import com.park.restapi.domain.api.entity.ApiRequestHistory;
 import com.park.restapi.domain.api.entity.MethodType;
-import com.park.restapi.domain.user.entity.User;
+import com.park.restapi.domain.member.entity.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,9 +20,9 @@ public class ApiRequestDTO {
     private String content;
 
 
-    public ApiRequestHistory toEntity(ChatGPTResponseDTO responseDTO, User user, boolean access){
+    public ApiRequestHistory toEntity(ChatGPTResponseDTO responseDTO, Member member, boolean access){
         return ApiRequestHistory.builder()
-                .user(user)
+                .member(member)
                 .request_status(access)
                 .requestContent(content)
                 .methodType(methodType)

@@ -5,8 +5,8 @@ import axios from "axios";
 import store from "./store/store";
 
 const app = createApp(App);
-app.config.globalProperties.$apiBaseUrl = "https://restapi.store";
-// app.config.globalProperties.$apiBaseUrl = "http://localhost:8080";
+// app.config.globalProperties.$apiBaseUrl = "https://restapi.store";
+app.config.globalProperties.$apiBaseUrl = "http://localhost:8080";
 app.config.globalProperties.$axios = axios;
 
 app.use(store);

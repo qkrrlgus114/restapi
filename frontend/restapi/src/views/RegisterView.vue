@@ -174,91 +174,90 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   color: white;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 24px;
-  z-index: 100;
+  font-size: 1.5rem;
+  z-index: 1000;
 }
+
 .register-container {
-  max-width: 500px;
-  margin: 200px auto;
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin: 50px auto;
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 h1 {
-  text-align: center;
   color: #333;
-}
-
-button {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  background-color: #86bfff;
-  color: rgb(0, 0, 0);
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  margin-top: 1rem;
-}
-.form-group {
-  margin-bottom: 15px;
-}
-
-label {
-  display: block;
-  margin-bottom: 5px;
+  margin-bottom: 2rem;
+  font-weight: 400;
+  text-align: center;
 }
 
 input[type="email"],
 input[type="password"],
 input[type="text"] {
-  width: calc(100% - 22px);
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
   box-sizing: border-box;
+  margin-bottom: 1rem;
+  transition: border 0.3s ease;
 }
 
-.btn {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="text"]:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+button {
+  padding: 0.65rem 1.5rem;
+  border-radius: 8px;
+  background-color: #3498db;
+  color: #ffffff;
+  font-size: 0.9rem;
   cursor: pointer;
-  margin-top: 10px;
+  transition: background-color 0.2s;
+  border: none;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  width: auto;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+button:disabled {
+  background-color: #95a5a6;
+  cursor: default;
+}
+
+button:hover:not(:disabled) {
+  background-color: #2980b9;
 }
 
 .auth-btn {
-  margin-right: 40px;
-}
-
-.btn:not(.submit) {
-  display: inline-block;
-  margin-left: 10px;
-}
-
-.btn.verify {
-  margin-top: 0;
-}
-
-.submit {
-  width: 100%;
-}
-
-.register-form {
-  display: flex;
-  flex-direction: column;
+  margin-right: 10px;
 }
 
 p {
-  color: red;
+  color: #e74c3c;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+
+.label {
+  display: block;
+  margin-bottom: 5px;
+  color: #34495e;
+  font-weight: 500;
 }
 </style>
