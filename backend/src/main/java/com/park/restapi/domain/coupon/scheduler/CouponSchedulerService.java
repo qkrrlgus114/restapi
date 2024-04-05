@@ -20,7 +20,7 @@ public class CouponSchedulerService {
     private final CouponSettingRepository couponSettingRepository;
 
     // 쿠폰 발급 스케줄러
-    @Scheduled(cron = "0 0 20 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "01 0 0 * * *", zone = "Asia/Seoul")
     @Transactional(rollbackOn = Exception.class)
     public void generatedCoupon(){
         try{
