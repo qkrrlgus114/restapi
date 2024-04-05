@@ -15,8 +15,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @DataJpaTest
 @TestPropertySource(locations = "classpath:application-test.yml")
 class CouponHistoryRepositoryTest {
@@ -37,15 +35,30 @@ class CouponHistoryRepositoryTest {
                 .password("test")
                 .loginLastDate(LocalDateTime.now()).build();
         savedMember = memberRepository.save(member);
-
-        CouponHistory couponHistory = CouponHistory.builder()
-                .member(savedMember).build();
-        savedCouponHistory = couponHistoryRepository.save(couponHistory);
     }
 
     @Test
     @DisplayName("오늘 쿠폰 획득 기록 있음")
     void findByCouponHistory(){
+        // given
+        CouponHistory couponHistory = CouponHistory.builder()
+                .member(savedMember).build();
+        savedCouponHistory = couponHistoryRepository.save(couponHistory);
+        LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+
+        // when
+        CouponHistory searchCouponHistory = couponHistoryRepository.findByCouponHistory(startOfDay, endOfDay, savedMember);
+
+        // then
+        Assertions.assertNotNull(searchCouponHistory);
+        Assertions.assertEquals(savedCouponHistory, searchCouponHistory);
+        Assertions.assertEquals(savedMember, searchCouponHistory.getMember());
+    }
+
+    @Test
+    @DisplayName("오늘 쿠폰 획득 기록 없음")
+    void findByCouponHistoryNo(){
         // given
         LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
         LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
@@ -54,13 +67,7 @@ class CouponHistoryRepositoryTest {
         CouponHistory searchCouponHistory = couponHistoryRepository.findByCouponHistory(startOfDay, endOfDay, savedMember);
 
         // then
-        Assertions.assertEquals(savedCouponHistory, searchCouponHistory);
-        Assertions.assertEquals(savedMember, searchCouponHistory.getMember());
-    }
-
-    @Test
-    @DisplayName("오늘 쿠폰 획득 기록 없음")
-    void findByCouponHistoryNo(){
+        Assertions.assertNull(searchCouponHistory);
 
     }
 }

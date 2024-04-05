@@ -38,16 +38,17 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 // 모든 요청 허용
                 .authorizeHttpRequests(authorize ->
                         authorize.requestMatchers("/api/authentications/send", "/api/authentications/verify", "/api/signup",
-                                "/api/email-check", "/api/phonenumber-check",  "/api/login", "/oauth2/authorization/kakao", "/login/oauth2/code/kakao").permitAll()
+                        "/api/email-check", "/api/phonenumber-check", "/api/login", "/oauth2/authorization/kakao", "/login/oauth2/code/kakao").permitAll()
                 )
-                .authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers("/api/**").hasAuthority("USER")
-                                .anyRequest().authenticated()
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
+                        .requestMatchers("/api/**").hasAuthority("USER")
+                        .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 // oauth 로그인
                 .oauth2Login(oauth -> {
                     oauth.successHandler(successHandler);
@@ -61,5 +62,6 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
 }

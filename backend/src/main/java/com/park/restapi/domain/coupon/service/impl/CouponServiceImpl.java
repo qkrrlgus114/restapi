@@ -1,9 +1,13 @@
 package com.park.restapi.domain.coupon.service.impl;
 
+import com.park.restapi.domain.coupon.dto.request.UpdateCouponSettingRequestDTO;
+import com.park.restapi.domain.coupon.dto.response.CouponSettingResponseDTO;
 import com.park.restapi.domain.coupon.entity.Coupon;
 import com.park.restapi.domain.coupon.entity.CouponHistory;
+import com.park.restapi.domain.coupon.entity.CouponSetting;
 import com.park.restapi.domain.coupon.repository.CouponHistoryRepository;
 import com.park.restapi.domain.coupon.repository.CouponRepository;
+import com.park.restapi.domain.coupon.repository.CouponSettingRepository;
 import com.park.restapi.domain.coupon.service.CouponService;
 import com.park.restapi.domain.exception.exception.CouponException;
 import com.park.restapi.domain.exception.exception.MemberException;
@@ -28,8 +32,10 @@ public class CouponServiceImpl implements CouponService {
 
     private final CouponRepository couponRepository;
     private final CouponHistoryRepository couponHistoryRepository;
+    private final CouponSettingRepository couponSettingRepository;
     private final MemberRepository memberRepository;
-
+    
+    // 쿠폰 획득
     @Override
     @Transactional
     public void acquisitionCoupon() {
@@ -81,5 +87,28 @@ public class CouponServiceImpl implements CouponService {
                 .orElseThrow(() -> new CouponException(CouponExceptionInfo.FAIL_COUPON_DATA, "DB에 쿠폰 데이터 존재하지 않음."));
 
         return coupon.getRemainingQuantity();
+    }
+
+    @Override
+    public void couponSettingChange() {
+
+    }
+
+    // 쿠폰 설정 가져오기
+    @Override
+    @Transactional(readOnly = true)
+    public CouponSettingResponseDTO getCouponSetting() {
+        CouponSetting couponSetting = couponSettingRepository.findTopByOrderByIdAsc();
+
+        return CouponSettingResponseDTO.fromEntity(couponSetting);
+    }
+
+    // 쿠폰 설정 업데이트
+    @Override
+    @Transactional
+    public void updateCouponSetting(UpdateCouponSettingRequestDTO requestDTO) {
+        CouponSetting couponSetting = couponSettingRepository.findTopByOrderByIdAsc();
+
+        couponSetting.updateCouponSetting(requestDTO);
     }
 }

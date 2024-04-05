@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @EntityListeners(AuditingEntityListener.class)
-@ToString
 public class Coupon {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,10 +24,9 @@ public class Coupon {
     private LocalDateTime createDate;
 
     @Builder
-    public Coupon(Integer remainingQuantity, Integer totalQuantity, LocalDateTime createDate) {
+    public Coupon(Integer remainingQuantity, Integer totalQuantity) {
         this.remainingQuantity = remainingQuantity;
         this.totalQuantity = totalQuantity;
-        this.createDate = LocalDateTime.now();
     }
 
     public void decreasedCoupon(){

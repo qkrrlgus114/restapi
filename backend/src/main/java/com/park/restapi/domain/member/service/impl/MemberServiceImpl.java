@@ -11,9 +11,9 @@ import com.park.restapi.domain.exception.info.MemberExceptionInfo;
 import com.park.restapi.domain.member.dto.request.LoginInfoRequestDTO;
 import com.park.restapi.domain.member.dto.request.SignUpRequstDTO;
 import com.park.restapi.domain.member.dto.response.MemberInfoResponseDTO;
-import com.park.restapi.domain.member.entity.Role;
 import com.park.restapi.domain.member.entity.Member;
 import com.park.restapi.domain.member.entity.MemberRole;
+import com.park.restapi.domain.member.entity.Role;
 import com.park.restapi.domain.member.repository.MemberRepository;
 import com.park.restapi.domain.member.repository.MemberRoleRepository;
 import com.park.restapi.domain.member.service.MemberService;
@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 
 
 @Service
@@ -144,14 +143,6 @@ public class MemberServiceImpl implements MemberService {
 
         LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
         LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
-
-        log.info("시작 시간 {}", startOfDay);
-        log.info("끝 시간 {}", endOfDay);
-        List<Coupon> all = couponRepository.findAll();
-        for(Coupon c : all){
-            System.out.println(c.toString());
-        }
-        // 테스트
 
         Coupon coupon = couponRepository.findCouponForRead(startOfDay, endOfDay)
                 .orElseThrow(() -> new CouponException(CouponExceptionInfo.FAIL_COUPON_DATA, "DB에 쿠폰 데이터 존재하지 않음."));

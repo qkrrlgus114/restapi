@@ -1,17 +1,21 @@
 package com.park.restapi.domain.member.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
 public class Member {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +35,8 @@ public class Member {
     private LocalDateTime createDate;
     @Column(nullable = false)
     private Integer token = 3;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
+    private List<MemberRole> memberRoles = new ArrayList<>();
 
     @Builder
     public Member(String email, String password, String nickname, LocalDateTime loginLastDate) {

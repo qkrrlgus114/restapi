@@ -1,7 +1,17 @@
 package com.park.restapi.domain.coupon.service;
 
-public interface CouponService {
-    void acquisitionCoupon();
+import com.park.restapi.domain.coupon.dto.request.UpdateCouponSettingRequestDTO;
+import com.park.restapi.domain.coupon.dto.response.CouponSettingResponseDTO;
 
+public interface CouponService {
+    // 쿠폰 획득
+    void acquisitionCoupon();
+    // 쿠폰 조회
     int getCoupons();
+    // 쿠폰 상태 변경(관리자)
+    void couponSettingChange();
+    // 쿠폰 상태 가져오기(관리자)
+    CouponSettingResponseDTO getCouponSetting();
+    // 쿠폰 상태 변경하기(관리자)
+    void updateCouponSetting(UpdateCouponSettingRequestDTO requestDTO);
 }

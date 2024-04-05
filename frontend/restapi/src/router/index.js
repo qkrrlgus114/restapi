@@ -5,6 +5,11 @@ import ChatView from "../views/ChatView.vue";
 import MainView from "../views/MainView.vue";
 import NotFoundComponent from "../components/NotFoundComponent.vue";
 import Success from "../views/Success.vue";
+import AdminView from "../views/AdminView.vue";
+import Store from "../store/store.js";
+import RequestLogView from "@/views/RequestLogView.vue";
+import UserBanView from "@/views/UserBanView.vue";
+import SettingsView from "../views/SettingsView.vue";
 
 const routes = [
   {
@@ -43,6 +48,21 @@ const routes = [
     component: NotFoundComponent,
     meta: { hideNavbar: true },
   },
+  {
+    path: "/admin",
+    name: "Admin",
+    component: AdminView,
+    meta: { requiresAdmin: true, requiresAuth: true },
+    children: [
+      {
+        path: "settings",
+        name: "Settings",
+        component: SettingsView,
+      },
+      { path: "requests", name: "RequestLog", component: RequestLogView },
+      { path: "ban", name: "UserBan", component: UserBanView },
+    ],
+  },
 ];
 
 const router = createRouter({
@@ -51,14 +71,19 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some((record) => record.meta.requiresAuth)) {
-    const loginState = localStorage.getItem("loginState") === "true";
-    if (!loginState) {
-      alert("로그인이 필요합니다.");
-      next({ name: "Login" });
-    } else {
-      next();
-    }
+  const isLoggedIn = Store.state.loginState; // 로그인 상태
+  const isAdmin = Store.state.memberRoles.includes("ADMIN"); // 관리자 권한 확인
+
+  if (to.matched.some((record) => record.meta.requiresAuth && !isLoggedIn)) {
+    // 로그인이 필요한 페이지에 로그인하지 않은 경우
+    alert("로그인이 필요합니다.");
+    next({ name: "Login" });
+  } else if (
+    to.matched.some((record) => record.meta.requiresAdmin && !isAdmin)
+  ) {
+    // 관리자 권한이 필요한 페이지에 관리자 권한이 없는 경우
+    alert("관리자 권한이 필요합니다.");
+    next({ name: "Chat" });
   } else {
     next();
   }
