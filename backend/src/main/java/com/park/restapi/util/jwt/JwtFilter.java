@@ -147,8 +147,6 @@ public class JwtFilter extends OncePerRequestFilter {
             Member member = userOptional.get();
 
             List<MemberRole> memberRoles = memberRoleRepository.findByMember(member);
-            System.out.println(memberRoles.size());
-            System.out.println(request.getRequestURI());
 
             List<GrantedAuthority> authorities = memberRoles.stream()
                     .map(memberRole -> new SimpleGrantedAuthority(memberRole.getRole().name()))

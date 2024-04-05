@@ -1,6 +1,5 @@
 package com.park.restapi.domain.member.service.impl;
 
-import com.park.restapi.domain.api.service.impl.ApiRequestServiceImpl;
 import com.park.restapi.domain.exception.exception.EmailException;
 import com.park.restapi.domain.exception.info.EmailExceptionInfo;
 import com.park.restapi.domain.member.entity.EmailConfirm;
@@ -31,12 +30,9 @@ public class EmailServiceImpl implements EmailService {
     private final JavaMailSender emailSender;
     private final EmailConfirmRepository emailConfirmRepository;
     private final MemberRepository memberRepository;
-    private final ApiRequestServiceImpl apiRequestService;
 
 
     private MimeMessage createMessageChange(String to, String authCode)throws Exception{
-        System.out.println("보내는 대상 : " + to);
-        System.out.println("인증 번호 : " + authCode);
         MimeMessage  message = emailSender.createMimeMessage();
 
         message.addRecipients(Message.RecipientType.TO, to);//보내는 대상
@@ -67,8 +63,6 @@ public class EmailServiceImpl implements EmailService {
     }
 
     private MimeMessage createMessageRegist(String to, String authCode)throws Exception{
-        System.out.println("보내는 대상 : " + to);
-        System.out.println("인증 번호 : " + authCode);
         MimeMessage  message = emailSender.createMimeMessage();
 
         message.addRecipients(Message.RecipientType.TO, to);//보내는 대상
@@ -98,7 +92,7 @@ public class EmailServiceImpl implements EmailService {
         return message;
     }
 
-    public static String createKey() {
+    public String createKey() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
         int length =10;
         SecureRandom rnd = new SecureRandom();

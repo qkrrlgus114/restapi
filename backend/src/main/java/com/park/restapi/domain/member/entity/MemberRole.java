@@ -8,7 +8,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
 public class MemberRole {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

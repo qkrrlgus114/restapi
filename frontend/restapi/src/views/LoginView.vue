@@ -30,6 +30,8 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
   name: "LoginView",
   data() {
@@ -66,6 +68,14 @@ export default {
       // 회원가입 페이지로 리다이렉션
       this.$router.push({ name: "Register" });
     },
+  },
+  computed: {
+    ...mapState(["loginState"]),
+  },
+  mounted() {
+    if (this.loginState) {
+      this.$router.push("/chat");
+    }
   },
 };
 </script>

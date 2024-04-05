@@ -99,26 +99,25 @@ export default {
           withCredentials: true,
         })
         .then((response) => {
-          localStorage.removeItem("loginState");
-          localStorage.removeItem("nickname");
-          localStorage.removeItem("token");
           this.$router.push("/");
         })
         .catch((error) => {
           console.error("토큰 개수 갱신 중 오류 발생:", error);
         });
     },
-    // 유저 정보 가져오기(쿠폰, 토큰, 이름)
+    // 유저 정보 가져오기(쿠폰, 토큰, 이름, 권한)
     checkLoginStatus() {
       this.$axios
         .get(`${this.$apiBaseUrl}/api/users`, {
           withCredentials: true,
         })
         .then((response) => {
+          console.log(response);
           this.$store.dispatch("updateUserInfo", {
             token: response.data.data.token,
             nickname: response.data.data.nickname,
             coupon: response.data.data.remainingQuantity,
+            memberRoles: response.data.data.memberRoles,
           });
         })
         .catch((error) => {
