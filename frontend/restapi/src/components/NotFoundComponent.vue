@@ -23,14 +23,14 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center; /* 텍스트 중앙 정렬 */
-  padding: 0; /* 패딩 초기화 */
-  margin: 0; /* 마진 초기화 */
-  box-sizing: border-box; /* 박스 사이징 규칙 설정 */
+  text-align: center;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 button {
-  margin-top: 20px; /* 버튼과 텍스트 간 간격 추가 */
+  margin-top: 20px;
   padding: 10px 20px;
   background-color: #2e2f30;
   color: white;

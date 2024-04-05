@@ -1,19 +1,23 @@
 <template>
-  <nav class="navbar" v-if="!shouldHideNavbar">
-    <div class="user-info">
-      <h2>{{ nickname }}</h2>
-      <h2>토큰 개수 : {{ token }}</h2>
-      <div class="buttons">
-        <button @click="refreshTokenCount" class="refresh-button">
-          토큰 갱신
-        </button>
-        <button @click="logout" class="logout-button">로그아웃</button>
+  <div v-if="!shouldHideNavbar">
+    <nav class="navbar">
+      <a @click="goHome">RESTAPI</a>
+      <div class="user-info">
+        <button v-if="isAdmin" @click="goAdmin">관리자 설정</button>
+        <h2>{{ nickname }}</h2>
+        <h2>토큰 개수 : {{ token }}</h2>
+        <div class="buttons">
+          <button @click="refreshTokenCount" class="refresh-button">
+            토큰 갱신
+          </button>
+          <button @click="logout" class="logout-button">로그아웃</button>
+        </div>
       </div>
+    </nav>
+    <div class="coupon-info">
+      <h2>오늘의 선착순 쿠폰(토큰) : {{ coupon }}개</h2>
+      <button class="receive-button" @click="acquiredToken">토큰 받기</button>
     </div>
-  </nav>
-  <div class="coupon-info">
-    <h2>오늘의 선착순 쿠폰(토큰) : {{ coupon }}개</h2>
-    <button class="receive-button" @click="acquiredToken">토큰 받기</button>
   </div>
 </template>
 
@@ -76,29 +80,26 @@ export default {
           });
       }
     },
+    goAdmin() {
+      this.$router.push("/admin/settings");
+    },
+    goHome() {
+      this.$router.push("/");
+    },
   },
   computed: {
     shouldHideNavbar() {
       return this.$route.meta.hideNavbar;
     },
-    ...mapState(["nickname", "token", "coupon"]),
+    ...mapState(["nickname", "token", "coupon", "memberRoles"]),
+    isAdmin() {
+      return this.memberRoles.includes("ADMIN");
+    },
   },
 };
 </script>
 
 <style scoped>
-.navbar {
-  position: fixed; /* 네비게이션 바를 상단에 고정 */
-  top: 0; /* 상단에 맞춤 */
-  left: 0; /* 왼쪽에 맞춤 */
-  width: 100%; /* 전체 너비 */
-  height: 5%;
-  display: flex;
-  justify-content: space-between;
-  background-color: #333;
-  padding: 1rem;
-}
-
 .user-info {
   display: flex;
   justify-content: flex-end;
@@ -107,15 +108,39 @@ export default {
 }
 
 .user-info h2 {
-  margin-right: 20px;
-  float: right;
+  margin: 0 1rem;
+  color: white;
+  font-size: 1rem;
+}
+.navbar,
+.coupon-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  background-color: #2c3e50;
   color: white;
 }
 
 .coupon-info {
-  padding-top: 100px;
+  margin-top: 4rem;
+  background-color: #22252b;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 998;
+}
+
+.navbar {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  background-color: #2c3e50;
+  color: white;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 999;
 }
 
 .buttons {
@@ -124,29 +149,60 @@ export default {
 }
 
 button {
-  padding: 8px 20px;
+  padding: 0.5rem 1rem;
   margin-left: 10px;
-  background-color: #007bff;
+  background-color: transparent;
   color: white;
-  border: none;
-  border-radius: 4px;
+  border: 1px solid white;
+  border-radius: 0.375rem;
   cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: white;
+  color: #5a5a5a;
 }
 
-.receive-button {
-  padding: 10px 20px; /* 버튼 내부의 상하좌우 여백 */
-  background-color: #4caf50; /* 버튼 배경 색상 */
-  color: white; /* 버튼 텍스트 색상 */
-  border: none; /* 테두리 제거 */
-  cursor: pointer; /* 마우스 오버 시 커서 변경 */
-  border-radius: 5px; /* 버튼 모서리 둥글게 */
-}
-
+.refresh-button:hover,
+.logout-button:hover,
 .receive-button:hover {
-  background-color: #45a049; /* 버튼 마우스 오버 시 배경 색상 변경 */
+  border-color: #e0e0e0;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .coupon-info {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .receive-button {
+    margin-top: 10px;
+  }
+
+  .buttons {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+a {
+  flex-grow: 1; /* 로고, restapi 추천, user-info 사이의 공간을 균등하게 나눔 */
+  text-decoration: none;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center; /* 텍스트를 중앙 정렬 */
+  transition: transform 0.3s ease-in-out;
+}
+
+a:hover {
+  transform: scale(1.1);
+  cursor: pointer;
 }
 </style>

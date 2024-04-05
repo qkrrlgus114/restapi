@@ -8,6 +8,9 @@ export default createStore({
     nickname: "",
     token: 0,
     coupon: 0,
+    memberRoles: [],
+    isDailyCouponGenerate: false,
+    dailyCouponQuantity: 0,
   },
   getters: {
     getToken(state) {
@@ -31,6 +34,7 @@ export default createStore({
       state.coupon = payload.coupon;
       state.nickname = payload.nickname;
       state.token = payload.token;
+      state.memberRoles = payload.memberRoles;
     },
     // 토큰 갱신
     updateTokenState(state, payload) {
@@ -52,15 +56,17 @@ export default createStore({
         state.coupon -= 1;
       }
     },
+    // 유저 권한
+    updateMemberRoleState(state, payload) {
+      state.memberRoles = payload;
+    },
   },
   actions: {
     login({ commit }, payload) {
       commit("setLoginState", payload);
-      localStorage.setItem("loginState", payload.loginState);
     },
     logout({ commit }) {
       commit("logout");
-      localStorage.removeItem("loginState");
     },
     updateUserInfo({ commit }, payload) {
       commit("updateUserInfoState", payload);
@@ -69,10 +75,11 @@ export default createStore({
     updateToken({ commit }, payload) {
       commit("updateTokenState", payload);
     },
+    // 설정 정보 ㄱ
   },
   plugins: [
     createPersistedState({
-      paths: ["loginState"],
+      paths: ["loginState", "memberRoles", "token", "coupon", "nickname"],
     }),
   ],
 });

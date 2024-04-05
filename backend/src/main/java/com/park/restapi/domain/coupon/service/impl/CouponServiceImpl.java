@@ -1,16 +1,20 @@
 package com.park.restapi.domain.coupon.service.impl;
 
+import com.park.restapi.domain.coupon.dto.request.UpdateCouponSettingRequestDTO;
+import com.park.restapi.domain.coupon.dto.response.CouponSettingResponseDTO;
 import com.park.restapi.domain.coupon.entity.Coupon;
 import com.park.restapi.domain.coupon.entity.CouponHistory;
+import com.park.restapi.domain.coupon.entity.CouponSetting;
 import com.park.restapi.domain.coupon.repository.CouponHistoryRepository;
 import com.park.restapi.domain.coupon.repository.CouponRepository;
+import com.park.restapi.domain.coupon.repository.CouponSettingRepository;
 import com.park.restapi.domain.coupon.service.CouponService;
 import com.park.restapi.domain.exception.exception.CouponException;
-import com.park.restapi.domain.exception.exception.UserException;
+import com.park.restapi.domain.exception.exception.MemberException;
 import com.park.restapi.domain.exception.info.CouponExceptionInfo;
-import com.park.restapi.domain.exception.info.UserExceptionInfo;
-import com.park.restapi.domain.user.entity.User;
-import com.park.restapi.domain.user.repository.UserRepository;
+import com.park.restapi.domain.exception.info.MemberExceptionInfo;
+import com.park.restapi.domain.member.entity.Member;
+import com.park.restapi.domain.member.repository.MemberRepository;
 import com.park.restapi.util.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,23 +32,27 @@ public class CouponServiceImpl implements CouponService {
 
     private final CouponRepository couponRepository;
     private final CouponHistoryRepository couponHistoryRepository;
-    private final UserRepository userRepository;
-
+    private final CouponSettingRepository couponSettingRepository;
+    private final MemberRepository memberRepository;
+    
+    // 쿠폰 획득
     @Override
     @Transactional
     public void acquisitionCoupon() {
         Long currentUserId = JwtService.getCurrentUserId();
-        User user = userRepository.findById(currentUserId)
-                .orElseThrow(() -> new UserException(UserExceptionInfo.NOT_FOUND_USER, "유저 데이터 없음"));
+        Member member = memberRepository.findById(currentUserId)
+                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_USER, "유저 데이터 없음"));
 
         // 오늘 획득한 이력이 있으면 중복 불가.
         LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
         LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
-        CouponHistory byCouponHistory = couponHistoryRepository.findByCouponHistory(startOfDay, endOfDay, user);
+        CouponHistory byCouponHistory = couponHistoryRepository.findByCouponHistory(startOfDay, endOfDay, member);
 
         if(byCouponHistory != null){
-            throw new UserException(UserExceptionInfo.ALREADY_GET_COUPON, "이미 쿠폰 획득 완료.");
+            throw new MemberException(MemberExceptionInfo.ALREADY_GET_COUPON, "이미 쿠폰 획득 완료.");
         }
+
+        Integer integer = Integer.valueOf(1);
 
         // 쿠폰이 남아있는지 확인
         Coupon coupon = couponRepository.findByCouponForWrite(startOfDay, endOfDay)
@@ -57,10 +65,10 @@ public class CouponServiceImpl implements CouponService {
         coupon.decreasedCoupon();
 
         // 유저 토큰 + 1
-        user.increasedToken();
+        member.increasedToken();
 
         CouponHistory couponHistory = CouponHistory.builder()
-                .user(user).build();
+                .member(member).build();
         couponHistoryRepository.save(couponHistory);
         log.info("쿠폰 획득 성공");
     }
@@ -79,5 +87,28 @@ public class CouponServiceImpl implements CouponService {
                 .orElseThrow(() -> new CouponException(CouponExceptionInfo.FAIL_COUPON_DATA, "DB에 쿠폰 데이터 존재하지 않음."));
 
         return coupon.getRemainingQuantity();
+    }
+
+    @Override
+    public void couponSettingChange() {
+
+    }
+
+    // 쿠폰 설정 가져오기
+    @Override
+    @Transactional(readOnly = true)
+    public CouponSettingResponseDTO getCouponSetting() {
+        CouponSetting couponSetting = couponSettingRepository.findTopByOrderByIdAsc();
+
+        return CouponSettingResponseDTO.fromEntity(couponSetting);
+    }
+
+    // 쿠폰 설정 업데이트
+    @Override
+    @Transactional
+    public void updateCouponSetting(UpdateCouponSettingRequestDTO requestDTO) {
+        CouponSetting couponSetting = couponSettingRepository.findTopByOrderByIdAsc();
+
+        couponSetting.updateCouponSetting(requestDTO);
     }
 }

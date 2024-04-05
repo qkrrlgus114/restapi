@@ -2,10 +2,10 @@ package com.park.restapi.util.jwt;
 
 import com.park.restapi.domain.auth.entity.RefreshToken;
 import com.park.restapi.domain.auth.repository.RefreshTokenRepository;
-import com.park.restapi.domain.exception.exception.UserException;
-import com.park.restapi.domain.exception.info.UserExceptionInfo;
-import com.park.restapi.domain.user.entity.User;
-import com.park.restapi.domain.user.repository.UserRepository;
+import com.park.restapi.domain.exception.exception.MemberException;
+import com.park.restapi.domain.exception.info.MemberExceptionInfo;
+import com.park.restapi.domain.member.entity.Member;
+import com.park.restapi.domain.member.repository.MemberRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -33,7 +33,7 @@ public class JwtService {
     @Value("#{${jwt.refresh-validity}}")
     private Long refreshTokenTime;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
     // 유저 pk 꺼내기
     public TokenInfo getUserId(String token){
@@ -59,7 +59,7 @@ public class JwtService {
             return (Long) authentication.getPrincipal();
         }
 
-        throw new UserException(UserExceptionInfo.NOT_FOUND_USER, "인증 정보가 잘못되었습니다.");
+        throw new MemberException(MemberExceptionInfo.NOT_FOUND_USER, "인증 정보가 잘못되었습니다.");
     }
 
     // 액세스 토큰 생성
@@ -82,13 +82,13 @@ public class JwtService {
     * */
     public String createRefreshToken(Long userId, boolean check){
         Claims claims = Jwts.claims();
-        Optional<User> userOptional = userRepository.findById(userId);
+        Optional<Member> userOptional = memberRepository.findById(userId);
         if(userOptional.isEmpty() && check) return "유저 없음";
         else if(userOptional.isEmpty() && !check){
-            throw new UserException(UserExceptionInfo.NOT_FOUND_USER, "유저 데이터 없음");
+            throw new MemberException(MemberExceptionInfo.NOT_FOUND_USER, "유저 데이터 없음");
         }
 
-        User user = userOptional.get();
+        Member member = userOptional.get();
 
         String refreshToken = Jwts.builder()
                 .setClaims(claims)
@@ -97,7 +97,7 @@ public class JwtService {
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
 
-        RefreshToken refreshTokenData = refreshTokenRepository.findByUser(user);
+        RefreshToken refreshTokenData = refreshTokenRepository.findByMember(member);
         refreshTokenData.addTokenValueAndExpireDate(refreshToken, LocalDateTime.now().plusDays(14));
 
         return refreshToken;

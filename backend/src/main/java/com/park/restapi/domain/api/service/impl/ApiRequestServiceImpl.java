@@ -8,11 +8,11 @@ import com.park.restapi.domain.api.entity.ApiRequestHistory;
 import com.park.restapi.domain.api.repository.ApiRequestHistoryRepository;
 import com.park.restapi.domain.api.service.ApiRequestService;
 import com.park.restapi.domain.exception.exception.GPTException;
-import com.park.restapi.domain.exception.exception.UserException;
+import com.park.restapi.domain.exception.exception.MemberException;
 import com.park.restapi.domain.exception.info.GPTExceptionInfo;
-import com.park.restapi.domain.exception.info.UserExceptionInfo;
-import com.park.restapi.domain.user.entity.User;
-import com.park.restapi.domain.user.repository.UserRepository;
+import com.park.restapi.domain.exception.info.MemberExceptionInfo;
+import com.park.restapi.domain.member.entity.Member;
+import com.park.restapi.domain.member.repository.MemberRepository;
 import com.park.restapi.util.jwt.JwtService;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     //api key를 application.yml에 넣어두었습니다.
     @Value("${chat-gpt.api-key}")
     private String apiKey;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final ApiRequestHistoryRepository apiRequestHistoryRepository;
 
     private final Semaphore semaphore = new Semaphore(5);
@@ -47,17 +47,17 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     @Transactional
     public ChatGPTResponseDTO chatGpt(ApiRequestDTO dto) {
 
-        User user = null;
+        Member member = null;
 
         try {
             semaphore.acquire();
 
             Long currentUserId = JwtService.getCurrentUserId();
-            user = userRepository.findById(currentUserId)
-                    .orElseThrow(() -> new UserException(UserExceptionInfo.NOT_FOUND_USER, "유저 데이터 없음"));
+            member = memberRepository.findById(currentUserId)
+                    .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_USER, "유저 데이터 없음"));
 
-            if (user.getToken() <= 0) {
-                throw new UserException(UserExceptionInfo.NO_REMAINING_USES, "토큰 부족");
+            if (member.getToken() <= 0) {
+                throw new MemberException(MemberExceptionInfo.NO_REMAINING_USES, "토큰 부족");
             }
 
 
@@ -100,16 +100,16 @@ public class ApiRequestServiceImpl implements ApiRequestService {
                     , ChatGPTResponseDTO.class);
             
             // 응답이 왔다면
-            ApiRequestHistory apiRequestHistory = dto.toEntity(chatGPTResponseDTO, user, true);
+            ApiRequestHistory apiRequestHistory = dto.toEntity(chatGPTResponseDTO, member, true);
             apiRequestHistoryRepository.save(apiRequestHistory);
 
-            user.useToken();
+            member.useToken();
 
             return chatGPTResponseDTO;
         } catch (InterruptedException e) {
             throw new GPTException(GPTExceptionInfo.FAIL_INTERRUPTED, e.getMessage());
         } catch (HttpClientErrorException.TooManyRequests e) {
-            ApiRequestHistory entity = dto.toEntity(null, user, false);
+            ApiRequestHistory entity = dto.toEntity(null, member, false);
             apiRequestHistoryRepository.save(entity);
             throw new GPTException(GPTExceptionInfo.FAIL_REQUEST_GPT, e.getMessage());
         } finally {

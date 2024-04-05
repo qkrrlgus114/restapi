@@ -3,7 +3,7 @@
     <div>
       <div class="api-container">
         <h1>REST API 생성하기</h1>
-        <div v-if="isLoading" class="overlay">restapi 생성중...</div>
+        <div v-if="isLoading" class="overlay">REST API 생성중...</div>
         <div class="form-wrapper">
           <div class="form-group">
             <label for="model">GPT 모델 선택</label>
@@ -99,75 +99,29 @@ export default {
           withCredentials: true,
         })
         .then((response) => {
-          localStorage.removeItem("loginState");
-          localStorage.removeItem("nickname");
-          localStorage.removeItem("token");
           this.$router.push("/");
         })
         .catch((error) => {
           console.error("토큰 개수 갱신 중 오류 발생:", error);
         });
     },
-    // 토큰 갱신
-    refreshTokenCount() {
-      this.$axios
-        .get(`${this.$apiBaseUrl}/api/tokens`, {
-          withCredentials: true,
-        })
-        .then((response) => {
-          const newTokenCount = response.data.data;
-          // 로컬 스토리지에도 토큰 개수 저장
-          localStorage.setItem("token", newTokenCount);
-
-          alert("갱신 성공");
-        })
-        .catch((error) => {
-          console.error("토큰 개수 갱신 중 오류 발생:", error);
-        });
-    },
-    // 로고 클릭
-    navigateHome() {},
-    // 유저 정보 가져오기(쿠폰, 토큰, 이름)
+    // 유저 정보 가져오기(쿠폰, 토큰, 이름, 권한)
     checkLoginStatus() {
       this.$axios
         .get(`${this.$apiBaseUrl}/api/users`, {
           withCredentials: true,
         })
         .then((response) => {
+          console.log(response);
           this.$store.dispatch("updateUserInfo", {
             token: response.data.data.token,
             nickname: response.data.data.nickname,
             coupon: response.data.data.remainingQuantity,
+            memberRoles: response.data.data.memberRoles,
           });
         })
         .catch((error) => {
           console.error("토큰 개수 갱신 중 오류 발생:", error);
-        });
-    },
-    // 토큰 가져오기
-    getToken() {
-      this.$axios
-        .get(`${this.$apiBaseUrl}/api/tokens`, {
-          withCredentials: true, // 쿠키 포함하기 위해
-        })
-        .then((response) => {
-          this.token = response.data.data;
-        })
-        .catch((error) => {
-          alert(error.response.data.message);
-        });
-    },
-    // 쿠폰 가져오기
-    getCoupon() {
-      this.$axios
-        .get(`${this.$apiBaseUrl}/api/coupons`, {
-          withCredentials: true, // 쿠키 포함하기 위해
-        })
-        .then((response) => {
-          this.coupon = response.data.data;
-        })
-        .catch((error) => {
-          alert(error.response.data.message);
         });
     },
 
@@ -218,112 +172,137 @@ export default {
 </script>
 
 <style scoped>
+body,
+html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
 .container {
-  text-align: center;
   display: flex;
   justify-content: center;
-  padding-top: 70px;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fafafa;
 }
 
 .api-container {
+  box-sizing: border-box;
+  margin: auto;
+  padding: 100px;
   max-width: 500px;
-  margin: 20px;
-  padding: 80px;
-  background-color: #f0f0f0;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  position: relative;
 }
 
 .overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
-  color: white;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 20px;
-  z-index: 100;
+  color: white;
+  font-size: 24px;
+  z-index: 10;
 }
 
 .form-wrapper {
-  width: 350px;
-  display: flex;
-  flex-direction: column;
-}
-
-.form-actions {
-  width: 100px;
-  display: flex;
-  align-self: center;
-  flex-direction: column;
-}
-
-.form-group,
-.form-actions button {
-  margin-bottom: 1rem;
-}
-
-label,
-input[type="text"],
-textarea,
-select {
-  display: block;
   width: 100%;
-  margin-bottom: 0.5rem;
+  margin: 0 auto;
 }
 
-input[type="text"],
-textarea,
-select {
-  padding: 0.5rem;
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  background-color: #f8f9fa;
 }
 
 button {
-  padding: 0.5rem 1rem;
-  background-color: #007bff;
-  color: white;
+  padding: 10px 20px;
+  margin-top: 10px;
+  width: auto;
+  background-color: #3498db;
+  color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+button:last-child {
+  margin-right: 0;
 }
 
 button:disabled {
-  background-color: #cccccc;
+  background-color: #95a5a6;
   cursor: not-allowed;
 }
 
 button:hover:not(:disabled) {
-  background-color: #0056b3;
+  background-color: #2980b9;
 }
 
-h1,
+h1 {
+  margin-bottom: 20px;
+  color: #2c3e50;
+  font-weight: 400;
+}
+
 h2 {
-  color: #333;
+  margin-top: 40px;
+  color: #2c3e50;
 }
 
-ol {
-  padding-left: 20px;
+ul {
+  list-style: none;
+  padding-left: 0;
 }
 
 li {
   background-color: #e9ecef;
-  margin-bottom: 0.5rem;
-  padding: 0.5rem;
+  padding: 10px;
   border-radius: 4px;
+  margin-bottom: 10px;
   text-align: left;
 }
 
 @media (max-width: 768px) {
   .api-container {
-    margin: 10px;
-    padding: 10px;
+    padding: 20px;
   }
 
+  .form-wrapper,
   .form-actions button {
     width: 100%;
   }

@@ -2,12 +2,12 @@ package com.park.restapi.util.oauth;
 
 import com.park.restapi.domain.auth.entity.RefreshToken;
 import com.park.restapi.domain.auth.repository.RefreshTokenRepository;
-import com.park.restapi.domain.user.entity.Role;
-import com.park.restapi.domain.user.entity.SocialType;
-import com.park.restapi.domain.user.entity.User;
-import com.park.restapi.domain.user.entity.UserRole;
-import com.park.restapi.domain.user.repository.UserRepository;
-import com.park.restapi.domain.user.repository.UserRoleRepository;
+import com.park.restapi.domain.member.entity.Role;
+import com.park.restapi.domain.member.entity.SocialType;
+import com.park.restapi.domain.member.entity.Member;
+import com.park.restapi.domain.member.entity.MemberRole;
+import com.park.restapi.domain.member.repository.MemberRepository;
+import com.park.restapi.domain.member.repository.MemberRoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -28,8 +28,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
 
-    private final UserRepository userRepository;
-    private final UserRoleRepository userRoleRepository;
+    private final MemberRepository memberRepository;
+    private final MemberRoleRepository memberRoleRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -52,23 +52,23 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
         String nickname = oAuth2UserInfo.getNickname();
 
         // 유저가 db에 있는지 판단.
-        Optional<User> byUser = userRepository.findByEmail(email);
+        Optional<Member> byUser = memberRepository.findByEmail(email);
 
         /*
          * 만약에 유저가 없으면 회원가입 진행
          * 랜덤 닉네임 생성 및 기본 프로필사진 설정
          * */
         if(byUser.isEmpty()){
-            User user = User.toEntity(email, nickname, SocialType.KAKAO);
-            User save = userRepository.save(user);
+            Member member = Member.toEntity(email, nickname, SocialType.KAKAO);
+            Member save = memberRepository.save(member);
 
-            UserRole userRole = UserRole.builder()
-                    .user(save)
+            MemberRole memberRole = MemberRole.builder()
+                    .member(save)
                     .role(Role.USER).build();
-            userRoleRepository.save(userRole);
+            memberRoleRepository.save(memberRole);
 
             RefreshToken refreshToken = RefreshToken.builder()
-                    .user(save).build();
+                    .member(save).build();
             refreshTokenRepository.save(refreshToken);
         }
 
