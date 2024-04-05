@@ -1,7 +1,7 @@
 package com.park.restapi.util.oauth;
 
-import com.park.restapi.domain.user.entity.User;
-import com.park.restapi.domain.user.repository.UserRepository;
+import com.park.restapi.domain.member.entity.Member;
+import com.park.restapi.domain.member.repository.MemberRepository;
 import com.park.restapi.util.jwt.JwtService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.ServletException;
@@ -38,7 +38,7 @@ import java.util.Optional;
 public class SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtService jwtService;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     @Override
@@ -53,16 +53,16 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
         String email = String.valueOf(kakaoAccount.get("email"));
 
         // 유저 없으면 예외처리
-        Optional<User> byEmail = Optional.ofNullable(userRepository.findByEmail(email)
+        Optional<Member> byEmail = Optional.ofNullable(memberRepository.findByEmail(email)
                 .orElseThrow(EntityNotFoundException::new));
 
-        User user = byEmail.get();
+        Member member = byEmail.get();
 
         // 액세스 토큰 생성
-        String accessToken = jwtService.createAccessToken(user.getId());
+        String accessToken = jwtService.createAccessToken(member.getId());
 
         // 리프레시 토큰 생성
-        String refreshToken = jwtService.createRefreshToken(user.getId(), true);
+        String refreshToken = jwtService.createRefreshToken(member.getId(), true);
         System.out.println(accessToken);
         System.out.println(refreshToken);
 

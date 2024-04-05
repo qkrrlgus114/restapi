@@ -1,10 +1,7 @@
 package com.park.restapi.domain.coupon.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -27,10 +24,9 @@ public class Coupon {
     private LocalDateTime createDate;
 
     @Builder
-    public Coupon(Integer remainingQuantity, Integer totalQuantity, LocalDateTime createDate) {
+    public Coupon(Integer remainingQuantity, Integer totalQuantity) {
         this.remainingQuantity = remainingQuantity;
         this.totalQuantity = totalQuantity;
-        this.createDate = LocalDateTime.now();
     }
 
     public void decreasedCoupon(){

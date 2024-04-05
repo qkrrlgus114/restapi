@@ -1,7 +1,7 @@
 package com.park.restapi.domain.auth.entity;
 
 
-import com.park.restapi.domain.user.entity.User;
+import com.park.restapi.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -20,15 +20,15 @@ public class RefreshToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
     @Column(length = 200)
     private String value;
     private LocalDateTime expireDate;
 
     @Builder
-    public RefreshToken(User user, String value, LocalDateTime expireDate) {
-        this.user = user;
+    public RefreshToken(Member member, String value, LocalDateTime expireDate) {
+        this.member = member;
         this.value = value;
         this.expireDate = expireDate;
     }

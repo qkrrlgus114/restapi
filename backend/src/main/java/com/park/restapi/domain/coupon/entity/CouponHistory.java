@@ -1,6 +1,6 @@
 package com.park.restapi.domain.coupon.entity;
 
-import com.park.restapi.domain.user.entity.User;
+import com.park.restapi.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -24,11 +24,11 @@ public class CouponHistory {
     @CreatedDate
     private LocalDateTime createDate;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @Builder
-    public CouponHistory(User user) {
-        this.user = user;
+    public CouponHistory(Member member) {
+        this.member = member;
     }
 }

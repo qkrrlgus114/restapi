@@ -1,9 +1,9 @@
 package com.park.restapi.util.jwt;
 
-import com.park.restapi.domain.user.entity.User;
-import com.park.restapi.domain.user.entity.UserRole;
-import com.park.restapi.domain.user.repository.UserRepository;
-import com.park.restapi.domain.user.repository.UserRoleRepository;
+import com.park.restapi.domain.member.entity.Member;
+import com.park.restapi.domain.member.entity.MemberRole;
+import com.park.restapi.domain.member.repository.MemberRepository;
+import com.park.restapi.domain.member.repository.MemberRoleRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -39,8 +39,8 @@ public class JwtFilter extends OncePerRequestFilter {
     @Value("#{${jwt.refresh-validity}}")
     private Long refreshTokenTime;
     private final JwtService jwtService;
-    private final UserRepository userRepository;
-    private final UserRoleRepository userRoleRepository;
+    private final MemberRepository memberRepository;
+    private final MemberRoleRepository memberRoleRepository;
 
     @Override // 이 주소로 오는 건 토큰 없어도 됨.
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
@@ -137,26 +137,24 @@ public class JwtFilter extends OncePerRequestFilter {
                 }
             }
 
-            Optional<User> userOptional = userRepository.findById(tokenInfo.getUserId());
+            Optional<Member> userOptional = memberRepository.findById(tokenInfo.getUserId());
             if(userOptional.isEmpty()) {
                 log.info("유저 데이터 없음");
                 sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "유저 데이터 없음");
                 return;
             }
 
-            User user = userOptional.get();
+            Member member = userOptional.get();
 
-            List<UserRole> userRoles = userRoleRepository.findByUser(user);
-            System.out.println(userRoles.size());
-            System.out.println(request.getRequestURI());
+            List<MemberRole> memberRoles = memberRoleRepository.findByMember(member);
 
-            List<GrantedAuthority> authorities = userRoles.stream()
-                    .map(userRole -> new SimpleGrantedAuthority(userRole.getRole().name()))
+            List<GrantedAuthority> authorities = memberRoles.stream()
+                    .map(memberRole -> new SimpleGrantedAuthority(memberRole.getRole().name()))
                     .collect(Collectors.toList());
 
             // 권한 부여
             UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(user.getId(), null, authorities);
+                    new UsernamePasswordAuthenticationToken(member.getId(), null, authorities);
 
             // Detail을 넣어준다.
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
