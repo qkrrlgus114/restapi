@@ -127,7 +127,20 @@
 
 <hr>
 
-# 5️⃣ **사용 영상**
+# 5️⃣ **사진 및 사용 영상**
+## 메인 화면
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/b5b1437c-8e21-4ede-9865-a77a48bc8986)
+## 로그인 화면
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/016cfe75-ae44-457e-8d1a-c2e41fbc6603)
+## 메인 서비스 화면
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/737368db-0d4a-4ab3-ae19-65ff6ff3e16d)
+## RESTAPI 추천 결과
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/87f18a8f-5ca2-47cd-8e05-9d540cd8eaf3)
+## 관리자 페이지(데일리 쿠폰 설정)
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/86e562f8-f42f-4a70-9dd4-0a6506075aec)
+
+
+
 
 ![녹화_2024_03_27_23_06_42_125](https://github.com/qkrrlgus114/restapi/assets/121294224/1793b28d-1691-4482-b7c7-01930a6d2406)
 
