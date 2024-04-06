@@ -2,9 +2,9 @@ package com.park.restapi.domain.coupon.controller;
 
 import com.park.restapi.domain.coupon.dto.request.UpdateCouponSettingRequestDTO;
 import com.park.restapi.domain.coupon.dto.response.CouponSettingResponseDTO;
-import com.park.restapi.domain.coupon.service.impl.CouponHistoryServiceImpl;
 import com.park.restapi.domain.coupon.service.impl.CouponServiceImpl;
 import com.park.restapi.util.response.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class CouponController {
 
-    private final CouponHistoryServiceImpl couponHistoryService;
     private final CouponServiceImpl couponService;
 
     // 유저가 쿠폰을 획득하는 API
@@ -44,7 +43,7 @@ public class CouponController {
 
     // 쿠폰 설정 상태 변경하기(관리자)
     @PatchMapping("admin/coupons/setting")
-    public ResponseEntity<ApiResponse<?>> updateCouponSetting(@RequestBody UpdateCouponSettingRequestDTO requestDTO){
+    public ResponseEntity<ApiResponse<?>> updateCouponSetting(@Valid @RequestBody UpdateCouponSettingRequestDTO requestDTO){
         couponService.updateCouponSetting(requestDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("쿠폰 설정이 변경되었습니다."));

@@ -57,7 +57,13 @@
     </div>
     <div>
       <label for="nickname">닉네임</label>
-      <input type="text" id="nickname" v-model="nickname" required />
+      <input
+        type="text"
+        id="nickname"
+        v-model="nickname"
+        @input="validateNickname"
+        required
+      />
     </div>
 
     <button @click="register">회원가입</button>
@@ -80,6 +86,7 @@ export default {
       passwordValid: false, // 비밀번호 검증
       passwordsMatch: false, // 비밀번호 일치여부
       EmailValid: false, // 이메일 입력여부
+      nicknameValid: false, // 닉네임 입력여부
     };
   },
   methods: {
@@ -122,7 +129,8 @@ export default {
     },
     // 비밀번호 입력 확인
     validatePassword() {
-      const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,15}$/; // 영문+숫자, 8~9자리
+      // 영문, 숫자를 포함하며, 8자 이상 15자 이하인 경우에 유효
+      const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,15}$/;
       this.passwordValid = regex.test(this.password);
       this.passwordsMatch = this.password === this.passwordConfirm;
     },
@@ -131,13 +139,20 @@ export default {
       const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
       this.EmailValid = regex.test(this.email);
     },
+    // 닉네임 입력 확인
+    validateNickname() {
+      // 한글, 영문, 숫자만 허용
+      const regex = /^[a-zA-Z가-힣0-9]*$/;
+      this.nicknameValid = regex.test(this.nickname);
+    },
     // 회원가입
     register() {
       if (
         this.EmailValid &&
         this.passwordValid &&
         this.passwordsMatch &&
-        this.isCertificationVerified
+        this.isCertificationVerified &&
+        this.nicknameValid
       ) {
         // 입력값이 모두 유효한 경우에만 요청을 보냄
         const userData = {
