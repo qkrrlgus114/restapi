@@ -5,6 +5,7 @@ import com.park.restapi.domain.member.dto.request.CertificationCodeRequestDTO;
 import com.park.restapi.domain.member.dto.request.EmailRequestDTO;
 import com.park.restapi.domain.member.service.impl.EmailServiceImpl;
 import com.park.restapi.util.response.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class EmailController {
 
     // 인증번호 전송
     @PostMapping ("authentications/send")
-    public ResponseEntity<ApiResponse<?>> createCretificationNumber(@RequestBody EmailRequestDTO dto) throws Exception {
+    public ResponseEntity<ApiResponse<?>> createCretificationNumber(@Valid @RequestBody EmailRequestDTO dto) throws Exception {
         emailService.sendSimpleMessageRegist(dto.getEmail());
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("성공"));
@@ -30,7 +31,7 @@ public class EmailController {
 
     // 인증번호 일치 확인
     @PostMapping("authentications/verify")
-    public ResponseEntity<?> verifyCertificationNumber(@RequestBody CertificationCodeRequestDTO dto) {
+    public ResponseEntity<?> verifyCertificationNumber(@Valid @RequestBody CertificationCodeRequestDTO dto) {
         emailService.checkCertificationCode(dto.getCertificationCode());
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("인증 성공"));
