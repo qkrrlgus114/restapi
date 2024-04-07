@@ -25,13 +25,7 @@ import java.util.Map;
 import java.util.Optional;
 
 
-/*
- * 여기서 처리해야 되는 내용
- * 1. 액세스 토큰 생성
- * 2. 리프레시 토큰 생성
- * 3. 쿠키에 리프레시 담음.
- * 4. 클라이언트에게 필요한 dto 전달
- * */
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -41,6 +35,7 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
     private final MemberRepository memberRepository;
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
+    // oauth 성공 핸들러
     @Override
     @Transactional
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -90,17 +85,17 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
     }
 
     // 리다이렉트 주소
-    private String makeRedirectUrl() {
-        return UriComponentsBuilder.fromUriString("https://restapi.store/success")
-                .encode(StandardCharsets.UTF_8)
-                .build().toUriString();
-    }
-
-    // 리다이렉트 주소
 //    private String makeRedirectUrl() {
-//        return UriComponentsBuilder.fromUriString("http://localhost:5173/success")
+//        return UriComponentsBuilder.fromUriString("https://restapi.store/success")
 //                .encode(StandardCharsets.UTF_8)
 //                .build().toUriString();
 //    }
+
+    // 리다이렉트 주소
+    private String makeRedirectUrl() {
+        return UriComponentsBuilder.fromUriString("http://localhost:5173/success")
+                .encode(StandardCharsets.UTF_8)
+                .build().toUriString();
+    }
 
 }
