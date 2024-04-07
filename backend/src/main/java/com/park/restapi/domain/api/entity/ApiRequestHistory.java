@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
+// API 요청 이력 엔티티
 @Entity
 @Getter
 @EntityListeners(AuditingEntityListener.class)

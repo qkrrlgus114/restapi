@@ -59,7 +59,12 @@ const routes = [
         name: "Settings",
         component: SettingsView,
       },
-      { path: "requests", name: "RequestLog", component: RequestLogView },
+      {
+        path: "requests/:page",
+        name: "RequestLog",
+        component: RequestLogView,
+        props: true,
+      },
       { path: "ban", name: "UserBan", component: UserBanView },
     ],
   },

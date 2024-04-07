@@ -1,14 +1,13 @@
 <template>
   <div class="admin-panel">
     <nav class="admin-nav">
-      <router-link class="nav-tab" to="/admin/requests"
+      <router-link class="nav-tab" to="/admin/requests/1"
         >요청기록확인</router-link
       >
       <router-link class="nav-tab" to="/admin/ban">유저추방</router-link>
       <router-link class="nav-tab" to="/admin/settings">설정</router-link>
     </nav>
     <router-view></router-view>
-    <!-- 여기에 선택된 탭의 컴포넌트가 렌더링됩니다 -->
   </div>
 </template>
 
