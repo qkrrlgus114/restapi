@@ -63,7 +63,6 @@ const routes = [
         path: "requests/:page",
         name: "RequestLog",
         component: RequestLogView,
-        props: true,
       },
       { path: "ban", name: "UserBan", component: UserBanView },
     ],

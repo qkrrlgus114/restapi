@@ -121,10 +121,21 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     // API 요청 이력 조회
     @Override
     @Transactional(readOnly = true)
-    public Page<RequestHistoryResponseDTO> getApiRequestHistory(int pageNumber, Pageable pageable) {
+    public Page<RequestHistoryResponseDTO> getApiRequestHistory(Pageable pageable) {
         Long startTime = System.currentTimeMillis();
         log.info("쿼리 시작 시간 : " + startTime);
         Page<RequestHistoryResponseDTO> requestHistoryResponseDTOS = apiRequestHistoryRepository.searchApiRequestHistory(pageable);
+        Long endTime = System.currentTimeMillis();
+        log.info("쿼리 걸린 시간 : " + (endTime - startTime) + "밀리초");
+
+        return requestHistoryResponseDTOS;
+    }
+
+    @Override
+    public Page<RequestHistoryResponseDTO> getApiRequestHistoryByCondition(Pageable pageable, String searchType, String keyword) {
+        Long startTime = System.currentTimeMillis();
+        log.info("쿼리 시작 시간 : " + startTime);
+        Page<RequestHistoryResponseDTO> requestHistoryResponseDTOS = apiRequestHistoryRepository.searchApiRequestHistoryByCondition(pageable, searchType, keyword);
         Long endTime = System.currentTimeMillis();
         log.info("쿼리 걸린 시간 : " + (endTime - startTime) + "밀리초");
 

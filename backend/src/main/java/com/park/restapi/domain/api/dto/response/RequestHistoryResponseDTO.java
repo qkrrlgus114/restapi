@@ -12,18 +12,18 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RequestHistoryResponseDTO {
-    private Long no;
     private Long memberId;
     private LocalDateTime requestDate;
+    private String email;
     private MethodType methodType;
     private String requestContent;
     private String responseContent;
 
     @Builder
-    public RequestHistoryResponseDTO(Long no, Long memberId, LocalDateTime requestDate, MethodType methodType, String requestContent, String responseContent) {
-        this.no = no;
+    public RequestHistoryResponseDTO(Long memberId, LocalDateTime requestDate, String email, MethodType methodType, String requestContent, String responseContent) {
         this.memberId = memberId;
         this.requestDate = requestDate;
+        this.email = email;
         this.methodType = methodType;
         this.requestContent = requestContent;
         this.responseContent = responseContent;

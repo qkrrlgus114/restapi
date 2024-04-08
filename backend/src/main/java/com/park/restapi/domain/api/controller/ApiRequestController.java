@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class ApiRequestController {
     private final ApiRequestServiceImpl apiRequestService;
+    private final int PAGE_SIZE = 10; // 페이지 크기
 
     // 챗봇 API
     @PostMapping("gpt/recommendations")
@@ -30,12 +31,17 @@ public class ApiRequestController {
 
     // API 요청 이력 조회
     @GetMapping("admin/requests")
-    public ResponseEntity<ApiResponse<?>> getApiRequestHistory(@RequestParam(value = "page", defaultValue = "0") int pageNumber){
-        int pageSize = 10; // 한 페이지에 보여줄 요청 이력 수
+    public ResponseEntity<ApiResponse<?>> getApiRequestHistory(@RequestParam(value = "page", defaultValue = "0") int pageNumber,
+                                                               @RequestParam(value = "searchType", required = false) String searchType,
+                                                                @RequestParam(value = "searchKey", required = false) String keyword){
+        Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
+        Page<RequestHistoryResponseDTO> apiRequestHistory = null;
 
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-
-        Page<RequestHistoryResponseDTO> apiRequestHistory = apiRequestService.getApiRequestHistory(pageNumber, pageable);
+        if(searchType != null && keyword != null && !searchType.isEmpty() && !keyword.isEmpty()){
+            apiRequestHistory = apiRequestService.getApiRequestHistoryByCondition(pageable, searchType, keyword);
+        }else{
+            apiRequestHistory = apiRequestService.getApiRequestHistory(pageable);
+        }
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(apiRequestHistory, "요청 이력 조회 성공"));
     }
