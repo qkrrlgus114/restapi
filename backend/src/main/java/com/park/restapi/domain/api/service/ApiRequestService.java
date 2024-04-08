@@ -10,6 +10,8 @@ public interface ApiRequestService {
     // 챗봇 API
     ChatGPTResponseDTO chatGpt(ApiRequestDTO dto);
     // API 요청 이력 조회
-    Page<RequestHistoryResponseDTO> getApiRequestHistory(int pageNumber, Pageable pageable);
+    Page<RequestHistoryResponseDTO> getApiRequestHistory(Pageable pageable);
+    // API 요청 조건부 조회
+    Page<RequestHistoryResponseDTO> getApiRequestHistoryByCondition(Pageable pageable, String searchType, String keyword);
 
 }
