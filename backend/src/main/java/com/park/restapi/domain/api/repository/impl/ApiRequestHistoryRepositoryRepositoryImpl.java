@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.park.restapi.domain.api.entity.QApiRequestHistory.apiRequestHistory;
+import static com.park.restapi.domain.member.entity.QMember.member;
 
 @RequiredArgsConstructor
 public class ApiRequestHistoryRepositoryRepositoryImpl implements ApiRequestHistoryRepositoryCustom {
@@ -24,10 +25,11 @@ public class ApiRequestHistoryRepositoryRepositoryImpl implements ApiRequestHist
         // 요청 이력 조회 쿼리 생성
         List<ApiRequestHistory> results = queryFactory
                 .selectFrom(apiRequestHistory)
-                .orderBy(apiRequestHistory.requestDate.desc()) // 요청 날짜 기준 내림차순 정렬
-                .offset(pageable.getOffset()) // 페이지네이션 시작점
-                .limit(pageable.getPageSize()) // 페이지 크기
-                .fetch(); // 쿼리 실행 및 결과 fetch
+                .leftJoin(apiRequestHistory.member, member).fetchJoin()
+                .orderBy(apiRequestHistory.requestDate.desc())
+                .offset(pageable.getOffset()) 
+                .limit(pageable.getPageSize()) 
+                .fetch();
 
         // 결과를 DTO로 변환
         List<RequestHistoryResponseDTO> dtoList = results.stream()
@@ -62,6 +64,7 @@ public class ApiRequestHistoryRepositoryRepositoryImpl implements ApiRequestHist
         List<ApiRequestHistory> results = queryFactory
                 .selectFrom(apiRequestHistory)
                 .where(searchCondition)
+                .leftJoin(apiRequestHistory.member, member).fetchJoin()
                 .orderBy(apiRequestHistory.requestDate.desc()) // 요청 날짜 기준 내림차순 정렬
                 .offset(pageable.getOffset()) // 페이지네이션 시작점
                 .limit(pageable.getPageSize()) // 페이지 크기

@@ -1,6 +1,5 @@
 <template class="container">
-  <div v-if="isLoading" class="overlay">요청 기록 불러오는중...</div>
-
+  <div v-show="isLoading" class="overlay">요청 기록 불러오는중...</div>
   <table>
     <thead>
       <tr>
@@ -32,14 +31,15 @@
       </select>
     </div>
     <input type="text" v-model="searchKey" placeholder="검색어 입력" />
-    <button @click="getRequestLogs(0)" :disabled="!canSearch">검색</button>
+    <button @click="getRequestLogs(1)" :disabled="!canSearch">검색</button>
   </div>
   <nav aria-label="Page navigation">
     <ul class="pagination">
       <li class="page-item" :class="{ disabled: currentPage <= 1 }">
         <button
           class="page-link"
-          @click="changePage(Math.floor((currentPage - 2) / 5) * 5)"
+          @click="changePage(currentPage - 5)"
+          :disabled="currentPage <= 1"
         >
           이전
         </button>
@@ -48,14 +48,24 @@
         class="page-item"
         v-for="page in paginatedPages"
         :key="page"
-        :class="{ active: currentPage === page }"
+        :class="{
+          active: currentPage === page,
+          disabled: currentPage === page,
+        }"
       >
-        <button class="page-link" @click="changePage(page)">{{ page }}</button>
+        <button
+          class="page-link"
+          @click="currentPage !== page && changePage(page)"
+          :disabled="currentPage === page"
+        >
+          {{ page }}
+        </button>
       </li>
       <li class="page-item" :class="{ disabled: currentPage >= totalPages }">
         <button
           class="page-link"
-          @click="changePage(Math.ceil(currentPage / 5) * 5 + 1)"
+          @click="changePage(currentPage + 5)"
+          :disabled="currentPage >= totalPages"
         >
           다음
         </button>
@@ -70,10 +80,9 @@ export default {
   computed: {
     paginatedPages() {
       const startPage = Math.floor((this.currentPage - 1) / 5) * 5 + 1;
-      const pages = Array.from({ length: 5 }, (v, k) => startPage + k).filter(
+      return Array.from({ length: 5 }, (v, k) => startPage + k).filter(
         (page) => page <= this.totalPages
       );
-      return pages;
     },
     canSearch() {
       return this.searchType && this.searchKey.trim();
@@ -83,7 +92,7 @@ export default {
     return {
       requestLogs: [],
       isLoading: false,
-      currentPage: 0,
+      currentPage: 1,
       totalPages: 0, // 총 페이지 수
       totalElements: 0, // 총 요소 수
       searchKey: "",
@@ -91,34 +100,41 @@ export default {
     };
   },
   watch: {
-    "$route.params.page": function (newVal, oldVal) {
-      this.getRequestLogs(newVal);
+    "$route.params.page": function (newPage) {
+      // URL의 페이지 번호가 변경될 때마다 새로운 페이지 데이터를 로드
+      // URL은 1부터 시작하지만, 백엔드 요청을 위해 1을 빼줌 (백엔드는 0부터 시작)
+      this.getRequestLogs(newPage ? Number(newPage) : 1);
     },
   },
   mounted() {
-    this.getRequestLogs(this.currentPage);
+    // 컴포넌트가 마운트될 때 현재 페이지에 해당하는 데이터 로드
+    // $route.params.page가 undefined일 수 있으므로 기본값 1 사용
+    this.getRequestLogs(
+      this.$route.params.page ? Number(this.$route.params.page) : 1
+    );
   },
   methods: {
     getRequestLogs(page) {
       this.isLoading = true;
-      const params = {
-        page: page,
-      };
-      // 검색 조건이 있는 경우 쿼리 파라미터에 추가
+      // 백엔드에 맞춰 페이지 번호 조정 (1 빼기)
+      const adjustedPage = page - 1;
+      const params = { page: adjustedPage };
+
       if (this.canSearch) {
         params.searchType = this.searchType;
         params.searchKey = this.searchKey;
       }
+
       this.$axios
         .get(`${this.$apiBaseUrl}/api/admin/requests`, {
-          params: params,
+          params,
           withCredentials: true,
         })
         .then((response) => {
           this.requestLogs = response.data.data.content;
-          this.totalPages = response.data.data.totalPages; // 총 페이지 수 업데이트
+          this.totalPages = response.data.data.totalPages;
           this.totalElements = response.data.data.totalElements;
-          this.currentPage = Number(this.$route.params.page) || 1;
+          this.currentPage = page; // URL과 일치하는 사용자 친화적 페이지 번호 설정
         })
         .catch((error) => {
           console.error("요청기록 조회 중 오류 발생:", error);
@@ -137,11 +153,11 @@ export default {
         this.getRequestLogs(this.currentPage - 1);
       }
     },
-    changePage(page) {
+    changePage(newPage) {
+      // 사용자 친화적 페이지 번호 사용 (1부터 시작)
       this.$router
-        .push({ name: "RequestLog", params: { page } })
+        .push({ name: "RequestLog", params: { page: newPage } })
         .catch((err) => {});
-      this.getRequestLogs(page);
     },
   },
 };
@@ -171,7 +187,6 @@ body {
 
 /* 로딩 오버레이 스타일 */
 .overlay {
-  display: none; /* 로딩 시만 보여야 함 */
   position: fixed;
   top: 0;
   left: 0;

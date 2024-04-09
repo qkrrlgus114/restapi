@@ -44,6 +44,7 @@ public class ApiRequestServiceImpl implements ApiRequestService {
 
     private final Semaphore semaphore = new Semaphore(5);
 
+    // ChatGPT API 호출
     @Override
     @Transactional
     public ChatGPTResponseDTO chatGpt(ApiRequestDTO dto) {
@@ -60,7 +61,6 @@ public class ApiRequestServiceImpl implements ApiRequestService {
             if (member.getToken() <= 0) {
                 throw new MemberException(MemberExceptionInfo.NO_REMAINING_USES, "토큰 부족");
             }
-
 
             String model = dto.getModel();
             String method = dto.getMethodType().toString();
@@ -131,7 +131,9 @@ public class ApiRequestServiceImpl implements ApiRequestService {
         return requestHistoryResponseDTOS;
     }
 
+    // 검색 조건에 따른 API 요청 이력 조회
     @Override
+    @Transactional(readOnly = true)
     public Page<RequestHistoryResponseDTO> getApiRequestHistoryByCondition(Pageable pageable, String searchType, String keyword) {
         Long startTime = System.currentTimeMillis();
         log.info("쿼리 시작 시간 : " + startTime);
@@ -141,5 +143,4 @@ public class ApiRequestServiceImpl implements ApiRequestService {
 
         return requestHistoryResponseDTOS;
     }
-
 }

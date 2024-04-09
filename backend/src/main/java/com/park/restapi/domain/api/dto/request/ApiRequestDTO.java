@@ -5,6 +5,7 @@ import com.park.restapi.domain.api.entity.ApiRequestHistory;
 import com.park.restapi.domain.api.entity.MethodType;
 import com.park.restapi.domain.member.entity.Member;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,7 +16,7 @@ public class ApiRequestDTO {
     @NotBlank(message = "모델을 선택해주세요.")
     private String model;
     // Http 메서드 타입
-    @NotBlank(message = "메서드 타입을 선택해주세요.")
+    @NotNull(message = "메서드 타입을 선택해주세요.")
     private MethodType methodType;
     // 주체가 되는 자원
     @NotBlank(message = "자원을 입력해주세요.")
