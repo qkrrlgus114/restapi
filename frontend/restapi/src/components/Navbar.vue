@@ -1,7 +1,7 @@
 <template>
   <div v-if="!shouldHideNavbar">
     <nav class="navbar">
-      <a @click="goHome">RESTAPI</a>
+      <a @click="goHome" img>RESTAPI</a>
       <div class="user-info">
         <button v-if="isAdmin" @click="goAdmin">관리자 설정</button>
         <h2>{{ nickname }}</h2>

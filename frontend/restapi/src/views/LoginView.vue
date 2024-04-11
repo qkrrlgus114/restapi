@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <h1>REST API 서비스</h1>
+    <img src="/public/logo.png" alt="" class="logo" />
     <div class="form-group">
       <label for="email">이메일</label>
       <input
@@ -89,6 +89,16 @@ export default {
   height: 100vh;
   background-color: #f7f7f7;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  top: 0;
+  left: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.logo {
+  width: 500px;
+  height: 200px;
+  margin-bottom: 100px;
 }
 
 h1 {

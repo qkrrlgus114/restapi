@@ -25,8 +25,7 @@ public class SecurityConfig {
     private final SuccessHandler successHandler;
     private final FailureHandler failureHandler;
     private final JwtFilter jwtFilter;
-
-
+    
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
