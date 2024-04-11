@@ -42,7 +42,7 @@ public class SecurityConfig {
                 // 모든 요청 허용
                 .authorizeHttpRequests(authorize ->
                         authorize.requestMatchers("/api/authentications/send", "/api/authentications/verify", "/api/signup",
-                        "/api/email-check", "/api/phonenumber-check", "/api/login", "/oauth2/authorization/kakao", "/login/oauth2/code/kakao").permitAll()
+                        "/api/email-check", "/api/phonenumber-check", "/api/login", "/oauth2/authorization/kakao", "/login/oauth2/code/kakao", "/ws").permitAll()
                 )
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
