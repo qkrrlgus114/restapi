@@ -104,10 +104,10 @@ public class JwtService {
     }
 
 //    // 리프레시 토큰 확인
-    public String checkRefreshToken(String refreshTokenValue) {
-        Optional<RefreshToken> byId = refreshTokenRepository.findByValueAndExpireDateGreaterThan(refreshTokenValue, LocalDateTime.now());
-        if(byId.isEmpty()) return "사용 불가";
-        return "사용 가능";
+    public boolean checkRefreshToken(String refreshTokenValue) {
+        Optional<RefreshToken> byValueAndExpireDateGreaterThan = refreshTokenRepository.findByValueAndExpireDateGreaterThan(refreshTokenValue, LocalDateTime.now());
+        if(byValueAndExpireDateGreaterThan.isEmpty()) return false;
+        return true;
     }
 
 }

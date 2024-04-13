@@ -140,7 +140,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberInfoResponseDTO getUserInfo() {
         Long currentUserId = JwtService.getCurrentUserId();
-        Member member = memberRepository.findById(currentUserId)
+        Member member = memberRepository.findByIdLogin(currentUserId)
                 .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_USER, "유저 데이터 없음"));
 
         LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
