@@ -2,6 +2,7 @@ package com.park.restapi.domain.member.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
@@ -14,6 +15,7 @@ public class MemberRole {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
+    @JsonIgnore
     private Member member;
     @Enumerated(EnumType.STRING)
     private Role role;
