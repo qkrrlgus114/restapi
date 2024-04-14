@@ -112,7 +112,6 @@ export default {
           withCredentials: true,
         })
         .then((response) => {
-          console.log(response);
           this.$store.dispatch("updateUserInfo", {
             token: response.data.data.token,
             nickname: response.data.data.nickname,

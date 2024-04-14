@@ -17,6 +17,7 @@ public class MemberSchedulerService {
 
     private final MemberRepository memberRepository;
 
+    // 매일 12시에 토큰 리셋
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
     @Transactional
     public void resetToken(){

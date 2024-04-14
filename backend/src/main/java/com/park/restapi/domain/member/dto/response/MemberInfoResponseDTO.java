@@ -31,10 +31,12 @@ public class MemberInfoResponseDTO {
                 .map(memberRole -> memberRole.getRole().name())
                 .collect(Collectors.toList());
 
+        int remainingQuantity = (coupon != null) ? coupon.getRemainingQuantity() : 0;
+
         return MemberInfoResponseDTO.builder()
                 .nickname(member.getNickname())
                 .token(member.getToken())
-                .remainingQuantity(coupon.getRemainingQuantity())
+                .remainingQuantity(remainingQuantity)
                 .memberRoles(roles).build();
     }
 }

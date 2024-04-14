@@ -4,8 +4,9 @@ import com.park.restapi.domain.api.dto.request.ApiRequestDTO;
 import com.park.restapi.domain.api.dto.request.ChatGPTRequestDTO;
 import com.park.restapi.domain.api.dto.request.Message;
 import com.park.restapi.domain.api.dto.response.ChatGPTResponseDTO;
+import com.park.restapi.domain.api.dto.response.RequestHistoryResponseDTO;
 import com.park.restapi.domain.api.entity.ApiRequestHistory;
-import com.park.restapi.domain.api.repository.ApiRequestHistoryRepository;
+import com.park.restapi.domain.api.repository.ApiRequestHistoryRepositoryRepository;
 import com.park.restapi.domain.api.service.ApiRequestService;
 import com.park.restapi.domain.exception.exception.GPTException;
 import com.park.restapi.domain.exception.exception.MemberException;
@@ -14,11 +15,13 @@ import com.park.restapi.domain.exception.info.MemberExceptionInfo;
 import com.park.restapi.domain.member.entity.Member;
 import com.park.restapi.domain.member.repository.MemberRepository;
 import com.park.restapi.util.jwt.JwtService;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -34,15 +37,14 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     private final RestTemplate restTemplate;
     @Value("${openai.url.prompt}")
     private String URL;
-
-    //api key를 application.yml에 넣어두었습니다.
     @Value("${chat-gpt.api-key}")
     private String apiKey;
     private final MemberRepository memberRepository;
-    private final ApiRequestHistoryRepository apiRequestHistoryRepository;
+    private final ApiRequestHistoryRepositoryRepository apiRequestHistoryRepository;
 
     private final Semaphore semaphore = new Semaphore(5);
 
+    // ChatGPT API 호출
     @Override
     @Transactional
     public ChatGPTResponseDTO chatGpt(ApiRequestDTO dto) {
@@ -59,7 +61,6 @@ public class ApiRequestServiceImpl implements ApiRequestService {
             if (member.getToken() <= 0) {
                 throw new MemberException(MemberExceptionInfo.NO_REMAINING_USES, "토큰 부족");
             }
-
 
             String model = dto.getModel();
             String method = dto.getMethodType().toString();
@@ -117,4 +118,29 @@ public class ApiRequestServiceImpl implements ApiRequestService {
         }
     }
 
+    // API 요청 이력 조회
+    @Override
+    @Transactional(readOnly = true)
+    public Page<RequestHistoryResponseDTO> getApiRequestHistory(Pageable pageable) {
+        Long startTime = System.currentTimeMillis();
+        log.info("쿼리 시작 시간 : " + startTime);
+        Page<RequestHistoryResponseDTO> requestHistoryResponseDTOS = apiRequestHistoryRepository.searchApiRequestHistory(pageable);
+        Long endTime = System.currentTimeMillis();
+        log.info("쿼리 걸린 시간 : " + (endTime - startTime) + "밀리초");
+
+        return requestHistoryResponseDTOS;
+    }
+
+    // 검색 조건에 따른 API 요청 이력 조회
+    @Override
+    @Transactional(readOnly = true)
+    public Page<RequestHistoryResponseDTO> getApiRequestHistoryByCondition(Pageable pageable, String searchType, String keyword) {
+        Long startTime = System.currentTimeMillis();
+        log.info("쿼리 시작 시간 : " + startTime);
+        Page<RequestHistoryResponseDTO> requestHistoryResponseDTOS = apiRequestHistoryRepository.searchApiRequestHistoryByCondition(pageable, searchType, keyword);
+        Long endTime = System.currentTimeMillis();
+        log.info("쿼리 걸린 시간 : " + (endTime - startTime) + "밀리초");
+
+        return requestHistoryResponseDTOS;
+    }
 }
