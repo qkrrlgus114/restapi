@@ -1,5 +1,6 @@
 package com.park.restapi.domain.coupon.repository;
 
+import com.park.restapi.domain.config.TestQuerydslConfiguration;
 import com.park.restapi.domain.coupon.entity.CouponHistory;
 import com.park.restapi.domain.member.entity.Member;
 import com.park.restapi.domain.member.repository.MemberRepository;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
@@ -17,6 +19,7 @@ import java.time.LocalTime;
 
 @DataJpaTest
 @TestPropertySource(locations = "classpath:application-test.yml")
+@Import(TestQuerydslConfiguration.class)
 class CouponHistoryRepositoryTest {
 
     @Autowired

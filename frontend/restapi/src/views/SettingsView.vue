@@ -57,10 +57,8 @@ export default {
         .then((response) => {
           this.dailyCouponSetting = response.data.data;
           this.originalSetting = response.data.data;
-          console.log(response);
         })
         .catch((error) => {
-          console.log(error);
           console.error("토큰 개수 갱신 중 오류 발생:", error);
           alert(error.message);
         });
@@ -85,7 +83,6 @@ export default {
             this.$router.go();
           })
           .catch((error) => {
-            console.log(error);
             console.error("토큰 개수 갱신 중 오류 발생:", error);
           });
       }
