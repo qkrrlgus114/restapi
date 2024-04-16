@@ -1,15 +1,16 @@
 package com.park.restapi.util.jwt;
 
-import com.park.restapi.domain.auth.entity.RefreshToken;
-import com.park.restapi.domain.auth.repository.RefreshTokenRepository;
 import com.park.restapi.domain.exception.exception.MemberException;
 import com.park.restapi.domain.exception.info.MemberExceptionInfo;
 import com.park.restapi.domain.member.entity.Member;
 import com.park.restapi.domain.member.repository.MemberRepository;
+import com.park.restapi.domain.refreshtoken.entity.RefreshToken;
+import com.park.restapi.domain.refreshtoken.repository.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,9 +79,10 @@ public class JwtService {
     /*
     * 리프레시 토큰 생성
     * check = true -> 필터에서 요청
-    * check = false -> 유저 서비스에서 요청
+    * check = false -> 서비스에서 요청
     * */
-    public String createRefreshToken(Long userId, boolean check){
+    @Transactional
+    public String createRefreshToken(Long userId, boolean check, String accessToken){
         Claims claims = Jwts.claims();
         Optional<Member> userOptional = memberRepository.findById(userId);
         if(userOptional.isEmpty() && check) return "유저 없음";
@@ -97,17 +99,10 @@ public class JwtService {
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
 
-        RefreshToken refreshTokenData = refreshTokenRepository.findByMember(member);
-        refreshTokenData.addTokenValueAndExpireDate(refreshToken, LocalDateTime.now().plusDays(14));
+        RefreshToken entity = RefreshToken.toEntity(accessToken, refreshToken, member, LocalDateTime.now().plusDays(14));
+        refreshTokenRepository.save(entity);
 
         return refreshToken;
-    }
-
-//    // 리프레시 토큰 확인
-    public boolean checkRefreshToken(String refreshTokenValue) {
-        Optional<RefreshToken> byValueAndExpireDateGreaterThan = refreshTokenRepository.findByValueAndExpireDateGreaterThan(refreshTokenValue, LocalDateTime.now());
-        if(byValueAndExpireDateGreaterThan.isEmpty()) return false;
-        return true;
     }
 
 }

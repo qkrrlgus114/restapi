@@ -3,17 +3,13 @@
   <router-view></router-view>
 </template>
 
-<script>
+<script setup>
 import Navbar from "./components/Navbar.vue";
-import { mapState } from "vuex";
+import { useMainStore } from "@/store/store.js";
+import { computed } from "vue";
 
-export default {
-  name: "App",
-  components: { Navbar },
-  computed: {
-    ...mapState(["loginState"]),
-  },
-};
+const store = useMainStore();
+const loginState = computed(() => store.state.loginState);
 </script>
 
 <style scoped></style>

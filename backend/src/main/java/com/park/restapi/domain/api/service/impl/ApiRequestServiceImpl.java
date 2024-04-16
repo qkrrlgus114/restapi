@@ -6,7 +6,7 @@ import com.park.restapi.domain.api.dto.request.Message;
 import com.park.restapi.domain.api.dto.response.ChatGPTResponseDTO;
 import com.park.restapi.domain.api.dto.response.RequestHistoryResponseDTO;
 import com.park.restapi.domain.api.entity.ApiRequestHistory;
-import com.park.restapi.domain.api.repository.ApiRequestHistoryRepositoryRepository;
+import com.park.restapi.domain.api.repository.ApiRequestHistoryRepository;
 import com.park.restapi.domain.api.service.ApiRequestService;
 import com.park.restapi.domain.exception.exception.GPTException;
 import com.park.restapi.domain.exception.exception.MemberException;
@@ -40,7 +40,7 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     @Value("${chat-gpt.api-key}")
     private String apiKey;
     private final MemberRepository memberRepository;
-    private final ApiRequestHistoryRepositoryRepository apiRequestHistoryRepository;
+    private final ApiRequestHistoryRepository apiRequestHistoryRepository;
 
     private final Semaphore semaphore = new Semaphore(5);
 

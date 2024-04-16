@@ -1,7 +1,5 @@
 package com.park.restapi.domain.member.service.impl;
 
-import com.park.restapi.domain.auth.entity.RefreshToken;
-import com.park.restapi.domain.auth.repository.RefreshTokenRepository;
 import com.park.restapi.domain.coupon.entity.Coupon;
 import com.park.restapi.domain.coupon.repository.CouponRepository;
 import com.park.restapi.domain.exception.exception.MemberException;
@@ -15,6 +13,8 @@ import com.park.restapi.domain.member.entity.Role;
 import com.park.restapi.domain.member.repository.MemberRepository;
 import com.park.restapi.domain.member.repository.MemberRoleRepository;
 import com.park.restapi.domain.member.service.MemberService;
+import com.park.restapi.domain.refreshtoken.entity.RefreshToken;
+import com.park.restapi.domain.refreshtoken.repository.RefreshTokenRepository;
 import com.park.restapi.util.jwt.JwtService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,10 +38,10 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
     private final MemberRoleRepository memberRoleRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final JwtService jwtService;
     private final BCryptPasswordEncoder encoder;
     private final CouponRepository couponRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     // 회원가입
     @Override
@@ -66,13 +66,6 @@ public class MemberServiceImpl implements MemberService {
                 .member(saveMember)
                 .role(Role.USER).build();
         memberRoleRepository.save(memberRole);
-
-        // 리프레시 토큰 데이터 생성
-        RefreshToken refreshToken = RefreshToken.builder()
-                .member(member)
-                .expireDate(null)
-                .value(null).build();
-        refreshTokenRepository.save(refreshToken);
     }
 
     // 이메일 중복 확인
@@ -96,19 +89,10 @@ public class MemberServiceImpl implements MemberService {
         member.updateLoginDate();
 
         String accessToken = jwtService.createAccessToken(member.getId());
-        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setSecure(true);
-        accessTokenCookie.setPath("/");
+        String refreshToken = jwtService.createRefreshToken(member.getId(), false, accessToken);
 
-        String refreshToken = jwtService.createRefreshToken(member.getId(), false);
-        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(true);
-        refreshTokenCookie.setPath("/");
-
-        response.addCookie(accessTokenCookie);
-        response.addCookie(refreshTokenCookie);
+        saveCookie(response, "accessToken", accessToken);
+        saveCookie(response, "refreshToken", refreshToken);
     }
 
     // 소셜로그인
@@ -121,19 +105,10 @@ public class MemberServiceImpl implements MemberService {
         member.updateLoginDate();
 
         String accessToken = jwtService.createAccessToken(member.getId());
-        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setSecure(true);
-        accessTokenCookie.setPath("/");
+        String refreshToken = jwtService.createRefreshToken(member.getId(), false, accessToken);
 
-        String refreshToken = jwtService.createRefreshToken(member.getId(), false);
-        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(true);
-        refreshTokenCookie.setPath("/");
-
-        response.addCookie(accessTokenCookie);
-        response.addCookie(refreshTokenCookie);
+        saveCookie(response, "accessToken", accessToken);
+        saveCookie(response, "refreshToken", refreshToken);
     }
 
     // 유저 정보 조회
@@ -168,20 +143,26 @@ public class MemberServiceImpl implements MemberService {
     // 로그아웃
     @Override
     public void logout(HttpServletResponse response) {
-        Cookie accessTokenCookie = new Cookie("accessToken", null);
-        accessTokenCookie.setMaxAge(0);
-        accessTokenCookie.setPath("/");
-        response.addCookie(accessTokenCookie);
+        deleteCookie(response, "accessToken");
+        deleteCookie(response, "refreshToken");
+    }
 
-        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
-        refreshTokenCookie.setMaxAge(0);
-        refreshTokenCookie.setPath("/");
-        response.addCookie(refreshTokenCookie);
+    // 쿠키 저장
+    public void saveCookie(HttpServletResponse response, String tokenName, String tokenValue){
+        Cookie tokenCookie = new Cookie(tokenName, tokenValue);
+        tokenCookie.setHttpOnly(true);
+        tokenCookie.setSecure(true);
+        tokenCookie.setPath("/");
 
-        Cookie jsessionidCookie = new Cookie("JSESSIONID", null);
-        jsessionidCookie.setMaxAge(0);
-        jsessionidCookie.setPath("/");
-        response.addCookie(jsessionidCookie);
+        response.addCookie(tokenCookie);
+    }
+
+    // 쿠키 삭제
+    public void deleteCookie(HttpServletResponse response, String tokenName){
+        Cookie cookie = new Cookie(tokenName, null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
     }
 
 

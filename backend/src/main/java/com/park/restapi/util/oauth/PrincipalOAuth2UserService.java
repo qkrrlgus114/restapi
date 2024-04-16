@@ -1,7 +1,7 @@
 package com.park.restapi.util.oauth;
 
-import com.park.restapi.domain.auth.entity.RefreshToken;
-import com.park.restapi.domain.auth.repository.RefreshTokenRepository;
+import com.park.restapi.domain.refreshtoken.entity.RefreshToken;
+import com.park.restapi.domain.refreshtoken.repository.RefreshTokenRepository;
 import com.park.restapi.domain.member.entity.Role;
 import com.park.restapi.domain.member.entity.SocialType;
 import com.park.restapi.domain.member.entity.Member;
