@@ -1,4 +1,4 @@
-package com.park.restapi.domain.auth.entity;
+package com.park.restapi.domain.refreshtoken.entity;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -16,11 +16,13 @@ import com.querydsl.core.types.dsl.PathInits;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QRefreshToken extends EntityPathBase<RefreshToken> {
 
-    private static final long serialVersionUID = -1756554770L;
+    private static final long serialVersionUID = -1620626876L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QRefreshToken refreshToken = new QRefreshToken("refreshToken");
+    public static final QRefreshToken refreshToken1 = new QRefreshToken("refreshToken1");
+
+    public final StringPath accessToken = createString("accessToken");
 
     public final DateTimePath<java.time.LocalDateTime> expireDate = createDateTime("expireDate", java.time.LocalDateTime.class);
 
@@ -28,7 +30,7 @@ public class QRefreshToken extends EntityPathBase<RefreshToken> {
 
     public final com.park.restapi.domain.member.entity.QMember member;
 
-    public final StringPath value = createString("value");
+    public final StringPath refreshToken = createString("refreshToken");
 
     public QRefreshToken(String variable) {
         this(RefreshToken.class, forVariable(variable), INITS);
