@@ -59,12 +59,12 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
          * 랜덤 닉네임 생성 및 기본 프로필사진 설정
          * */
         if(byUser.isEmpty()){
-            Member member = Member.toEntity(email, nickname, SocialType.KAKAO);
+            Member member = new Member(email, nickname, SocialType.KAKAO);
             Member save = memberRepository.save(member);
 
             MemberRole memberRole = MemberRole.builder()
                     .member(save)
-                    .role(Role.USER).build();
+                    .build();
             memberRoleRepository.save(memberRole);
 
             RefreshToken refreshToken = RefreshToken.builder()

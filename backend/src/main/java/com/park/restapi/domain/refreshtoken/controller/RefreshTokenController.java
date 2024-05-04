@@ -22,7 +22,7 @@ public class RefreshTokenController {
     private final RefreshTokenServiceImpl refreshTokenService;
 
     @PostMapping("refresh-token")
-    public ResponseEntity<ApiResponse<?>> refreshToken(@CookieValue(value = "accessToken", re) String accessToken,
+    public ResponseEntity<ApiResponse<?>> refreshToken(@CookieValue(value = "accessToken") String accessToken,
                                                        @CookieValue(value = "refreshToken") String refreshToken,
                                                        HttpServletResponse response) {
         refreshTokenService.reGenerateToken(response, accessToken, refreshToken);

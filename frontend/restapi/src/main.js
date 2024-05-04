@@ -8,11 +8,10 @@ import axios from "axios";
 const app = createApp(App);
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
+app.ues(axios);
+app.use(pinia);
+app.use(router).mount("#app");
 
 // app.config.globalProperties.$apiBaseUrl = "https://restapi.store";
 app.config.globalProperties.$apiBaseUrl = "http://localhost:8080";
-app.config.globalProperties.$axios = axios;
-
-app.use(pinia);
-app.use(store);
-app.use(router).mount("#app");
+app.config.globalProperties.axios = axios;

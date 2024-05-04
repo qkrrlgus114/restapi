@@ -9,7 +9,7 @@ import { useMainStore } from "@/store/store.js";
 import { computed } from "vue";
 
 const store = useMainStore();
-const loginState = computed(() => store.state.loginState);
+const loginState = computed(() => store.loginState);
 </script>
 
 <style scoped></style>

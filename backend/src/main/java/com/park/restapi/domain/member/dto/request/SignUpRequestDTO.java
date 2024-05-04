@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class SignUpRequstDTO {
+public class SignUpRequestDTO {
 
     @NotBlank(message = "이메일을 입력해주세요.")
     @Email(message = "이메일 형식이 아닙니다.")
@@ -19,6 +19,8 @@ public class SignUpRequstDTO {
     private String password;
     @NotBlank(message = "닉네임을 입력해주세요.")
     @Pattern(regexp = "^[a-zA-Z가-힣0-9]*$", message = "닉네임은 한글, 영문, 숫자만 입력 가능합니다.")
+    @Size(min = 3, max = 10, message = "닉네임은 3자 이상 10자 이하로 입력해주세요.")
     private String nickname;
+
 
 }

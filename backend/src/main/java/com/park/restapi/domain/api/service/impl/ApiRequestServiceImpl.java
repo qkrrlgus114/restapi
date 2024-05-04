@@ -143,4 +143,11 @@ public class ApiRequestServiceImpl implements ApiRequestService {
 
         return requestHistoryResponseDTOS;
     }
+
+    // 현재 로그인 유저 찾기
+    private Member getCurrentMember() {
+        Long currentUserId = JwtService.getCurrentUserId();
+        return memberRepository.findById(currentUserId)
+                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_USER, currentUserId + "번 유저를 찾지 못했습니다."));
+    }
 }

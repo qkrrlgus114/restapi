@@ -6,14 +6,14 @@ import MainView from "../views/MainView.vue";
 import NotFoundComponent from "../components/NotFoundComponent.vue";
 import Success from "../views/Success.vue";
 import AdminView from "../views/AdminView.vue";
-import Store from "../store/store.js";
+import { useMainStore } from "../store/store.js";
 import RequestLogView from "@/views/RequestLogView.vue";
 import UserBanView from "@/views/UserBanView.vue";
 import SettingsView from "../views/SettingsView.vue";
 
 const routes = [
   {
-    path: "/loginview",
+    path: "/login",
     name: "Login",
     component: LoginView,
     meta: { hideNavbar: true },
@@ -75,8 +75,9 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const isLoggedIn = Store.state.loginState; // 로그인 상태
-  const isAdmin = Store.state.memberRoles.includes("ADMIN"); // 관리자 권한 확인
+  const store = useMainStore();
+  const isLoggedIn = store.loginState; // 로그인 상태
+  const isAdmin = store.memberRoles.includes("ADMIN"); // 관리자 권한 확인
 
   if (to.matched.some((record) => record.meta.requiresAuth && !isLoggedIn)) {
     // 로그인이 필요한 페이지에 로그인하지 않은 경우

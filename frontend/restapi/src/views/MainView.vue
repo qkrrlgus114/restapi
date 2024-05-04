@@ -18,49 +18,46 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      guides: [
-        {
-          id: 1,
-          title: "1. 원하는 GPT 모델 선택하기",
-          text: "원하는 GPT 모델을 선택하세요.",
-          imageUrl: "/guide1.png",
-        },
-        {
-          id: 2,
-          title: "2. 원하는 메서드 선택하기",
-          text: "사용하고 싶은 메서드를 선택하세요.",
-          imageUrl: "/guide2.png",
-        },
-        {
-          id: 3,
-          title: "3. 사용하는 자원 입력하기",
-          text: "사용되는 자원을 입력하세요.(ex user, post, comment)",
-          imageUrl: "/guide3.png",
-        },
-        {
-          id: 4,
-          title: "4. 간단한 설명 작성하기",
-          text: "어떤 api를 만들고 싶은지 설명을 적어주세요(상세할 수록 좋습니다.)",
-          imageUrl: "/guide4.png",
-        },
-        {
-          id: 5,
-          title: "5. 추천 결과 확인",
-          text: "3개의 추천 결과를 받아보세요.",
-          imageUrl: "/guide5.png",
-        },
-      ],
-    };
+<script setup>
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+
+const guides = ref([
+  {
+    id: 1,
+    title: "1. 원하는 GPT 모델 선택하기",
+    text: "원하는 GPT 모델을 선택하세요.",
+    imageUrl: "/guide1.png",
   },
-  methods: {
-    goToLogin() {
-      this.$router.push("/loginview");
-    },
+  {
+    id: 2,
+    title: "2. 원하는 메서드 선택하기",
+    text: "사용하고 싶은 메서드를 선택하세요.",
+    imageUrl: "/guide2.png",
   },
+  {
+    id: 3,
+    title: "3. 사용하는 자원 입력하기",
+    text: "사용되는 자원을 입력하세요.(ex user, post, comment)",
+    imageUrl: "/guide3.png",
+  },
+  {
+    id: 4,
+    title: "4. 간단한 설명 작성하기",
+    text: "어떤 api를 만들고 싶은지 설명을 적어주세요(상세할 수록 좋습니다.)",
+    imageUrl: "/guide4.png",
+  },
+  {
+    id: 5,
+    title: "5. 추천 결과 확인",
+    text: "3개의 추천 결과를 받아보세요.",
+    imageUrl: "/guide5.png",
+  },
+]);
+
+const router = useRouter();
+const goToLogin = () => {
+  router.push("/login");
 };
 </script>
 

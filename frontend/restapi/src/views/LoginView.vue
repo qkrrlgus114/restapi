@@ -29,8 +29,17 @@
   </div>
 </template>
 
-<script>
-import { mapState } from "vuex";
+<script setup>
+import { useMainStore } from "@/store/store";
+import { ref } from "vue";
+
+const store = useMainStore();
+
+const kakaoLogin = () => {
+  window.location.href = `${store.state.apiBaseUrl}/oauth2/authorization/kakao`;
+};
+
+const login = () => {};
 
 export default {
   name: "LoginView",

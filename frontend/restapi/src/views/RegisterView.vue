@@ -166,7 +166,7 @@ export default {
           .then((response) => {
             // 회원가입 성공 처리
             alert("회원가입이 성공적으로 완료되었습니다.");
-            this.$router.push("/loginview");
+            this.$router.push("/login");
           })
           .catch((error) => {
             // 회원가입 실패 처리
