@@ -39,8 +39,6 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRoleRepository memberRoleRepository;
     private final JwtService jwtService;
     private final BCryptPasswordEncoder encoder;
-    private final CouponRepository couponRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
 
     // 회원가입
     @Override
