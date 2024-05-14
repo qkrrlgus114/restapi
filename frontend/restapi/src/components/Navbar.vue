@@ -5,11 +5,9 @@
       <div class="user-info">
         <button v-if="isAdmin" @click="goAdmin">관리자 설정</button>
         <h2>{{ nickname }}</h2>
-        <h2>토큰 개수 : {{ token }}</h2>
+        <h2>남은 토큰 : {{ token }}</h2>
         <div class="buttons">
-          <button @click="refreshTokenCount" class="refresh-button">
-            토큰 갱신
-          </button>
+          <button @click="renewToken" class="refresh-button">토큰 갱신</button>
           <button @click="logout" class="logout-button">로그아웃</button>
         </div>
       </div>
@@ -21,82 +19,71 @@
   </div>
 </template>
 
-<script>
-import { mapState } from "vuex";
+<script setup>
+import { useMainStore } from "@/store/store.js";
+import { computed } from "vue";
+import { useRouter } from "vue-router";
+import { useGlobalProperties } from "@/composables/useGlobalProperties";
 
-export default {
-  name: "Navbar",
-  methods: {
-    // 로그아웃
-    logout() {
-      this.$axios
-        .get(`${this.$apiBaseUrl}/api/logout`, {
-          withCredentials: true,
-        })
-        .then((response) => {
-          this.$store.dispatch("logout");
-          this.$router.push("/");
-        })
-        .catch((error) => {
-          console.error("토큰 개수 갱신 중 오류 발생:", error);
-        });
-    },
-    // 토큰 갱신
-    refreshTokenCount() {
-      this.$axios
-        .get(`${this.$apiBaseUrl}/api/tokens`, {
-          withCredentials: true,
-        })
-        .then((response) => {
-          const newTokenCount = response.data.data;
-          this.$store.dispatch("updateToken", response.data.data);
+const { $axios, $apiBaseUrl } = useGlobalProperties();
+const store = useMainStore();
+const router = useRouter();
 
-          alert("갱신 성공");
-        })
-        .catch((error) => {
-          console.error("토큰 개수 갱신 중 오류 발생:", error);
-        });
-    },
-    // 토큰 획득하기
-    acquiredToken() {
-      if (this.coupon <= 0) {
-        alert("쿠폰이 전부 소진되었습니다.");
-      } else {
-        this.$axios
-          .post(
-            `${this.$apiBaseUrl}/api/coupons`,
-            {},
-            {
-              withCredentials: true,
-            }
-          )
-          .then((response) => {
-            alert(response.data.message);
-            this.$store.commit("incrementToken");
-            this.$store.commit("decrementCoupon");
-          })
-          .catch((error) => {
-            alert(error.response.data.message);
-          });
-      }
-    },
-    goAdmin() {
-      this.$router.push("/admin/settings");
-    },
-    goHome() {
-      this.$router.push("/");
-    },
-  },
-  computed: {
-    shouldHideNavbar() {
-      return this.$route.meta.hideNavbar;
-    },
-    ...mapState(["nickname", "token", "coupon", "memberRoles"]),
-    isAdmin() {
-      return this.memberRoles.includes("ADMIN");
-    },
-  },
+const nickname = computed(() => store.nickname);
+const coupon = computed(() => store.coupon);
+const token = computed(() => store.token);
+
+// 로그아웃 함수
+const logout = async () => {
+  try {
+    await $axios.get(`${$apiBaseUrl}/api/logout`, {
+      withCredentials: true,
+    });
+    store.logout();
+    router.push("/");
+  } catch (error) {
+    alert(error.response.data.message);
+  }
 };
+
+// 토큰 갱신
+const renewToken = async () => {
+  try {
+    const response = await $axios.get(`${$apiBaseUrl}/api/tokens`, {
+      withCredentials: true,
+    });
+    console.log(response);
+    store.updateToken(response.data.data);
+    alert(response.data.message);
+  } catch (error) {
+    alert(error.response.data.message);
+  }
+};
+
+// 데일리 쿠폰 사용하기(토큰 획득)
+const acquiredToken = async () => {
+  try {
+    // pinia에서 쿠폰 데이터 먼저 확인
+    if (store.coupon <= 0) {
+      alert("쿠폰이 전부 소진되었습니다.");
+      return;
+    }
+
+    const response = await $axios.post(`${$apiBaseUrl}/api/coupons`, {
+      withCredentials: true,
+    });
+    store.incrementToken();
+    store.decrementCoupon();
+    alert("토큰 1개를 획득하셨습니다.");
+  } catch (error) {
+    alert(error.response.data.message);
+  }
+};
+
+// 홈으로 이동
+const goHome = () => router.push("/");
+// 어드민 페이지로 이동
+const goAdmin = () => router.push("/admin/settings");
 </script>
 
 <style scoped>

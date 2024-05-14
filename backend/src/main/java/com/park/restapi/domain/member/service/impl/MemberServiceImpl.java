@@ -1,7 +1,6 @@
 package com.park.restapi.domain.member.service.impl;
 
-import com.park.restapi.domain.coupon.entity.Coupon;
-import com.park.restapi.domain.coupon.repository.CouponRepository;
+
 import com.park.restapi.domain.exception.exception.MemberException;
 import com.park.restapi.domain.exception.info.MemberExceptionInfo;
 import com.park.restapi.domain.member.dto.request.LoginInfoRequestDTO;
@@ -9,11 +8,9 @@ import com.park.restapi.domain.member.dto.request.SignUpRequestDTO;
 import com.park.restapi.domain.member.dto.response.MemberInfoResponseDTO;
 import com.park.restapi.domain.member.entity.Member;
 import com.park.restapi.domain.member.entity.MemberRole;
-import com.park.restapi.domain.member.entity.Role;
 import com.park.restapi.domain.member.repository.MemberRepository;
 import com.park.restapi.domain.member.repository.MemberRoleRepository;
 import com.park.restapi.domain.member.service.MemberService;
-import com.park.restapi.domain.refreshtoken.repository.RefreshTokenRepository;
 import com.park.restapi.util.jwt.JwtService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,10 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Optional;
 
 
 @Service
