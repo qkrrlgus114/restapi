@@ -3,7 +3,6 @@ package com.park.restapi.domain.coupon.controller;
 import com.park.restapi.domain.coupon.dto.request.UpdateCouponSettingRequestDTO;
 import com.park.restapi.domain.coupon.dto.response.CouponSettingResponseDTO;
 import com.park.restapi.domain.coupon.service.CouponService;
-import com.park.restapi.domain.coupon.service.impl.CouponServiceImpl;
 import com.park.restapi.util.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

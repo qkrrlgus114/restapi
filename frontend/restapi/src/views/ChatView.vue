@@ -73,14 +73,6 @@ const router = useRouter();
 const formData = ref({ model: "", methodType: "", resource: "", content: "" });
 const isLoading = ref(false);
 const contentItems = ref([]);
-
-// 로그아웃 함수
-const logout = async () => {
-  try {
-    await $axios.post(`${$apiBaseUrl}/api/logout`, { withCredentials: true });
-    router.push("/");
-  } catch (error) {}
-};
 </script>
 
 <style scoped>
