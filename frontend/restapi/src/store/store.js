@@ -12,6 +12,8 @@ export const useMainStore = defineStore("main", {
   }),
   getters: {
     getToken: (state) => state.token,
+    getLoginState: (state) => state.loginState,
+    getAdminRole: (state) => state.memberRoles.includes("ADMIN"),
   },
   actions: {
     setLoginState(payload) {
@@ -26,10 +28,12 @@ export const useMainStore = defineStore("main", {
     },
     // 유저 정보 갱신
     updateUserInfo(payload) {
-      this.coupon = payload.coupon;
       this.nickname = payload.nickname;
       this.token = payload.token;
       this.memberRoles = payload.memberRoles;
+    },
+    updateCouponInfo(payload) {
+      this.coupon = payload;
     },
     // 토큰 갱신
     updateToken(payload) {

@@ -88,9 +88,6 @@ public class JwtFilter extends OncePerRequestFilter {
     // 쿠키에서 토큰 찾기
     private Optional<String> findCookieToken(HttpServletRequest request, String name) {
         Cookie[] cookies = request.getCookies();
-        for(Cookie c : cookies){
-            System.out.println(c.getName());
-        }
 
         return cookies == null ? Optional.empty() : Arrays.stream(cookies)
                 .filter(cookie -> name.equals(cookie.getName()))

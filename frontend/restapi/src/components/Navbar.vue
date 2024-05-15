@@ -21,7 +21,7 @@
 
 <script setup>
 import { useMainStore } from "@/store/store.js";
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useGlobalProperties } from "@/composables/useGlobalProperties";
 
@@ -32,6 +32,35 @@ const router = useRouter();
 const nickname = computed(() => store.nickname);
 const coupon = computed(() => store.coupon);
 const token = computed(() => store.token);
+
+onMounted(() => {
+  loadUserInfo();
+  loadCouponInfo();
+});
+
+// 유저 정보 호출
+const loadUserInfo = async () => {
+  try {
+    const response = await $axios.get(`${$apiBaseUrl}/api/users`, {
+      withCredentials: true,
+    });
+    store.updateUserInfo(response.data.data);
+  } catch (error) {
+    alert(error.response.data.message);
+  }
+};
+
+// 쿠폰 정보 호출
+const loadCouponInfo = async () => {
+  try {
+    const response = await $axios.get(`${$apiBaseUrl}/api/coupons`, {
+      withCredentials: true,
+    });
+    store.updateCouponInfo(response.data.data);
+  } catch (error) {
+    alert(error.response.data.message);
+  }
+};
 
 // 로그아웃 함수
 const logout = async () => {
@@ -69,9 +98,13 @@ const acquiredToken = async () => {
       return;
     }
 
-    const response = await $axios.post(`${$apiBaseUrl}/api/coupons`, {
-      withCredentials: true,
-    });
+    const response = await $axios.post(
+      `${$apiBaseUrl}/api/coupons`,
+      {},
+      {
+        withCredentials: true,
+      }
+    );
     store.incrementToken();
     store.decrementCoupon();
     alert("토큰 1개를 획득하셨습니다.");

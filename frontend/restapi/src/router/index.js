@@ -16,13 +16,13 @@ const routes = [
     path: "/login",
     name: "Login",
     component: LoginView,
-    meta: { hideNavbar: true },
+    meta: { showNavbar: false },
   },
   {
     path: "/register",
     name: "Register",
     component: RegisterView,
-    meta: { hideNavbar: true },
+    meta: { showNavbar: false },
   },
   {
     path: "/chat",
@@ -34,19 +34,19 @@ const routes = [
     path: "/",
     name: "Main",
     component: MainView,
-    meta: { hideNavbar: true },
+    meta: { showNavbar: false },
   },
   {
     path: "/success",
     name: "Success",
     component: Success,
-    meta: { hideNavbar: true },
+    meta: { showNavbar: false },
   },
   {
     path: "/:catchAll(.*)",
     name: "NotFoundComponent",
     component: NotFoundComponent,
-    meta: { hideNavbar: true },
+    meta: { showNavbar: false },
   },
   {
     path: "/admin",
@@ -70,23 +70,22 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes,
 });
 
 router.beforeEach((to, from, next) => {
   const store = useMainStore();
-  const isLoggedIn = store.loginState; // 로그인 상태
-  const isAdmin = store.memberRoles.includes("ADMIN"); // 관리자 권한 확인
+  const isLoggedIn = store.getLoginState;
+  const isAdmin = store.getAdminRole; // 관리자 권한 확인
 
+  // 로그인이 필요한 페이지인 경우
   if (to.matched.some((record) => record.meta.requiresAuth && !isLoggedIn)) {
-    // 로그인이 필요한 페이지에 로그인하지 않은 경우
     alert("로그인이 필요합니다.");
     next({ name: "Login" });
   } else if (
     to.matched.some((record) => record.meta.requiresAdmin && !isAdmin)
   ) {
-    // 관리자 권한이 필요한 페이지에 관리자 권한이 없는 경우
     alert("관리자 권한이 필요합니다.");
     next({ name: "Chat" });
   } else {
