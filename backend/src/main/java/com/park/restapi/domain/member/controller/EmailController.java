@@ -3,6 +3,7 @@ package com.park.restapi.domain.member.controller;
 
 import com.park.restapi.domain.member.dto.request.CertificationCodeRequestDTO;
 import com.park.restapi.domain.member.dto.request.EmailRequestDTO;
+import com.park.restapi.domain.member.service.EmailService;
 import com.park.restapi.domain.member.service.impl.EmailServiceImpl;
 import com.park.restapi.util.response.ApiResponse;
 import jakarta.validation.Valid;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class EmailController {
 
-    private final EmailServiceImpl emailService;
+    private final EmailService emailService;
 
     // 인증번호 전송
     @PostMapping ("authentications/send")

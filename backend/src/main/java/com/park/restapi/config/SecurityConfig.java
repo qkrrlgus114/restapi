@@ -4,6 +4,7 @@ import com.park.restapi.util.jwt.JwtFilter;
 import com.park.restapi.util.oauth.FailureHandler;
 import com.park.restapi.util.oauth.PrincipalOAuth2UserService;
 import com.park.restapi.util.oauth.SuccessHandler;
+import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
-@EnableWebSecurity
+//@EnableWebSecurity(debug = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -40,13 +41,14 @@ public class SecurityConfig {
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 // 모든 요청 허용
                 .authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers("/api/authentications/send", "/api/authentications/verify", "/api/signup",
-                        "/api/email-check", "/api/phonenumber-check", "/api/login", "/oauth2/authorization/kakao", "/login/oauth2/code/kakao", "/ws").permitAll()
-                )
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
-                        .requestMatchers("/api/**").hasAuthority("USER")
-                        .anyRequest().authenticated()
+                        authorize
+                                .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
+                                .requestMatchers("/api/authentications/**", "/api/signup",
+                        "/api/email-check", "/api/login", "/oauth2/authorization/kakao", "/login/oauth2/code/kakao", "/ws"
+                        ,"/api/auth/**").permitAll()
+                                .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
+                                .requestMatchers("/api/**").hasAuthority("USER")
+                                .anyRequest().authenticated()
                 )
                 // oauth 로그인
                 .oauth2Login(oauth -> {

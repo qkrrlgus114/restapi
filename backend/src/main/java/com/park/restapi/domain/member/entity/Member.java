@@ -54,10 +54,6 @@ public class Member {
         this.loginLastDate = LocalDateTime.now();
     }
 
-    public static Member toEntity(String email, String nickname, SocialType socialType) {
-        return new Member(email, nickname, socialType);
-    }
-
     public void useToken(){
         this.token -= 1;
     }

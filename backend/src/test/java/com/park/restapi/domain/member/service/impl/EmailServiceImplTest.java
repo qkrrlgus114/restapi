@@ -52,8 +52,8 @@ class EmailServiceImplTest {
         String key = emailService.createKey();
 
         // then
-        Assertions.assertEquals(10, key.length());
-        Assertions.assertTrue(key.matches("[A-Za-z0-9!@#$%^&*()]+"));
+        assertEquals(10, key.length());
+        assertTrue(key.matches("[A-Za-z0-9!@#$%^&*()]+"));
     }
 
     @Test
@@ -74,7 +74,7 @@ class EmailServiceImplTest {
         emailService.checkCertificationCode(code);
 
         // then
-        Assertions.assertTrue(emailConfirm.getCertificationStatus());
+        assertTrue(emailConfirm.getCertificationStatus());
     }
 
     @Test
@@ -87,7 +87,7 @@ class EmailServiceImplTest {
         EmailException emailException = assertThrows(EmailException.class, () -> {
             emailService.checkCertificationCode(code);
         });
-        Assertions.assertEquals("인증번호가 일치하지 않습니다", emailException.getException().getMessage());
+        assertEquals("인증번호가 일치하지 않습니다", emailException.getException().getMessage());
     }
 
     @Test
@@ -103,6 +103,6 @@ class EmailServiceImplTest {
         EmailException emailException = assertThrows(EmailException.class, () -> {
             emailService.checkCertificationCode(code);
         });
-        Assertions.assertEquals("인증번호가 만료되었습니다.", emailException.getException().getMessage());
+        assertEquals("인증번호가 만료되었습니다.", emailException.getException().getMessage());
     }
 }

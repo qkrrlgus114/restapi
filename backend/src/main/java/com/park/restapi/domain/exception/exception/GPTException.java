@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 public class GPTException extends RuntimeException{
     private GPTExceptionInfo exception;
+    // 개발자에게 보여지는 로그
     private String log;
 
     public GPTException(GPTExceptionInfo exception, String log) {
