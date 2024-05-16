@@ -1,9 +1,7 @@
-// Vuex 4.x를 사용하여 Vue 3와 호환되도록 설정
-import { createStore } from "vuex";
-import createPersistedState from "vuex-persistedstate";
+import { defineStore } from "pinia";
 
-export default createStore({
-  state: {
+export const useMainStore = defineStore("main", {
+  state: () => ({
     loginState: false,
     nickname: "",
     token: 0,
@@ -11,75 +9,56 @@ export default createStore({
     memberRoles: [],
     isDailyCouponGenerate: false,
     dailyCouponQuantity: 0,
-  },
+  }),
   getters: {
-    getToken(state) {
-      return state.token;
-    },
-  },
-  // state를 변경하는 메서드
-  mutations: {
-    // 로그인
-    setLoginState(state, payload) {
-      state.loginState = payload.loginState;
-    },
-    // 로그아웃
-    logout(state) {
-      state.loginState = false;
-      state.nickname = "";
-      state.token = 0;
-    },
-    // 유저 정보 업데이트
-    updateUserInfoState(state, payload) {
-      state.coupon = payload.coupon;
-      state.nickname = payload.nickname;
-      state.token = payload.token;
-      state.memberRoles = payload.memberRoles;
-    },
-    // 토큰 갱신
-    updateTokenState(state, payload) {
-      state.token = payload;
-    },
-    // 토큰 감소
-    decrementToken(state) {
-      if (state.token > 0) {
-        state.token -= 1;
-      }
-    },
-    // 토큰 감소
-    incrementToken(state) {
-      state.token += 1;
-    },
-    // 쿠폰 감소
-    decrementCoupon(state) {
-      if (state.coupon > 0) {
-        state.coupon -= 1;
-      }
-    },
-    // 유저 권한
-    updateMemberRoleState(state, payload) {
-      state.memberRoles = payload;
-    },
+    getToken: (state) => state.token,
+    getLoginState: (state) => state.loginState,
+    getAdminRole: (state) => state.memberRoles.includes("ADMIN"),
   },
   actions: {
-    login({ commit }, payload) {
-      commit("setLoginState", payload);
+    setLoginState(payload) {
+      this.loginState = payload.loginState;
     },
-    logout({ commit }) {
-      commit("logout");
+    logout() {
+      this.loginState = false;
+      this.nickname = "";
+      this.token = 0;
+      this.coupon = 0;
+      this.memberRoles = [];
     },
-    updateUserInfo({ commit }, payload) {
-      commit("updateUserInfoState", payload);
+    // 유저 정보 갱신
+    updateUserInfo(payload) {
+      this.nickname = payload.nickname;
+      this.token = payload.token;
+      this.memberRoles = payload.memberRoles;
+    },
+    updateCouponInfo(payload) {
+      this.coupon = payload;
     },
     // 토큰 갱신
-    updateToken({ commit }, payload) {
-      commit("updateTokenState", payload);
+    updateToken(payload) {
+      this.token = payload;
     },
-    // 설정 정보 ㄱ
+    // 토큰 감소(사용)
+    decrementToken() {
+      if (this.token > 0) {
+        this.token -= 1;
+      }
+    },
+    // 토큰 증가(획득)
+    incrementToken() {
+      this.token += 1;
+    },
+    // 쿠폰 감소(사용)
+    decrementCoupon() {
+      if (this.coupon > 0) {
+        this.coupon -= 1;
+      }
+    },
+    // 멤버 권한 갱신
+    updateMemberRole(payload) {
+      this.memberRoles = payload;
+    },
   },
-  plugins: [
-    createPersistedState({
-      paths: ["loginState", "memberRoles", "token", "coupon", "nickname"],
-    }),
-  ],
+  persist: true, // persist 옵션을 스토어 정의 객체 내에 포함
 });

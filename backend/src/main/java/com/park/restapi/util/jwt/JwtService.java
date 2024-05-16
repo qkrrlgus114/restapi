@@ -1,15 +1,16 @@
 package com.park.restapi.util.jwt;
 
-import com.park.restapi.domain.auth.entity.RefreshToken;
-import com.park.restapi.domain.auth.repository.RefreshTokenRepository;
 import com.park.restapi.domain.exception.exception.MemberException;
 import com.park.restapi.domain.exception.info.MemberExceptionInfo;
 import com.park.restapi.domain.member.entity.Member;
 import com.park.restapi.domain.member.repository.MemberRepository;
+import com.park.restapi.domain.refreshtoken.entity.RefreshToken;
+import com.park.restapi.domain.refreshtoken.repository.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,9 +30,9 @@ public class JwtService {
     @Value("${jwt.secretkey}")
     private String SECRET_KEY;
     @Value("#{${jwt.access-validity}}")
-    private Long accessTokenTime;
+    private Long ACCESS_TOKEN_TIME;
     @Value("#{${jwt.refresh-validity}}")
-    private Long refreshTokenTime;
+    private Long REFRESH_TOKEN_TIME;
     private final RefreshTokenRepository refreshTokenRepository;
     private final MemberRepository memberRepository;
 
@@ -52,6 +53,7 @@ public class JwtService {
         }
     }
 
+    // 시큐리티 컨텍스트 홀더에서 유저 ID 추출
     public static Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -59,7 +61,7 @@ public class JwtService {
             return (Long) authentication.getPrincipal();
         }
 
-        throw new MemberException(MemberExceptionInfo.NOT_FOUND_USER, "인증 정보가 잘못되었습니다.");
+        throw new MemberException(MemberExceptionInfo.NOT_FOUND_USER, "시큐리티 컨텍스트 홀더에서 유저 ID 추출을 실패하였습니다.");
     }
 
     // 액세스 토큰 생성
@@ -70,7 +72,7 @@ public class JwtService {
         return Jwts.builder() // 액세스 토큰을 생성
                 .setClaims(claims) // 유저의 pk값
                 .setIssuedAt(new Date(System.currentTimeMillis())) // 현재 시간
-                .setExpiration(new Date(System.currentTimeMillis() + accessTokenTime)) // 언제까지
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_TIME)) // 언제까지
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY) // 뭐로 사인됐는지
                 .compact();
     }
@@ -78,9 +80,10 @@ public class JwtService {
     /*
     * 리프레시 토큰 생성
     * check = true -> 필터에서 요청
-    * check = false -> 유저 서비스에서 요청
+    * check = false -> 서비스에서 요청
     * */
-    public String createRefreshToken(Long userId, boolean check){
+    @Transactional
+    public String createRefreshToken(Long userId, boolean check, String accessToken){
         Claims claims = Jwts.claims();
         Optional<Member> userOptional = memberRepository.findById(userId);
         if(userOptional.isEmpty() && check) return "유저 없음";
@@ -93,21 +96,14 @@ public class JwtService {
         String refreshToken = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + refreshTokenTime))
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_TIME))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
 
-        RefreshToken refreshTokenData = refreshTokenRepository.findByMember(member);
-        refreshTokenData.addTokenValueAndExpireDate(refreshToken, LocalDateTime.now().plusDays(14));
+        RefreshToken entity = RefreshToken.toEntity(accessToken, refreshToken, member, LocalDateTime.now().plusDays(14));
+        refreshTokenRepository.save(entity);
 
         return refreshToken;
-    }
-
-//    // 리프레시 토큰 확인
-    public boolean checkRefreshToken(String refreshTokenValue) {
-        Optional<RefreshToken> byValueAndExpireDateGreaterThan = refreshTokenRepository.findByValueAndExpireDateGreaterThan(refreshTokenValue, LocalDateTime.now());
-        if(byValueAndExpireDateGreaterThan.isEmpty()) return false;
-        return true;
     }
 
 }

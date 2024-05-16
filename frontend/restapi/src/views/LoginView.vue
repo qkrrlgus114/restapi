@@ -29,54 +29,58 @@
   </div>
 </template>
 
-<script>
-import { mapState } from "vuex";
+<script setup>
+import { useMainStore } from "@/store/store.js";
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
+import { useGlobalProperties } from "@/composables/useGlobalProperties";
 
-export default {
-  name: "LoginView",
-  data() {
-    return {
-      email: "",
-      password: "",
-    };
-  },
-  methods: {
-    kakaoLogin() {
-      window.location.href = `${this.$apiBaseUrl}/oauth2/authorization/kakao`;
-    },
-    login() {
-      this.$axios
-        .post(
-          `${this.$apiBaseUrl}/api/login`,
-          { email: this.email, password: this.password },
-          {
-            withCredentials: true, // 쿠키 포함하기 위해
-          }
-        )
-        .then((response) => {
-          // 스토어의 로그인 액션 호출
-          this.$store.dispatch("login", { loginState: true });
-          this.$router.push("/chat");
-        })
-        .catch((error) => {
-          if (error.response.data.status === "1002") {
-            alert(error.response.data.message);
-          }
-        });
-    },
-    register() {
-      // 회원가입 페이지로 리다이렉션
-      this.$router.push({ name: "Register" });
-    },
-  },
-  computed: {
-    ...mapState(["loginState"]),
-  },
-  mounted() {
-    if (this.loginState) {
-      this.$router.push("/chat");
-    }
-  },
+const { $axios, $apiBaseUrl } = useGlobalProperties();
+const store = useMainStore();
+const router = useRouter();
+
+const email = ref("");
+const password = ref("");
+
+// 이메일 검사
+const isValidEmail = (email) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
+// 카카오 로그인 함수
+const kakaoLogin = () => {
+  window.location.href = `${$apiBaseUrl}/oauth2/authorization/kakao`;
+};
+
+// 로그인 함수
+const login = async () => {
+  if (!email.value) {
+    alert("이메일을 입력해주세요.");
+    return;
+  } else if (!isValidEmail(email.value)) {
+    alert("유효한 이메일 주소를 입력해주세요.");
+    return;
+  }
+
+  if (!password.value) {
+    alert("비밀번호를 입력해주세요.");
+    return;
+  } else if (password.value.length > 15 || password.value.length < 8) {
+    alert("비밀번호는 8자 이상 15자 이하로 입력해주세요.");
+    return;
+  }
+
+  try {
+    await $axios.post(
+      `${$apiBaseUrl}/api/login`,
+      { email: email.value, password: password.value },
+      { withCredentials: true }
+    );
+    store.loginState = true;
+    router.push("/chat");
+  } catch (error) {
+    alert(error.response.data.message);
+  }
 };
 </script>
 

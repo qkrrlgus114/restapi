@@ -2,6 +2,7 @@ package com.park.restapi.util.oauth;
 
 import com.park.restapi.domain.member.entity.Member;
 import com.park.restapi.domain.member.repository.MemberRepository;
+import com.park.restapi.domain.refreshtoken.repository.RefreshTokenRepository;
 import com.park.restapi.util.jwt.JwtService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.ServletException;
@@ -33,6 +34,7 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     // oauth 성공 핸들러
@@ -57,9 +59,7 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
         String accessToken = jwtService.createAccessToken(member.getId());
 
         // 리프레시 토큰 생성
-        String refreshToken = jwtService.createRefreshToken(member.getId(), true);
-        System.out.println(accessToken);
-        System.out.println(refreshToken);
+        String refreshToken = jwtService.createRefreshToken(member.getId(), true, accessToken);
 
         // 액세스 토큰을 위한 쿠키 생성(세션쿠키)
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
@@ -85,17 +85,17 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
     }
 
     // 리다이렉트 주소
-    private String makeRedirectUrl() {
-        return UriComponentsBuilder.fromUriString("https://restapi.store/success")
-                .encode(StandardCharsets.UTF_8)
-                .build().toUriString();
-    }
-
-    // 리다이렉트 주소
 //    private String makeRedirectUrl() {
-//        return UriComponentsBuilder.fromUriString("http://localhost:5173/success")
+//        return UriComponentsBuilder.fromUriString("https://restapi.store/success")
 //                .encode(StandardCharsets.UTF_8)
 //                .build().toUriString();
 //    }
+
+    // 리다이렉트 주소
+    private String makeRedirectUrl() {
+        return UriComponentsBuilder.fromUriString("http://localhost:5173/success")
+                .encode(StandardCharsets.UTF_8)
+                .build().toUriString();
+    }
 
 }

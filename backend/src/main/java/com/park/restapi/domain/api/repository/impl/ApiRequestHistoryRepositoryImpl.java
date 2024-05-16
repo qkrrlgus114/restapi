@@ -2,13 +2,14 @@ package com.park.restapi.domain.api.repository.impl;
 
 import com.park.restapi.domain.api.dto.response.RequestHistoryResponseDTO;
 import com.park.restapi.domain.api.entity.ApiRequestHistory;
-import com.park.restapi.domain.api.repository.ApiRequestHistoryRepositoryCustom;
+import com.park.restapi.domain.api.repository.ApiRequestHistoryCustomRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,7 +18,8 @@ import static com.park.restapi.domain.api.entity.QApiRequestHistory.apiRequestHi
 import static com.park.restapi.domain.member.entity.QMember.member;
 
 @RequiredArgsConstructor
-public class ApiRequestHistoryRepositoryRepositoryImpl implements ApiRequestHistoryRepositoryCustom {
+@Repository
+public class ApiRequestHistoryRepositoryImpl implements ApiRequestHistoryCustomRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override

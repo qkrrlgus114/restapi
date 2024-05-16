@@ -2,7 +2,7 @@ package com.park.restapi.domain.coupon.controller;
 
 import com.park.restapi.domain.coupon.dto.request.UpdateCouponSettingRequestDTO;
 import com.park.restapi.domain.coupon.dto.response.CouponSettingResponseDTO;
-import com.park.restapi.domain.coupon.service.impl.CouponServiceImpl;
+import com.park.restapi.domain.coupon.service.CouponService;
 import com.park.restapi.util.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class CouponController {
 
-    private final CouponServiceImpl couponService;
+    private final CouponService couponService;
 
     // 유저가 쿠폰을 획득하는 API
     @PostMapping("coupons")

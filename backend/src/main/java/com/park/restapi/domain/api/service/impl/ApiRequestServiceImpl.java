@@ -6,7 +6,7 @@ import com.park.restapi.domain.api.dto.request.Message;
 import com.park.restapi.domain.api.dto.response.ChatGPTResponseDTO;
 import com.park.restapi.domain.api.dto.response.RequestHistoryResponseDTO;
 import com.park.restapi.domain.api.entity.ApiRequestHistory;
-import com.park.restapi.domain.api.repository.ApiRequestHistoryRepositoryRepository;
+import com.park.restapi.domain.api.repository.ApiRequestHistoryRepository;
 import com.park.restapi.domain.api.service.ApiRequestService;
 import com.park.restapi.domain.exception.exception.GPTException;
 import com.park.restapi.domain.exception.exception.MemberException;
@@ -40,7 +40,7 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     @Value("${chat-gpt.api-key}")
     private String apiKey;
     private final MemberRepository memberRepository;
-    private final ApiRequestHistoryRepositoryRepository apiRequestHistoryRepository;
+    private final ApiRequestHistoryRepository apiRequestHistoryRepository;
 
     private final Semaphore semaphore = new Semaphore(5);
 
@@ -142,5 +142,12 @@ public class ApiRequestServiceImpl implements ApiRequestService {
         log.info("쿼리 걸린 시간 : " + (endTime - startTime) + "밀리초");
 
         return requestHistoryResponseDTOS;
+    }
+
+    // 현재 로그인 유저 찾기
+    private Member getCurrentMember() {
+        Long currentUserId = JwtService.getCurrentUserId();
+        return memberRepository.findById(currentUserId)
+                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_USER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 }

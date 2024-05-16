@@ -1,7 +1,7 @@
 package com.park.restapi.util.oauth;
 
-import com.park.restapi.domain.auth.entity.RefreshToken;
-import com.park.restapi.domain.auth.repository.RefreshTokenRepository;
+import com.park.restapi.domain.refreshtoken.entity.RefreshToken;
+import com.park.restapi.domain.refreshtoken.repository.RefreshTokenRepository;
 import com.park.restapi.domain.member.entity.Role;
 import com.park.restapi.domain.member.entity.SocialType;
 import com.park.restapi.domain.member.entity.Member;
@@ -59,12 +59,12 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
          * 랜덤 닉네임 생성 및 기본 프로필사진 설정
          * */
         if(byUser.isEmpty()){
-            Member member = Member.toEntity(email, nickname, SocialType.KAKAO);
+            Member member = new Member(email, nickname, SocialType.KAKAO);
             Member save = memberRepository.save(member);
 
             MemberRole memberRole = MemberRole.builder()
                     .member(save)
-                    .role(Role.USER).build();
+                    .build();
             memberRoleRepository.save(memberRole);
 
             RefreshToken refreshToken = RefreshToken.builder()

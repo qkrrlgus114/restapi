@@ -1,7 +1,7 @@
 package com.park.restapi.domain.member.service;
 
 import com.park.restapi.domain.member.dto.request.LoginInfoRequestDTO;
-import com.park.restapi.domain.member.dto.request.SignUpRequstDTO;
+import com.park.restapi.domain.member.dto.request.SignUpRequestDTO;
 import com.park.restapi.domain.member.dto.response.MemberInfoResponseDTO;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public interface MemberService {
     // 회원가입
-    void signUp(SignUpRequstDTO signUpRequstDTO) throws IOException, InterruptedException;
+    void signUp(SignUpRequestDTO signUpRequestDTO) throws IOException, InterruptedException;
     // 이메일 중복 확인
     boolean existEmailCheck(String email);
     // 로그인

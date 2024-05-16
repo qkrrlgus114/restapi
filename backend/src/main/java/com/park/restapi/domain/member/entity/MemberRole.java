@@ -21,9 +21,9 @@ public class MemberRole {
     private Role role;
 
     @Builder
-    public MemberRole(Member member, Role role) {
+    public MemberRole(Member member) {
         this.member = member;
-        this.role = role;
+        this.role = Role.USER;
     }
 
     @Override

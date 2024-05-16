@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -80,13 +81,9 @@ public class CouponServiceImpl implements CouponService {
         LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
         LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
 
-        log.info("시작 시간 {}", startOfDay);
-        log.info("끝 시간 {}", endOfDay);
-
-        Coupon coupon = couponRepository.findCouponForRead(startOfDay, endOfDay)
-                .orElseThrow(() -> new CouponException(CouponExceptionInfo.FAIL_COUPON_DATA, "DB에 쿠폰 데이터 존재하지 않음."));
-
-        return coupon.getRemainingQuantity();
+        return couponRepository.findCouponForRead(startOfDay, endOfDay)
+                .map(Coupon::getRemainingQuantity)
+                .orElse(0);
     }
 
     @Override
@@ -110,5 +107,12 @@ public class CouponServiceImpl implements CouponService {
         CouponSetting couponSetting = couponSettingRepository.findTopByOrderByIdAsc();
 
         couponSetting.updateCouponSetting(requestDTO);
+    }
+
+    // 현재 로그인 유저 찾기
+    private Member getCurrentMember() {
+        Long currentUserId = JwtService.getCurrentUserId();
+        return memberRepository.findById(currentUserId)
+                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_USER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 }

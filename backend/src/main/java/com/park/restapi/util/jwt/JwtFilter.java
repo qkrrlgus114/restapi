@@ -36,7 +36,7 @@ public class JwtFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
 
-        return path.startsWith("/api/authentications/send") || path.startsWith("/api/email-check") || path.startsWith("/api/phonenumber-check") || path.startsWith("/login")
+        return path.startsWith("/api/authentications/send") || path.startsWith("/api/email-check") || path.startsWith("/login") || path.startsWith("/api/auth/refresh-token")
                 || path.startsWith("/api/authentications/verify") || path.startsWith("/api/signup") || path.startsWith("/api/login") || path.startsWith("/oauth2/authorization/kakao")
                 || path.startsWith("/ws");
     }
@@ -61,32 +61,15 @@ public class JwtFilter extends OncePerRequestFilter {
             TokenInfo tokenInfo = jwtService.getUserId(accessToken);
             log.info("userId:{}번 유저 토큰 추출 완료", tokenInfo.getUserId());
 
-            // 토큰이 만료됐으면
+            // 토큰이 만료됐으면 401 리턴
             if (tokenInfo.isExpired()) {
-                // 리프레시 토큰 추출
-                Optional<String> refreshTokenOptional = findCookieToken(request, "refreshToken");
-                if (!refreshTokenOptional.isPresent()) {
-                    log.error("리프레시 토큰 없음");
-                    sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "리프레시 토큰이 존재하지 않습니다.");
-                    return;
-                }
-
-                // 리프레시 토큰 만료 확인
-                if (!jwtService.checkRefreshToken(refreshTokenOptional.get())) {
-                    log.error("리프레시 토큰 문제 발생");
-                    sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "리프레시 토큰 사용 불가(로그아웃 진행)");
-                    return; // 여기서 처리 종료
-                }
-
-                // 토큰 재생성 및 쿠키 설정
-                if (!reGenerateToken(response, tokenInfo.getUserId())) return;
-
-                sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "JWT 재발급 완료");
+                sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "액세스 토큰이 만료 되었습니다.");
                 return; // 여기서 처리 종료
             }
 
             if (!authenticateUser(request, response, tokenInfo.getUserId())) return;
 
+            log.info("유저 인증 완료");
             filterChain.doFilter(request, response);
         } catch (Exception e) {
             e.printStackTrace();
@@ -110,35 +93,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 .filter(cookie -> name.equals(cookie.getName()))
                 .findFirst()
                 .map(Cookie::getValue);
-    }
-
-    // 토큰 재생성
-    private boolean reGenerateToken(HttpServletResponse response, Long userId) throws IOException {
-        // 액세스 토큰을 위한 쿠키 생성
-        String accessToken = jwtService.createAccessToken(userId);
-        String refreshToken = jwtService.createRefreshToken(userId, true);
-
-        if ("유저 없음".equals(refreshToken)) {
-            log.error("유저 없음");
-            sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "유저 정보 조회 실패");
-            return false;
-        }
-
-        setCookie(response, "accessToken", accessToken);
-        setCookie(response, "refreshToken", refreshToken);
-
-        return true;
-    }
-
-    // 쿠키에 토큰 저장
-    private void setCookie(HttpServletResponse response, String name, String value) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setSecure(true);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        response.addCookie(cookie);
-
-        log.info("쿠키 생성 및 설정 완료");
     }
 
     // 유저 인증

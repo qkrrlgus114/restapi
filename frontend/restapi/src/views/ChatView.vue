@@ -60,114 +60,19 @@
   </div>
 </template>
 
-<script>
-import { mapGetters } from "vuex";
+<script setup>
+import { useMainStore } from "@/store/store.js";
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
+import { useGlobalProperties } from "@/composables/useGlobalProperties";
 
-export default {
-  name: "ChatView",
-  mounted() {
-    this.checkLoginStatus();
-  },
-  data() {
-    return {
-      formData: {
-        model: "",
-        methodType: "",
-        resource: "",
-        content: "",
-      },
-      isLoading: false,
-      contentItems: [],
-    };
-  },
-  computed: {
-    isFormValid() {
-      return (
-        this.formData.model &&
-        this.formData.methodType &&
-        this.formData.resource &&
-        this.formData.content
-      );
-    },
-    ...mapGetters(["getToken"]),
-  },
-  methods: {
-    // 로그아웃
-    logout() {
-      this.$axios
-        .get(`${this.$apiBaseUrl}/api/logout`, {
-          withCredentials: true,
-        })
-        .then((response) => {
-          this.$router.push("/");
-        })
-        .catch((error) => {
-          console.error("토큰 개수 갱신 중 오류 발생:", error);
-        });
-    },
-    // 유저 정보 가져오기(쿠폰, 토큰, 이름, 권한)
-    checkLoginStatus() {
-      this.$axios
-        .get(`${this.$apiBaseUrl}/api/users`, {
-          withCredentials: true,
-        })
-        .then((response) => {
-          this.$store.dispatch("updateUserInfo", {
-            token: response.data.data.token,
-            nickname: response.data.data.nickname,
-            coupon: response.data.data.remainingQuantity,
-            memberRoles: response.data.data.memberRoles,
-          });
-        })
-        .catch((error) => {
-          console.error("토큰 개수 갱신 중 오류 발생:", error);
-        });
-    },
+const { $axios, $apiBaseUrl } = useGlobalProperties();
+const store = useMainStore();
+const router = useRouter();
 
-    // 제출
-    submitForm() {
-      if (this.getToken > 0) {
-        this.isLoading = true;
-        this.$axios
-          .post(`${this.$apiBaseUrl}/api/gpt/recommendations`, this.formData, {
-            withCredentials: true, // 쿠키 포함하기 위해
-          })
-          .then((response) => {
-            alert("데이터 추천 성공");
-            if (
-              response.data &&
-              response.data.data &&
-              response.data.data.choices
-            ) {
-              const choice = response.data.data.choices[0];
-              if (choice && choice.message && choice.message.content) {
-                // \n을 기준으로 content를 분리하여 배열로 저장
-                this.contentItems = choice.message.content.split(",");
-              }
-            }
-            this.$store.commit("decrementToken");
-          })
-          .catch((error) => {
-            alert(error.response.data.message);
-          })
-          .finally(() => {
-            this.isLoading = false;
-          });
-      } else {
-        alert("토큰이 부족합니다. 토큰 갱신 눌러보세요(혹시?)");
-      }
-    },
-    resetForm() {
-      this.formData = {
-        gptModel: "",
-        task: "",
-        methodType: "",
-        resource: "",
-        description: "",
-      };
-    },
-  },
-};
+const formData = ref({ model: "", methodType: "", resource: "", content: "" });
+const isLoading = ref(false);
+const contentItems = ref([]);
 </script>
 
 <style scoped>

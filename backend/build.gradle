@@ -49,6 +49,8 @@ dependencies {
 	//test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'com.h2database:h2'
+	testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.25.3'
+
 
 	// QueryDSL
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
@@ -64,10 +66,7 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-def querydslSrcDir = 'src/main/generated'
 clean {
-	delete file(querydslSrcDir)
+	delete file('src/main/generated')
 }
-tasks.withType(JavaCompile) {
-	options.generatedSourceOutputDirectory = file(querydslSrcDir)
-}
+
