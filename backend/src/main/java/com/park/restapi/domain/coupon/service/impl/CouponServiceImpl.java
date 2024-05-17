@@ -1,5 +1,6 @@
 package com.park.restapi.domain.coupon.service.impl;
 
+import com.park.restapi.domain.coupon.dto.request.UpdateCouponQuantityRequestDTO;
 import com.park.restapi.domain.coupon.dto.request.UpdateCouponSettingRequestDTO;
 import com.park.restapi.domain.coupon.dto.response.CouponSettingResponseDTO;
 import com.park.restapi.domain.coupon.entity.Coupon;
@@ -86,11 +87,6 @@ public class CouponServiceImpl implements CouponService {
                 .orElse(0);
     }
 
-    @Override
-    public void couponSettingChange() {
-
-    }
-
     // 쿠폰 설정 가져오기
     @Override
     @Transactional(readOnly = true)
@@ -107,6 +103,32 @@ public class CouponServiceImpl implements CouponService {
         CouponSetting couponSetting = couponSettingRepository.findTopByOrderByIdAsc();
 
         couponSetting.updateCouponSetting(requestDTO);
+    }
+
+    // 쿠폰 개수 업데이트
+    @Override
+    @Transactional
+    public int updateCouponQuantity(UpdateCouponQuantityRequestDTO requestDTO) {
+        Coupon coupon = null;
+
+        // 오늘 발급된 쿠폰이 있는지 확인
+        LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+
+        Optional<Coupon> byCouponForWrite = couponRepository.findByCouponForWrite(startOfDay, endOfDay);
+
+        // 발급된 쿠폰이 없으면 새로 발급
+        if (byCouponForWrite.isEmpty()) {
+            coupon = Coupon.builder()
+                    .totalQuantity(requestDTO.getDailyCouponQuantity())
+                    .remainingQuantity(requestDTO.getDailyCouponQuantity()).build();
+            couponRepository.save(coupon);
+        } else {
+            coupon = byCouponForWrite.get();
+            coupon.updateCouponQuantity(requestDTO.getDailyCouponQuantity());
+        }
+
+        return coupon.getRemainingQuantity();
     }
 
     // 현재 로그인 유저 찾기

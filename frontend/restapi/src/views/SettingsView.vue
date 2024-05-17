@@ -13,20 +13,35 @@
     <div class="form-control">
       <label for="quantity"
         >발급 쿠폰 개수<br />
-        (1~100개 설정 가능합니다.)</label
+        (0~100개 설정 가능합니다.)</label
       >
       <input
         id="quantity"
         type="number"
-        min="1"
+        min="0"
         max="100"
         v-model="dailyCouponQuantity"
       />
     </div>
     <div class="buttons">
-      <button @click="resetSettings">초기화</button>
-      <button>즉시 발급</button>
-      <button @click="applySettings">적용</button>
+      <button class="btn-immediately" @click="showModal = true">
+        즉시 발급
+      </button>
+      <Modal
+        :isVisible="showModal"
+        @confirm="handleConfirm"
+        @cancel="handleCancel"
+      >
+        <template #header> 쿠폰의 개수를 즉시 변경하시겠습니까? </template>
+        <template #body>
+          현재 설정하신 쿠폰의 개수로<br />
+          즉시 발급 (개수 변경)을 진행합니다.
+        </template>
+        <template #cancel-btn> 취소하기 </template>
+        <template #confirm-btn> 변경하기 </template>
+      </Modal>
+      <button class="btn" @click="resetSettings">초기화</button>
+      <button class="btn" @click="applySettings">적용</button>
     </div>
   </div>
 </template>
@@ -36,6 +51,7 @@ import { useMainStore } from "@/store/store.js";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useGlobalProperties } from "@/composables/useGlobalProperties";
+import Modal from "../components/Modal.vue";
 
 const { $axios, $apiBaseUrl } = useGlobalProperties();
 const store = useMainStore();
@@ -45,6 +61,16 @@ const dailyCouponQuantity = ref(0);
 const isDailyCouponGenerate = ref(false);
 const originDailyCouponQuantity = ref(0);
 const originIsDailyCouponGenerate = ref(false);
+const showModal = ref(false);
+
+const handleConfirm = () => {
+  immediatelyCoupon();
+  showModal.value = false;
+};
+
+const handleCancel = () => {
+  showModal.value = false;
+};
 
 onMounted(() => {
   getCouponSetting();
@@ -100,22 +126,43 @@ const applySettings = async () => {
 
 // 쿠폰 상태 체크
 const checkCouponData = () => {
-  if (dailyCouponQuantity.value <= 0 || dailyCouponQuantity.value > 100) {
-    alert("쿠폰은 1~100개 설정이 가능합니다.");
+  if (dailyCouponQuantity.value < 0 || dailyCouponQuantity.value > 100) {
+    alert("쿠폰은 0 ~ 100개 까지 설정이 가능합니다.");
     return false;
   }
   return true;
+};
+
+// 쿠폰 즉시 발급
+const immediatelyCoupon = async () => {
+  try {
+    // 쿠폰 개수 사전 체크
+    if (!checkCouponData()) return;
+
+    const response = await $axios.post(
+      `${$apiBaseUrl}/api/admin/coupons`,
+      {
+        dailyCouponQuantity: dailyCouponQuantity.value,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    alert(response.data.message);
+  } catch (error) {
+    alert(error.response.data.message);
+  }
 };
 </script>
 
 <style scoped>
 .container {
-  max-width: 300px; /* 폼의 최대 너비 설정 */
-  margin: 150px auto; /* 상하 여백과 가운데 정렬 */
+  max-width: 300px;
+  margin: 150px auto;
   padding: 50px;
-  background-color: #fff; /* 배경색 */
-  border: 1px solid #e0e0e0; /* 경계선 */
-  border-radius: 4px; /* 경계 둥글기 */
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
 }
 
 .from-title {
@@ -127,14 +174,14 @@ const checkCouponData = () => {
 }
 
 .form-control {
-  margin-bottom: 20px; /* 하단 여백 */
+  margin-bottom: 20px;
 }
 
 label {
   display: block;
-  font-size: 16px; /* 글꼴 크기 조정 */
-  color: #333; /* 글꼴색 */
-  margin-bottom: 10px; /* 라벨 하단 여백 */
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 10px;
 }
 
 select {
@@ -144,52 +191,49 @@ select {
 select,
 input {
   padding: 10px;
-  border: 1px solid #e0e0e0; /* 경계선 스타일 */
-  border-radius: 4px; /* 입력 필드 경계 둥글기 */
-  font-size: 16px; /* 글꼴 크기 조정 */
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 16px;
 }
 
 .buttons {
   display: flex;
-  justify-content: space-between; /* 버튼 사이의 간격을 균등하게 분배 */
-  margin-top: 20px; /* 버튼 상단 여백 */
+  justify-content: space-between;
+  margin-top: 50px;
 }
 
-button {
-  padding: 10px 20px; /* 패딩 */
-  font-size: 16px; /* 글꼴 크기 */
-  cursor: pointer; /* 포인터 모양 변경 */
-  border: 1px solid #3498db; /* 버튼 경계선 */
-  border-radius: 4px; /* 버튼 경계 둥글기 */
-  background-color: #3498db; /* 버튼 배경색 */
-  color: white; /* 글꼴색 */
-  outline: none; /* 윤곽선 제거 */
-  transition: background-color 0.2s, border-color 0.2s; /* 색상 전환 효과 */
+.btn {
+  background-color: #eeeeee;
+}
+.btn,
+.btn-immediately {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 1000;
+  cursor: pointer;
+  border-radius: 4px;
+  color: #5c5c5c;
+  outline: none;
+  border: none;
+  transition: background-color 0.2s, border-color 0.2s;
 }
 
-button:hover {
-  background-color: #2980b9; /* 호버 시 배경색 변경 */
-  border-color: #2980b9; /* 호버 시 경계선 색상 변경 */
+.btn:hover {
+  background-color: #c7c7c7;
+  border-color: #c7c7c7;
 }
 
-button:active {
-  background-color: #2471a3; /* 클릭 시 배경색 */
-  border-color: #2471a3; /* 클릭 시 경계선 색상 */
+.btn:active {
+  background-color: #c7c7c7;
+  border-color: #c7c7c7;
 }
 
-/* 선택된 버튼 스타일을 다르게 하고 싶다면 추가 클래스를 사용 */
-button.apply {
-  background-color: #28a745; /* 적용 버튼의 배경색 */
-  border-color: #28a745; /* 적용 버튼의 경계선 색상 */
+.btn-immediately:hover {
+  background-color: #ffcdb8;
+  border-color: #ffcdb8;
 }
-
-button.apply:hover {
-  background-color: #218838; /* 적용 버튼 호버 시 배경색 */
-  border-color: #218838; /* 적용 버튼 호버 시 경계선 색상 */
-}
-
-button.apply:active {
-  background-color: #1e7e34; /* 적용 버튼 클릭 시 배경색 */
-  border-color: #1e7e34; /* 적용 버튼 클릭 시 경계선 색상 */
+.btn-immediately {
+  background-color: #ffe8de;
+  color: #db0700;
 }
 </style>

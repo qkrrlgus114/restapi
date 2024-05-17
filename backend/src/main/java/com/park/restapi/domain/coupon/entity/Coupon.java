@@ -32,4 +32,9 @@ public class Coupon {
     public void decreasedCoupon(){
         this.remainingQuantity--;
     }
+
+    public void updateCouponQuantity(int quantity){
+        this.remainingQuantity = quantity;
+        this.totalQuantity = quantity;
+    }
 }
