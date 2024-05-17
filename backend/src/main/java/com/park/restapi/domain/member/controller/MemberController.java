@@ -6,18 +6,21 @@ import com.park.restapi.domain.member.dto.response.MemberInfoResponseDTO;
 import com.park.restapi.domain.member.service.MemberService;
 import com.park.restapi.domain.member.service.impl.MemberServiceImpl;
 import com.park.restapi.util.response.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.net.URI;
 
 
 @RestController

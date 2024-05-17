@@ -5,7 +5,7 @@
       <label for="status"
         >쿠폰 발급 상태 <br />(매일 00:00시에 쿠폰이 발급됩니다.)</label
       >
-      <select id="status" v-model="dailyCouponSetting.isDailyCouponGenerate">
+      <select id="status" v-model="isDailyCouponGenerate">
         <option value="true">On</option>
         <option value="false">Off</option>
       </select>
@@ -18,79 +18,93 @@
       <input
         id="quantity"
         type="number"
-        v-model="dailyCouponSetting.dailyCouponQuantity"
-        min="0"
+        min="1"
+        max="100"
+        v-model="dailyCouponQuantity"
       />
     </div>
     <div class="buttons">
       <button @click="resetSettings">초기화</button>
+      <button>즉시 발급</button>
       <button @click="applySettings">적용</button>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: "AdminView",
-  data() {
-    return {
-      dailyCouponSetting: {
-        isDailyCouponGenerate: false,
-        dailyCouponQuantity: 0,
-      },
-      originalSetting: {
-        isDailyCouponGenerate: false,
-        dailyCouponQuantity: 0,
-      },
-    };
-  },
-  mounted() {
-    this.getCouponSetting();
-  },
-  methods: {
-    // 쿠폰 설정 가져오기
-    getCouponSetting() {
-      this.$axios
-        .get(`${this.$apiBaseUrl}/api/admin/coupons/setting`, {
-          withCredentials: true,
-        })
-        .then((response) => {
-          this.dailyCouponSetting = response.data.data;
-          this.originalSetting = response.data.data;
-        })
-        .catch((error) => {
-          console.error("토큰 개수 갱신 중 오류 발생:", error);
-          alert(error.message);
-        });
-    },
-    // 쿠폰 설정 적용하기
-    applySettings() {
-      if (this.dailyCouponSetting.dailyCouponQuantity === 0) {
-        alert("데일리 쿠폰은 최소 1개부터 가능합니다.");
-      } else if (this.dailyCouponSetting.dailyCouponQuantity > 100) {
-        alert("데일리 쿠폰은 최대 100개까지 가능합니다.");
-      } else {
-        this.$axios
-          .patch(
-            `${this.$apiBaseUrl}/api/admin/coupons/setting`,
-            this.dailyCouponSetting,
-            {
-              withCredentials: true,
-            }
-          )
-          .then((response) => {
-            alert(response.data.message);
-            this.$router.go();
-          })
-          .catch((error) => {
-            console.error("토큰 개수 갱신 중 오류 발생:", error);
-          });
+<script setup>
+import { useMainStore } from "@/store/store.js";
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import { useGlobalProperties } from "@/composables/useGlobalProperties";
+
+const { $axios, $apiBaseUrl } = useGlobalProperties();
+const store = useMainStore();
+const router = useRouter();
+
+const dailyCouponQuantity = ref(0);
+const isDailyCouponGenerate = ref(false);
+const originDailyCouponQuantity = ref(0);
+const originIsDailyCouponGenerate = ref(false);
+
+onMounted(() => {
+  getCouponSetting();
+});
+
+// 쿠폰 설정 가져오기
+const getCouponSetting = async () => {
+  try {
+    const response = await $axios.get(
+      `${$apiBaseUrl}/api/admin/coupons/setting`,
+      {
+        withCredentials: true,
       }
-    },
-    resetSettings() {
-      this.dailyCouponSetting = { ...this.originalSetting };
-    },
-  },
+    );
+    dailyCouponQuantity.value = response.data.data.dailyCouponQuantity;
+    isDailyCouponGenerate.value = response.data.data.isDailyCouponGenerate;
+    originDailyCouponQuantity.value = dailyCouponQuantity.value;
+    originIsDailyCouponGenerate.value = isDailyCouponGenerate.value;
+  } catch (error) {
+    alert(error.response.data.message);
+  }
+};
+
+// 초기화 로직
+const resetSettings = () => {
+  dailyCouponQuantity.value = originDailyCouponQuantity.value;
+  isDailyCouponGenerate.value = originIsDailyCouponGenerate.value;
+};
+
+// 쿠폰 설정 변경
+const applySettings = async () => {
+  try {
+    // 쿠폰 개수 사전 체크
+    if (!checkCouponData()) return;
+
+    const response = await $axios.patch(
+      `${$apiBaseUrl}/api/admin/coupons/setting`,
+      {
+        isDailyCouponGenerate: isDailyCouponGenerate.value,
+        dailyCouponQuantity: dailyCouponQuantity.value,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    alert(response.data.message);
+    originDailyCouponQuantity.value = dailyCouponQuantity.value;
+    originIsDailyCouponGenerate.value = isDailyCouponGenerate.value;
+  } catch (error) {
+    alert(error.response.data.message);
+  }
+};
+
+// 쿠폰 상태 체크
+const checkCouponData = () => {
+  if (dailyCouponQuantity.value <= 0 || dailyCouponQuantity.value > 100) {
+    alert("쿠폰은 1~100개 설정이 가능합니다.");
+    return false;
+  }
+  return true;
 };
 </script>
 

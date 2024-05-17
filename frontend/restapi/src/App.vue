@@ -1,15 +1,17 @@
 <template>
-  <navbar v-if="loginState"></navbar>
+  <navbar v-if="showNavbar"></navbar>
   <router-view></router-view>
 </template>
 
 <script setup>
 import Navbar from "./components/Navbar.vue";
-import { useMainStore } from "@/store/store.js";
+import { useRoute } from "vue-router";
 import { computed } from "vue";
 
-const store = useMainStore();
-const loginState = computed(() => store.loginState);
+const route = useRoute();
+const showNavbar = computed(() => {
+  return route.meta.showNavbar !== false;
+});
 </script>
 
 <style scoped></style>

@@ -1,11 +1,11 @@
 <template>
-  <div v-if="!shouldHideNavbar">
+  <div>
     <nav class="navbar">
       <a @click="goHome" img>RESTAPI</a>
       <div class="user-info">
         <button v-if="isAdmin" @click="goAdmin">관리자 설정</button>
         <h2>{{ nickname }}</h2>
-        <h2>남은 토큰 : {{ token }}</h2>
+        <h2>남은 토큰 : {{ token }} 개</h2>
         <div class="buttons">
           <button @click="renewToken" class="refresh-button">토큰 갱신</button>
           <button @click="logout" class="logout-button">로그아웃</button>
@@ -13,7 +13,7 @@
       </div>
     </nav>
     <div class="coupon-info">
-      <h2>오늘의 선착순 쿠폰(토큰) : {{ coupon }}개</h2>
+      <h2>오늘의 선착순 쿠폰(토큰) : {{ coupon }} 개</h2>
       <button class="receive-button" @click="acquiredToken">토큰 받기</button>
     </div>
   </div>
@@ -21,7 +21,7 @@
 
 <script setup>
 import { useMainStore } from "@/store/store.js";
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useGlobalProperties } from "@/composables/useGlobalProperties";
 
@@ -32,10 +32,13 @@ const router = useRouter();
 const nickname = computed(() => store.nickname);
 const coupon = computed(() => store.coupon);
 const token = computed(() => store.token);
+const isAdmin = ref(false);
 
 onMounted(() => {
   loadUserInfo();
   loadCouponInfo();
+  const admin = store.getAdminRole;
+  if (admin) isAdmin.value = true;
 });
 
 // 유저 정보 호출
@@ -81,7 +84,6 @@ const renewToken = async () => {
     const response = await $axios.get(`${$apiBaseUrl}/api/tokens`, {
       withCredentials: true,
     });
-    console.log(response);
     store.updateToken(response.data.data);
     alert(response.data.message);
   } catch (error) {

@@ -9,8 +9,7 @@
             <label for="model">GPT 모델 선택</label>
             <select v-model="formData.model" id="model">
               <option disabled value="">모델 선택</option>
-              <option value="gpt-3.5-turbo">GPT-3.5</option>
-              <option value="gpt-4">GPT-4</option>
+              <option value="gpt-4o">GPT-4o</option>
             </select>
           </div>
           <div class="form-group">
@@ -43,7 +42,7 @@
             ></textarea>
           </div>
           <div class="form-actions">
-            <button :disabled="!isFormValid" @click="submitForm">제출</button>
+            <button @click="checkFormData">제출</button>
             <button type="button" @click="resetForm">초기화</button>
           </div>
         </div>
@@ -51,7 +50,7 @@
           <h2>추천 결과:</h2>
           <ul>
             <li v-for="(item, index) in contentItems" :key="index">
-              {{ item }}
+              {{ index + 1 }}. {{ item }}
             </li>
           </ul>
         </div>
@@ -62,7 +61,7 @@
 
 <script setup>
 import { useMainStore } from "@/store/store.js";
-import { ref, computed } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useGlobalProperties } from "@/composables/useGlobalProperties";
 
@@ -73,6 +72,47 @@ const router = useRouter();
 const formData = ref({ model: "", methodType: "", resource: "", content: "" });
 const isLoading = ref(false);
 const contentItems = ref([]);
+
+// form 데이터 검사
+const checkFormData = () => {
+  const { model, methodType, resource, content } = formData.value;
+
+  if (!model || !methodType || !resource || !content) {
+    alert("모든 필드를 채워주세요.");
+    return;
+  }
+
+  submitForm();
+};
+
+// rest api 제출
+const submitForm = async () => {
+  if (store.getToken <= 0) {
+    alert("토큰이 부족합니다.");
+    return;
+  }
+  isLoading.value = true;
+
+  try {
+    const response = await $axios.post(
+      `${$apiBaseUrl}/api/gpt/recommendations`,
+      formData.value,
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(response);
+    alert(response.data.message);
+    const choices = response.data.data.choices;
+    const recommendations = choices[0].message.content.split(", ");
+    contentItems.value = recommendations;
+    store.decrementToken();
+  } catch (error) {
+    alert(error.response.data.message);
+  } finally {
+    isLoading.value = false;
+  }
+};
 </script>
 
 <style scoped>

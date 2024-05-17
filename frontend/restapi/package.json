@@ -13,6 +13,7 @@
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
     "vue": "^3.4.21",
+    "vue-cookies": "^1.8.4",
     "vue-router": "^4.3.0",
     "vuex": "^4.0.2",
     "vuex-persistedstate": "^4.1.0"

@@ -73,14 +73,15 @@ public class ApiRequestServiceImpl implements ApiRequestService {
                             "- HTTP 메서드: %s\n" +
                             "- 주체가 되는 자원: %s\n" +
                             "- 작업 설명: %s\n\n" +
-                            "제안할 API 경로는 다음 RESTful 디자인 규칙을 따라야 합니다:\n" +
+                            "제안할 API 경9로는 다음 RESTful 디자인 규칙을 따라야 합니다:\n" +
                             "1. 자원을 명사로 나타내고, URI의 마지막에 슬래시(/)는 사용하지 않습니다.\n" +
                             "2. 가독성을 위해 하이픈(-)을 사용하고, 언더스코어(_)는 사용하지 않습니다.\n" +
                             "3. 모두 소문자를 사용합니다.\n" +
                             "4. URI에 파일 확장자는 포함하지 않습니다.\n" +
                             "5. CRUD 함수 이름을 URI에 포함하지 않고, 대신 적절한 HTTP 메서드를 사용합니다.\n" +
                             "6. 자원의 필터링을 위해서는 쿼리 파라미터를 사용합니다.\n\n" +
-                            "제안된 API 경로는 쉼표(,)로 구분해서 나열해주세요. 예: [POST] /users, [POST] /users/{id}/posts, [POST] /posts/{id}/comments",
+                            "제안된 API 경로는 쉼표(,)로 구분해서 나열해주세요. 예: [POST] /users, [POST] /users/{id}/posts, [POST] /posts/{id}/comments\n\n" +
+                            "답변에는 API의 경로만 있어야 합니다.",
                     method, resource, content
             );
 

@@ -31,7 +31,7 @@
 
 <script setup>
 import { useMainStore } from "@/store/store.js";
-import { ref, computed } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useGlobalProperties } from "@/composables/useGlobalProperties";
 
@@ -41,6 +41,16 @@ const router = useRouter();
 
 const email = ref("");
 const password = ref("");
+const loginState = store.getLoginState;
+
+onMounted(() => {
+  checkLogin();
+});
+
+// 로그인 상태 검사
+const checkLogin = () => {
+  if (loginState) router.push("/chat");
+};
 
 // 이메일 검사
 const isValidEmail = (email) => {
@@ -81,6 +91,11 @@ const login = async () => {
   } catch (error) {
     alert(error.response.data.message);
   }
+};
+
+// 회원가입 이동
+const register = () => {
+  router.push("/register");
 };
 </script>
 
