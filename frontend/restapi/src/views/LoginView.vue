@@ -33,9 +33,8 @@
 import { useMainStore } from "@/store/store.js";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { useGlobalProperties } from "@/composables/useGlobalProperties";
+import { apiPost, getBaseURL } from "@/utils/api";
 
-const { $axios, $apiBaseUrl } = useGlobalProperties();
 const store = useMainStore();
 const router = useRouter();
 
@@ -59,7 +58,8 @@ const isValidEmail = (email) => {
 
 // 카카오 로그인 함수
 const kakaoLogin = () => {
-  window.location.href = `${$apiBaseUrl}/oauth2/authorization/kakao`;
+  const baseUrl = getBaseURL();
+  window.location.href = `${baseUrl}/oauth2/authorization/kakao`;
 };
 
 // 로그인 함수
@@ -81,16 +81,13 @@ const login = async () => {
   }
 
   try {
-    await $axios.post(
-      `${$apiBaseUrl}/api/login`,
-      { email: email.value, password: password.value },
-      { withCredentials: true }
-    );
+    await apiPost("/api/login", {
+      email: email.value,
+      password: password.value,
+    });
     store.loginState = true;
     router.push("/chat");
-  } catch (error) {
-    alert(error.response.data.message);
-  }
+  } catch (error) {}
 };
 
 // 회원가입 이동

@@ -66,9 +66,8 @@
 import { useMainStore } from "@/store/store.js";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { useGlobalProperties } from "@/composables/useGlobalProperties";
+import { apiPost, apiGet } from "@/utils/api";
 
-const { $axios, $apiBaseUrl } = useGlobalProperties();
 const store = useMainStore();
 const router = useRouter();
 
@@ -126,14 +125,10 @@ const sendCertificationCode = async () => {
   }
   isLoading.value = true;
   try {
-    await $axios.post(`${$apiBaseUrl}/api/authentications/send`, {
-      email: email.value,
-    });
+    await apiPost("/api/authentications/send", { email: email.value });
     showCertificationInput.value = true;
     alert("인증번호가 전송되었습니다.");
   } catch (error) {
-    // alert();
-    alert(error.response.data.message);
   } finally {
     isLoading.value = false;
   }
@@ -142,18 +137,13 @@ const sendCertificationCode = async () => {
 // 인증번호 확인
 const checkCertificationCode = async () => {
   try {
-    const response = await $axios.post(
-      `${$apiBaseUrl}/api/authentications/verify`,
-      {
-        certificationCode: certificationCode.value,
-      }
-    );
-    alert(response.data.message);
+    const data = await apiPost("/api/authentications/verify", {
+      certificationCode: certificationCode.value,
+    });
+    alert(data.message);
     isDisabled.value = true;
     isCheckCertification.value = true;
-  } catch (error) {
-    alert(error.response.data.message);
-  }
+  } catch (error) {}
 };
 
 // 회원가입
@@ -161,16 +151,14 @@ const register = async () => {
   if (!checkInputValue()) return;
 
   try {
-    const response = await $axios.post(`${$apiBaseUrl}/api/signup`, {
+    const data = await apiPost("/api/signup", {
       email: email.value,
       password: password.value,
       nickname: nickname.value,
     });
-    alert(response.data.message);
+    alert(data.message);
     router.push("/login");
-  } catch (error) {
-    alert(error.response.data.message);
-  }
+  } catch (error) {}
 };
 </script>
 

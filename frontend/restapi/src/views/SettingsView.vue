@@ -50,10 +50,9 @@
 import { useMainStore } from "@/store/store.js";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { useGlobalProperties } from "@/composables/useGlobalProperties";
+import { apiPost, apiGet, apiPatch } from "@/utils/api";
 import Modal from "../components/Modal.vue";
 
-const { $axios, $apiBaseUrl } = useGlobalProperties();
 const store = useMainStore();
 const router = useRouter();
 
@@ -79,19 +78,12 @@ onMounted(() => {
 // 쿠폰 설정 가져오기
 const getCouponSetting = async () => {
   try {
-    const response = await $axios.get(
-      `${$apiBaseUrl}/api/admin/coupons/setting`,
-      {
-        withCredentials: true,
-      }
-    );
-    dailyCouponQuantity.value = response.data.data.dailyCouponQuantity;
-    isDailyCouponGenerate.value = response.data.data.isDailyCouponGenerate;
+    const data = await apiGet("/api/admin/coupons/setting");
+    dailyCouponQuantity.value = data.data.dailyCouponQuantity;
+    isDailyCouponGenerate.value = data.data.isDailyCouponGenerate;
     originDailyCouponQuantity.value = dailyCouponQuantity.value;
     originIsDailyCouponGenerate.value = isDailyCouponGenerate.value;
-  } catch (error) {
-    alert(error.response.data.message);
-  }
+  } catch (error) {}
 };
 
 // 초기화 로직
@@ -106,22 +98,14 @@ const applySettings = async () => {
     // 쿠폰 개수 사전 체크
     if (!checkCouponData()) return;
 
-    const response = await $axios.patch(
-      `${$apiBaseUrl}/api/admin/coupons/setting`,
-      {
-        isDailyCouponGenerate: isDailyCouponGenerate.value,
-        dailyCouponQuantity: dailyCouponQuantity.value,
-      },
-      {
-        withCredentials: true,
-      }
-    );
-    alert(response.data.message);
+    const data = await apiPatch("/api/admin/coupons/setting", {
+      isDailyCouponGenerate: isDailyCouponGenerate.value,
+      dailyCouponQuantity: dailyCouponQuantity.value,
+    });
+    alert(data.message);
     originDailyCouponQuantity.value = dailyCouponQuantity.value;
     originIsDailyCouponGenerate.value = isDailyCouponGenerate.value;
-  } catch (error) {
-    alert(error.response.data.message);
-  }
+  } catch (error) {}
 };
 
 // 쿠폰 상태 체크
@@ -139,19 +123,11 @@ const immediatelyCoupon = async () => {
     // 쿠폰 개수 사전 체크
     if (!checkCouponData()) return;
 
-    const response = await $axios.post(
-      `${$apiBaseUrl}/api/admin/coupons`,
-      {
-        dailyCouponQuantity: dailyCouponQuantity.value,
-      },
-      {
-        withCredentials: true,
-      }
-    );
-    alert(response.data.message);
-  } catch (error) {
-    alert(error.response.data.message);
-  }
+    const data = await apiPost("/api/admin/coupons", {
+      dailyCouponQuantity: dailyCouponQuantity.value,
+    });
+    alert(data.message);
+  } catch (error) {}
 };
 </script>
 

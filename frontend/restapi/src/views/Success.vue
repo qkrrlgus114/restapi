@@ -6,9 +6,8 @@
 import { useMainStore } from "@/store/store.js";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { useGlobalProperties } from "@/composables/useGlobalProperties";
+import { apiPost, apiGet } from "@/utils/api";
 
-const { $axios, $apiBaseUrl } = useGlobalProperties();
 const store = useMainStore();
 const router = useRouter();
 
@@ -18,16 +17,12 @@ onMounted(() => {
 
 const socialLogin = async () => {
   try {
-    await $axios.post(
-      `${$apiBaseUrl}/api/social-login`,
-      { social: true },
-      { withCredentials: true }
-    );
+    await apiPost("/api/social-login", {
+      social: true,
+    });
     store.loginState = true;
     router.push("/chat");
-  } catch (error) {
-    alert(error.response.data.message);
-  }
+  } catch (error) {}
 };
 </script>
 

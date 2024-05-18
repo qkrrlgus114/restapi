@@ -61,11 +61,10 @@
 
 <script setup>
 import { useMainStore } from "@/store/store.js";
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { useGlobalProperties } from "@/composables/useGlobalProperties";
+import { apiPost } from "@/utils/api";
 
-const { $axios, $apiBaseUrl } = useGlobalProperties();
 const store = useMainStore();
 const router = useRouter();
 
@@ -94,21 +93,13 @@ const submitForm = async () => {
   isLoading.value = true;
 
   try {
-    const response = await $axios.post(
-      `${$apiBaseUrl}/api/gpt/recommendations`,
-      formData.value,
-      {
-        withCredentials: true,
-      }
-    );
-    console.log(response);
-    alert(response.data.message);
-    const choices = response.data.data.choices;
+    const data = await apiPost("/api/gpt/recommendations", formData.value);
+    alert(data.message);
+    const choices = data.data.choices;
     const recommendations = choices[0].message.content.split(", ");
     contentItems.value = recommendations;
     store.decrementToken();
   } catch (error) {
-    alert(error.response.data.message);
   } finally {
     isLoading.value = false;
   }

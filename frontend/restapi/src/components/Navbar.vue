@@ -22,10 +22,9 @@
 <script setup>
 import { useMainStore } from "@/store/store.js";
 import { computed, onMounted, ref } from "vue";
+import { apiGet, apiPost } from "@/utils/api";
 import { useRouter } from "vue-router";
-import { useGlobalProperties } from "@/composables/useGlobalProperties";
 
-const { $axios, $apiBaseUrl } = useGlobalProperties();
 const store = useMainStore();
 const router = useRouter();
 
@@ -44,51 +43,35 @@ onMounted(() => {
 // 유저 정보 호출
 const loadUserInfo = async () => {
   try {
-    const response = await $axios.get(`${$apiBaseUrl}/api/users`, {
-      withCredentials: true,
-    });
-    store.updateUserInfo(response.data.data);
-  } catch (error) {
-    alert(error.response.data.message);
-  }
+    const data = await apiGet("api/users");
+    store.updateUserInfo(data.data);
+  } catch (error) {}
 };
 
 // 쿠폰 정보 호출
 const loadCouponInfo = async () => {
   try {
-    const response = await $axios.get(`${$apiBaseUrl}/api/coupons`, {
-      withCredentials: true,
-    });
-    store.updateCouponInfo(response.data.data);
-  } catch (error) {
-    alert(error.response.data.message);
-  }
+    const data = await apiGet("/api/coupons");
+    store.updateCouponInfo(data.data);
+  } catch (error) {}
 };
 
 // 로그아웃 함수
 const logout = async () => {
   try {
-    await $axios.get(`${$apiBaseUrl}/api/logout`, {
-      withCredentials: true,
-    });
+    await apiGet("/api/logout");
     store.logout();
     router.push("/");
-  } catch (error) {
-    alert(error.response.data.message);
-  }
+  } catch (error) {}
 };
 
 // 토큰 갱신
 const renewToken = async () => {
   try {
-    const response = await $axios.get(`${$apiBaseUrl}/api/tokens`, {
-      withCredentials: true,
-    });
-    store.updateToken(response.data.data);
-    alert(response.data.message);
-  } catch (error) {
-    alert(error.response.data.message);
-  }
+    const data = await apiGet("/api/tokens");
+    store.updateToken(data.data);
+    alert(data.message);
+  } catch (error) {}
 };
 
 // 데일리 쿠폰 사용하기(토큰 획득)
@@ -100,19 +83,11 @@ const acquiredToken = async () => {
       return;
     }
 
-    const response = await $axios.post(
-      `${$apiBaseUrl}/api/coupons`,
-      {},
-      {
-        withCredentials: true,
-      }
-    );
+    await apiPost("/api/coupons");
     store.incrementToken();
     store.decrementCoupon();
     alert("토큰 1개를 획득하셨습니다.");
-  } catch (error) {
-    alert(error.response.data.message);
-  }
+  } catch (error) {}
 };
 
 // 홈으로 이동
