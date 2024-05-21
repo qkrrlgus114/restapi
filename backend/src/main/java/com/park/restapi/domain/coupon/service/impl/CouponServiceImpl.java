@@ -36,14 +36,13 @@ public class CouponServiceImpl implements CouponService {
     private final CouponHistoryRepository couponHistoryRepository;
     private final CouponSettingRepository couponSettingRepository;
     private final MemberRepository memberRepository;
+    private final JwtService jwtService;
     
     // 쿠폰 획득
     @Override
     @Transactional
     public void acquisitionCoupon() {
-        Long currentUserId = JwtService.getCurrentUserId();
-        Member member = memberRepository.findById(currentUserId)
-                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_USER, "유저 데이터 없음"));
+        Member member = getCurrentMember();
 
         // 오늘 획득한 이력이 있으면 중복 불가.
         LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
@@ -133,8 +132,8 @@ public class CouponServiceImpl implements CouponService {
 
     // 현재 로그인 유저 찾기
     private Member getCurrentMember() {
-        Long currentUserId = JwtService.getCurrentUserId();
+        Long currentUserId = jwtService.getCurrentUserId();
         return memberRepository.findById(currentUserId)
-                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_USER, currentUserId + "번 유저를 찾지 못했습니다."));
+                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 }

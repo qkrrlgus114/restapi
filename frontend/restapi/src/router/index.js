@@ -5,6 +5,7 @@ import ChatView from "../views/ChatView.vue";
 import MainView from "../views/MainView.vue";
 import NotFoundComponent from "../components/NotFoundComponent.vue";
 import Success from "../views/Success.vue";
+import Failure from "../views/Failure.vue";
 import AdminView from "../views/AdminView.vue";
 import { useMainStore } from "../store/store.js";
 import RequestLogView from "@/views/RequestLogView.vue";
@@ -40,6 +41,12 @@ const routes = [
     path: "/success",
     name: "Success",
     component: Success,
+    meta: { showNavbar: false },
+  },
+  {
+    path: "/failure",
+    name: "Failure",
+    component: Failure,
     meta: { showNavbar: false },
   },
   {

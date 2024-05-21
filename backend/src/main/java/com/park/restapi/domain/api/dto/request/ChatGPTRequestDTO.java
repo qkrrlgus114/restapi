@@ -15,11 +15,17 @@ import java.util.List;
 public class ChatGPTRequestDTO {
 
     private String model;
+
     private List<Message> messages;
+
     private int temperature = 1;
+
     private int maxTokens = 256;
+
     private int topP = 1;
+
     private int frequencyPenalty = 0;
+
     private int presencePenalty = 0;
 
     @Builder

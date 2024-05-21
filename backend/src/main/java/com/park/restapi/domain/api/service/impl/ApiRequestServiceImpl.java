@@ -41,6 +41,7 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     private String apiKey;
     private final MemberRepository memberRepository;
     private final ApiRequestHistoryRepository apiRequestHistoryRepository;
+    private final JwtService jwtService;
 
     private final Semaphore semaphore = new Semaphore(5);
 
@@ -54,9 +55,7 @@ public class ApiRequestServiceImpl implements ApiRequestService {
         try {
             semaphore.acquire();
 
-            Long currentUserId = JwtService.getCurrentUserId();
-            member = memberRepository.findById(currentUserId)
-                    .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_USER, "유저 데이터 없음"));
+            member = getCurrentMember();
 
             if (member.getToken() <= 0) {
                 throw new MemberException(MemberExceptionInfo.NO_REMAINING_USES, "토큰 부족");
@@ -147,8 +146,8 @@ public class ApiRequestServiceImpl implements ApiRequestService {
 
     // 현재 로그인 유저 찾기
     private Member getCurrentMember() {
-        Long currentUserId = JwtService.getCurrentUserId();
+        Long currentUserId = jwtService.getCurrentUserId();
         return memberRepository.findById(currentUserId)
-                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_USER, currentUserId + "번 유저를 찾지 못했습니다."));
+                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 }

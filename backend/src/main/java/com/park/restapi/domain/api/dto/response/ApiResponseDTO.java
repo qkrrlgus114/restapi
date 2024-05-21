@@ -6,5 +6,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ApiResponseDTO {
+
     private String responseContent;
 }

@@ -3,11 +3,13 @@ package com.park.restapi.domain.member.service.impl;
 
 import com.park.restapi.domain.exception.exception.MemberException;
 import com.park.restapi.domain.exception.info.MemberExceptionInfo;
+import com.park.restapi.domain.member.dto.request.DeactivateRequestDTO;
 import com.park.restapi.domain.member.dto.request.LoginInfoRequestDTO;
 import com.park.restapi.domain.member.dto.request.SignUpRequestDTO;
 import com.park.restapi.domain.member.dto.response.MemberInfoResponseDTO;
 import com.park.restapi.domain.member.entity.Member;
 import com.park.restapi.domain.member.entity.MemberRole;
+import com.park.restapi.domain.member.entity.SocialType;
 import com.park.restapi.domain.member.repository.MemberRepository;
 import com.park.restapi.domain.member.repository.MemberRoleRepository;
 import com.park.restapi.domain.member.service.MemberService;
@@ -40,7 +42,7 @@ public class MemberServiceImpl implements MemberService {
     public void signUp(SignUpRequestDTO signUpRequestDTO) throws IOException, InterruptedException {
         // 기존에 데이터가 있는지 확인
         if(memberRepository.existsByEmail(signUpRequestDTO.getEmail())){
-            throw new MemberException(MemberExceptionInfo.EXIST_USER_SIGNUP_DATA, "회원가입 중복 데이터 발생");
+            throw new MemberException(MemberExceptionInfo.EXIST_MEMBER_SIGNUP_DATA, "회원가입 중복 데이터 발생");
         }
 
         // 유저 생성
@@ -48,7 +50,8 @@ public class MemberServiceImpl implements MemberService {
                 .nickname(signUpRequestDTO.getNickname())
                 .email(signUpRequestDTO.getEmail())
                 .password(encoder.encode(signUpRequestDTO.getPassword()))
-                .loginLastDate(LocalDateTime.now()).build();
+                .loginLastDate(LocalDateTime.now())
+                .socialType(SocialType.GENERAL).build();
         Member saveMember = memberRepository.save(member);
 
         // 유저 역할 생성
@@ -70,6 +73,16 @@ public class MemberServiceImpl implements MemberService {
     public void login(LoginInfoRequestDTO loginInfoRequestDTO, HttpServletResponse response) {
         Member member = memberRepository.findByMemberLogin(loginInfoRequestDTO.getEmail())
                 .orElseThrow(() -> new MemberException(MemberExceptionInfo.FAIL_LOGIN, loginInfoRequestDTO.getEmail() + "에 맞는 유저를 찾지 못했습니다.(로그인 실패)"));
+
+        // 추방 여부 판단
+        if(member.getBannedDate() != null){
+            throw new MemberException(MemberExceptionInfo.BANNED_MEMBER, loginInfoRequestDTO.getEmail() + " 유저가 로그인 시도를 진행했습니다.(추방된 유저)");
+        }
+
+        // 탈퇴 여부 판단
+        if(member.getWithdrawalDate() != null){
+            throw new MemberException(MemberExceptionInfo.WITHDRAWAL_MEMBER, loginInfoRequestDTO.getEmail() + " 유저가 로그인 시도를 진행했습니다.(탈퇴한 유저)");
+        }
 
         if(!member.getEmail().startsWith("test")){
             if(!encoder.matches(loginInfoRequestDTO.getPassword(), member.getPassword())){
@@ -124,6 +137,27 @@ public class MemberServiceImpl implements MemberService {
         deleteCookie(response, "refreshToken");
     }
 
+    // 일반 유저 탈퇴
+    @Override
+    @Transactional
+    public void deactivateGeneralMember(DeactivateRequestDTO requestDTO) {
+        Member currentMember = getCurrentMember();
+        if(!encoder.matches(requestDTO.getPassword(), currentMember.getPassword())){
+            throw new MemberException(MemberExceptionInfo.NOT_MATCH_PASSWORD, currentMember.getEmail() + " 유저 비밀번호 불일치 발생(회원 탈퇴)");
+        }
+
+        currentMember.updateWithdrawalDate();
+    }
+
+    // 소셜 유저 탈퇴
+    @Override
+    @Transactional
+    public void deactivateSocialMember() {
+        Member currentMember = getCurrentMember();
+
+        currentMember.updateWithdrawalDate();
+    }
+
     // 쿠키 저장
     private void saveCookie(HttpServletResponse response, String tokenName, String tokenValue){
         Cookie tokenCookie = new Cookie(tokenName, tokenValue);
@@ -144,9 +178,9 @@ public class MemberServiceImpl implements MemberService {
 
     // 현재 로그인 유저 찾기
     private Member getCurrentMember() {
-        Long currentUserId = JwtService.getCurrentUserId();
+        Long currentUserId = jwtService.getCurrentUserId();
         return memberRepository.findById(currentUserId)
-                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_USER, currentUserId + "번 유저를 찾지 못했습니다."));
+                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 
 }

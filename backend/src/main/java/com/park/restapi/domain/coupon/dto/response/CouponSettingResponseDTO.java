@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CouponSettingResponseDTO {
+
     private Boolean isDailyCouponGenerate;
+
     private Integer dailyCouponQuantity;
 
     @Builder

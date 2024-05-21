@@ -11,8 +11,6 @@ const handleApiError = (error) => {
     error.response.status === 401 &&
     error.response.data.error == "쿠키가 존재하지 않습니다."
   ) {
-    console.log("에러뜸 ㅠㅠ");
-    console.log(error);
     store.logout();
     router.push("/login");
   } else {

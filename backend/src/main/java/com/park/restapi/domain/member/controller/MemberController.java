@@ -1,8 +1,10 @@
 package com.park.restapi.domain.member.controller;
 
+import com.park.restapi.domain.member.dto.request.DeactivateRequestDTO;
 import com.park.restapi.domain.member.dto.request.LoginInfoRequestDTO;
 import com.park.restapi.domain.member.dto.request.SignUpRequestDTO;
 import com.park.restapi.domain.member.dto.response.MemberInfoResponseDTO;
+import com.park.restapi.domain.member.entity.SocialType;
 import com.park.restapi.domain.member.service.MemberService;
 import com.park.restapi.domain.member.service.impl.MemberServiceImpl;
 import com.park.restapi.util.response.ApiResponse;
@@ -81,11 +83,30 @@ public class MemberController {
     }
 
     // 유저 정보 조회
-    @GetMapping("users")
-    public ResponseEntity<ApiResponse<MemberInfoResponseDTO>> getUserInfo() {
+    @GetMapping("members")
+    public ResponseEntity<ApiResponse<MemberInfoResponseDTO>> getMemberInfo() {
         MemberInfoResponseDTO userInfo = memberService.getUserInfo();
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(userInfo, "현재 로그인 유저의 정보"));
+    }
+
+    // 유저 탈퇴
+    @PatchMapping("members/deactivate")
+    public ResponseEntity<ApiResponse<Void>> deactivateMember(@RequestBody @Valid DeactivateRequestDTO requestDTO){
+        SocialType socialType = requestDTO.getSocialType();
+
+        switch (socialType){
+            case KAKAO:
+                memberService.deactivateSocialMember();
+                break;
+            case GENERAL:
+                memberService.deactivateGeneralMember(requestDTO);
+                break;
+            default:
+                throw new IllegalArgumentException("잘못된 타입");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("회원 탈퇴에 성공했습니다."));
     }
 
 }

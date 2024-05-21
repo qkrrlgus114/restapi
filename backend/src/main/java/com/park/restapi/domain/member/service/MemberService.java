@@ -1,5 +1,6 @@
 package com.park.restapi.domain.member.service;
 
+import com.park.restapi.domain.member.dto.request.DeactivateRequestDTO;
 import com.park.restapi.domain.member.dto.request.LoginInfoRequestDTO;
 import com.park.restapi.domain.member.dto.request.SignUpRequestDTO;
 import com.park.restapi.domain.member.dto.response.MemberInfoResponseDTO;
@@ -22,4 +23,8 @@ public interface MemberService {
     void socialLogin(HttpServletResponse response);
     // 유저 정보 호출
     MemberInfoResponseDTO getUserInfo();
+    // 일반 유저 탈퇴
+    void deactivateGeneralMember(DeactivateRequestDTO requestDTO);
+    // 소셜 탈퇴
+    void deactivateSocialMember();
 }

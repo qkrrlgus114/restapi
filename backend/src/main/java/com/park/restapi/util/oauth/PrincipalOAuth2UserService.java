@@ -1,5 +1,7 @@
 package com.park.restapi.util.oauth;
 
+import com.park.restapi.domain.exception.exception.MemberException;
+import com.park.restapi.domain.exception.info.MemberExceptionInfo;
 import com.park.restapi.domain.refreshtoken.entity.RefreshToken;
 import com.park.restapi.domain.refreshtoken.repository.RefreshTokenRepository;
 import com.park.restapi.domain.member.entity.Role;
@@ -10,9 +12,12 @@ import com.park.restapi.domain.member.repository.MemberRepository;
 import com.park.restapi.domain.member.repository.MemberRoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +35,7 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
 
     private final MemberRepository memberRepository;
     private final MemberRoleRepository memberRoleRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
@@ -67,9 +72,20 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
                     .build();
             memberRoleRepository.save(memberRole);
 
-            RefreshToken refreshToken = RefreshToken.builder()
-                    .member(save).build();
-            refreshTokenRepository.save(refreshToken);
+        }else{
+            Member member = byUser.get();
+
+            // 추방 여부 판단
+            if(member.getBannedDate() != null){
+                OAuth2Error error = new OAuth2Error("추방된 유저", member.getEmail() + " 유저가 로그인 시도를 진행했습니다.(추방된 유저, 카카오)", null);
+                throw new OAuth2AuthenticationException(error);
+            }
+
+            // 탈퇴 여부 판단
+            if(member.getWithdrawalDate() != null){
+                OAuth2Error error = new OAuth2Error("탈퇴한 유저", member.getEmail() + " 유저가 로그인 시도를 진행했습니다.(탈퇴한 유저, 카카오)", null);
+                throw new OAuth2AuthenticationException(error);
+            }
         }
 
         return oAuth2User;
