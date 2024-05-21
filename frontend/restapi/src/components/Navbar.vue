@@ -43,7 +43,7 @@ onMounted(() => {
 // 유저 정보 호출
 const loadUserInfo = async () => {
   try {
-    const data = await apiGet("api/users");
+    const data = await apiGet("api/members");
     store.updateUserInfo(data.data);
   } catch (error) {}
 };
