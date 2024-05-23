@@ -1,5 +1,5 @@
 <template>
-  <div class="login-container">
+  <div class="login-container bg-dark">
     <img src="/public/logo.png" alt="" class="logo" />
     <div class="form-group">
       <label for="email">이메일</label>
@@ -103,7 +103,6 @@ const register = () => {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #f7f7f7;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   top: 0;
   left: 0;
@@ -133,7 +132,7 @@ h1 {
   display: block;
   margin-bottom: 0.5rem;
   font-size: 16px;
-  color: #34495e;
+  color: #ffffff;
   font-weight: 500;
 }
 
@@ -175,6 +174,7 @@ h1 {
 button:hover,
 .button-group a:hover {
   transform: translateY(-2px);
+  cursor: pointer;
 }
 
 @media (max-width: 768px) {

@@ -1,56 +1,56 @@
 <template>
-  <div class="container">
-    <div class="from-title">데일리 쿠폰 발급 설정</div>
-    <div class="form-control">
-      <label for="status"
-        >쿠폰 발급 상태 <br />(매일 00:00시에 쿠폰이 발급됩니다.)</label
-      >
-      <select id="status" v-model="isDailyCouponGenerate">
-        <option value="true">On</option>
-        <option value="false">Off</option>
-      </select>
+  <div class="main">
+    <div class="main-form">
+      <div class="from-title">데일리 쿠폰 발급 설정</div>
+      <div class="form-control">
+        <label for="status"
+          >쿠폰 발급 상태 <br />(매일 00:00시에 쿠폰이 발급됩니다.)</label
+        >
+        <select id="status" v-model="isDailyCouponGenerate">
+          <option value="true">On</option>
+          <option value="false">Off</option>
+        </select>
+      </div>
+      <div class="form-control">
+        <label for="quantity"
+          >발급 쿠폰 개수<br />
+          (0~100개 설정 가능합니다.)</label
+        >
+        <input
+          id="quantity"
+          type="number"
+          min="0"
+          max="100"
+          v-model="dailyCouponQuantity"
+        />
+      </div>
+      <div class="buttons">
+        <button class="btn-immediately" @click="showModal = true">
+          즉시 발급
+        </button>
+        <button class="btn" @click="resetSettings">초기화</button>
+        <button class="btn" @click="applySettings">적용</button>
+      </div>
     </div>
-    <div class="form-control">
-      <label for="quantity"
-        >발급 쿠폰 개수<br />
-        (0~100개 설정 가능합니다.)</label
-      >
-      <input
-        id="quantity"
-        type="number"
-        min="0"
-        max="100"
-        v-model="dailyCouponQuantity"
-      />
-    </div>
-    <div class="buttons">
-      <button class="btn-immediately" @click="showModal = true">
-        즉시 발급
-      </button>
-      <Modal
-        :isVisible="showModal"
-        @confirm="handleConfirm"
-        @cancel="handleCancel"
-      >
-        <template #header> 쿠폰의 개수를 즉시 변경하시겠습니까? </template>
-        <template #body>
-          현재 설정하신 쿠폰의 개수로<br />
-          즉시 발급 (개수 변경)을 진행합니다.
-        </template>
-        <template #cancel-btn> 취소하기 </template>
-        <template #confirm-btn> 변경하기 </template>
-      </Modal>
-      <button class="btn" @click="resetSettings">초기화</button>
-      <button class="btn" @click="applySettings">적용</button>
-    </div>
+
+    <Modal
+      :isVisible="showModal"
+      @confirm="handleConfirm"
+      @cancel="handleCancel"
+    >
+      <template #header> 쿠폰을 즉시 발급하시겠습니까? </template>
+      <template #body> (현재 설정해놓은 개수로 발급됩니다.) </template>
+      <template #cancel-btn> 취소하기 </template>
+      <template #confirm-btn> 발급하기 </template>
+    </Modal>
   </div>
 </template>
 
 <script setup>
+import { ref, onMounted } from "vue";
 import { useMainStore } from "@/store/store.js";
-import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { apiPost, apiGet, apiPatch } from "@/utils/api";
+import { apiGet, apiPost, apiPatch } from "@/utils/api";
 import Modal from "../components/Modal.vue";
 
 const store = useMainStore();
@@ -83,7 +83,9 @@ const getCouponSetting = async () => {
     isDailyCouponGenerate.value = data.data.isDailyCouponGenerate;
     originDailyCouponQuantity.value = dailyCouponQuantity.value;
     originIsDailyCouponGenerate.value = isDailyCouponGenerate.value;
-  } catch (error) {}
+  } catch (error) {
+    // 오류 처리
+  }
 };
 
 // 초기화 로직
@@ -95,7 +97,6 @@ const resetSettings = () => {
 // 쿠폰 설정 변경
 const applySettings = async () => {
   try {
-    // 쿠폰 개수 사전 체크
     if (!checkCouponData()) return;
 
     const data = await apiPatch("/api/admin/coupons/setting", {
@@ -105,7 +106,9 @@ const applySettings = async () => {
     alert(data.message);
     originDailyCouponQuantity.value = dailyCouponQuantity.value;
     originIsDailyCouponGenerate.value = isDailyCouponGenerate.value;
-  } catch (error) {}
+  } catch (error) {
+    // 오류 처리
+  }
 };
 
 // 쿠폰 상태 체크
@@ -120,23 +123,29 @@ const checkCouponData = () => {
 // 쿠폰 즉시 발급
 const immediatelyCoupon = async () => {
   try {
-    // 쿠폰 개수 사전 체크
     if (!checkCouponData()) return;
 
     const data = await apiPost("/api/admin/coupons", {
       dailyCouponQuantity: dailyCouponQuantity.value,
     });
     alert(data.message);
-  } catch (error) {}
+  } catch (error) {
+    // 오류 처리
+  }
 };
 </script>
 
 <style scoped>
-.container {
-  max-width: 300px;
-  margin: 150px auto;
+.main {
+  display: flex;
+  justify-content: center;
+  margin-top: 100px;
+}
+
+.main-form {
+  display: flex;
+  flex-direction: column;
   padding: 50px;
-  background-color: #fff;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
 }
@@ -161,7 +170,7 @@ label {
 }
 
 select {
-  width: 50%;
+  width: 100%;
 }
 
 select,

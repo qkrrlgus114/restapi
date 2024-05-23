@@ -1,19 +1,21 @@
 <template>
-  <div v-if="isVisible" class="modal-overlay">
-    <div class="modal">
-      <div class="modal-header">
-        <slot name="header">Default Header</slot>
-      </div>
-      <div class="modal-body">
-        <slot name="body">Default Body</slot>
-      </div>
-      <div class="modal-buttons">
-        <button class="cancel" @click="onCancel">
-          <slot name="cancel-btn">취소</slot>
-        </button>
-        <button class="confirm" @click="onConfirm">
-          <slot name="confirm-btn">확인</slot>
-        </button>
+  <div class="modal-overlay" v-if="isVisible">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><slot name="header"></slot></h5>
+        </div>
+        <div class="modal-body">
+          <slot name="body"></slot>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn cancel-btn" @click="onCancel">
+            <slot name="cancel-btn">취소</slot>
+          </button>
+          <button type="button" class="btn confirm-btn" @click="onConfirm">
+            <slot name="confirm-btn">적용</slot>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -53,37 +55,33 @@ const onCancel = () => {
   align-items: center;
 }
 
-.modal {
+.modal-content {
   background: white;
   border-radius: 5px;
-  padding: 30px 20px 10px 20px;
+  padding: 50px 30px 20px 30px;
   width: 400px;
-  height: 200px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
 }
 
-.modal-header {
-  font-size: 20px;
+.modal-title {
   font-weight: 1000;
-  margin-bottom: 10px;
 }
 
 .modal-body {
-  margin-bottom: 50px;
-  text-align: center;
+  padding: 20px 0px;
 }
 
-.modal-buttons {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
+.modal-footer button:nth-child(2) {
+  margin-left: 20px;
 }
 
-.modal-buttons button {
-  padding: 10px 60px;
+.cancel-btn {
+  background-color: #eeeeee;
+  color: #5c5c5c;
+}
+
+.cancel-btn,
+.confirm-btn {
+  padding: 10px 20px;
   font-size: 16px;
   font-weight: 1000;
   cursor: pointer;
@@ -93,23 +91,22 @@ const onCancel = () => {
   transition: background-color 0.2s, border-color 0.2s;
 }
 
-.modal-buttons .cancel {
-  background-color: #eeeeee;
-  color: #5c5c5c;
+.cancel-btn:hover {
+  background-color: #c7c7c7;
+  border-color: #c7c7c7;
 }
 
-.modal-buttons .cancel:hover {
-  background-color: #dbdbdb;
-  color: #5c5c5c;
+.cancel-btn:active {
+  background-color: #c7c7c7;
+  border-color: #c7c7c7;
 }
 
-.modal-buttons .confirm {
+.confirm-btn:hover {
+  background-color: #ffcdb8;
+  border-color: #ffcdb8;
+}
+.confirm-btn {
   background-color: #ffe8de;
-  color: #f95421;
-}
-
-.modal-buttons .confirm:hover {
-  background-color: #ffd5c3;
-  color: #f95421;
+  color: #db0700;
 }
 </style>

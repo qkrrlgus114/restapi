@@ -11,6 +11,7 @@ import { useMainStore } from "../store/store.js";
 import RequestLogView from "@/views/RequestLogView.vue";
 import UserBanView from "@/views/UserBanView.vue";
 import SettingsView from "../views/SettingsView.vue";
+import MyInfoView from "../views/MyInfoView.vue";
 
 const routes = [
   {
@@ -36,6 +37,13 @@ const routes = [
     name: "Main",
     component: MainView,
     meta: { showNavbar: false },
+  },
+  {
+    path: "/my-info",
+    name: "MyInfo",
+    component: MyInfoView,
+    meta: { showNavbar: true },
+    children: [],
   },
   {
     path: "/success",
