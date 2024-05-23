@@ -114,4 +114,20 @@ class MemberServiceImplTest {
         assertNotNull(mockMember.getWithdrawalDate());
     }
 
+    @Test
+    @DisplayName("유저 추방에 성공한다.")
+    void bannedMemberSuccessTest(){
+        // given
+        Long id = 1L;
+
+        when(memberRepository.findById(anyLong())).thenReturn(Optional.of(mockMember));
+
+        // when
+        memberService.bannedMember(id);
+
+        // then
+        assertNotNull(mockMember.getBannedDate());
+        verify(memberRepository).findById(id);
+    }
+
 }

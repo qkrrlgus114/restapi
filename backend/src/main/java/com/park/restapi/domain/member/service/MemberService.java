@@ -4,6 +4,7 @@ import com.park.restapi.domain.member.dto.request.DeactivateRequestDTO;
 import com.park.restapi.domain.member.dto.request.LoginInfoRequestDTO;
 import com.park.restapi.domain.member.dto.request.SignUpRequestDTO;
 import com.park.restapi.domain.member.dto.response.MemberInfoResponseDTO;
+import com.park.restapi.domain.member.dto.response.MyInfoResponseDTO;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
@@ -27,4 +28,8 @@ public interface MemberService {
     void deactivateGeneralMember(DeactivateRequestDTO requestDTO);
     // 소셜 탈퇴
     void deactivateSocialMember();
+    // 유저 추방
+    void bannedMember(Long id);
+    // 유저 개인 정보 제공
+    MyInfoResponseDTO getMemberInfo();
 }

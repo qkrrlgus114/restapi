@@ -1,6 +1,7 @@
 package com.park.restapi.domain.api.repository;
 
 import com.park.restapi.domain.api.dto.response.RequestHistoryResponseDTO;
+import com.park.restapi.domain.member.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

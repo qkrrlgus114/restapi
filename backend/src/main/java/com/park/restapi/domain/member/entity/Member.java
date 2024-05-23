@@ -16,7 +16,8 @@ import java.util.List;
 @EqualsAndHashCode
 public class Member {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true, length = 50)
@@ -40,7 +41,7 @@ public class Member {
 
     @Column(nullable = true)
     private LocalDateTime bannedDate;
-    
+
     @Column(nullable = true)
     private LocalDateTime withdrawalDate;
 
@@ -68,26 +69,31 @@ public class Member {
         this.loginLastDate = LocalDateTime.now();
     }
 
-    public void useToken(){
+    public void useToken() {
         this.token -= 1;
     }
 
-    public void resetToken(){
+    public void resetToken() {
         this.token = token < 4 ? 3 : this.token;
     }
 
-    public void updateLoginDate(){
+    public void updateLoginDate() {
         this.loginLastDate = LocalDateTime.now();
     }
 
     // 토큰 획득
-    public void increasedToken(){
+    public void increasedToken() {
         this.token++;
     }
 
     // 탈퇴 시간 추가
-    public void updateWithdrawalDate(){
+    public void updateWithdrawalDate() {
         this.withdrawalDate = LocalDateTime.now();
+    }
+
+    // 추방 로직
+    public void updateBannedDate(){
+        this.bannedDate = LocalDateTime.now();
     }
 
 }

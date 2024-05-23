@@ -49,7 +49,7 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
          * 확장성을 위함.
          * kakao, naver, google 등등 다양한 타입에 맞게 수정만 해주면 됨.
          * */
-        if(registrationId.equals("kakao")){
+        if (registrationId.equals("kakao")) {
             oAuth2UserInfo = new KakaoUserInfo(oAuth2User.getAttributes());
         }
 
@@ -63,7 +63,7 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
          * 만약에 유저가 없으면 회원가입 진행
          * 랜덤 닉네임 생성 및 기본 프로필사진 설정
          * */
-        if(byUser.isEmpty()){
+        if (byUser.isEmpty()) {
             Member member = new Member(email, nickname, SocialType.KAKAO);
             Member save = memberRepository.save(member);
 
@@ -72,17 +72,17 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
                     .build();
             memberRoleRepository.save(memberRole);
 
-        }else{
+        } else {
             Member member = byUser.get();
 
             // 추방 여부 판단
-            if(member.getBannedDate() != null){
+            if (member.getBannedDate() != null) {
                 OAuth2Error error = new OAuth2Error("추방된 유저", member.getEmail() + " 유저가 로그인 시도를 진행했습니다.(추방된 유저, 카카오)", null);
                 throw new OAuth2AuthenticationException(error);
             }
 
             // 탈퇴 여부 판단
-            if(member.getWithdrawalDate() != null){
+            if (member.getWithdrawalDate() != null) {
                 OAuth2Error error = new OAuth2Error("탈퇴한 유저", member.getEmail() + " 유저가 로그인 시도를 진행했습니다.(탈퇴한 유저, 카카오)", null);
                 throw new OAuth2AuthenticationException(error);
             }
