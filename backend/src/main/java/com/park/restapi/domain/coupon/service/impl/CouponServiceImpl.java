@@ -1,5 +1,6 @@
 package com.park.restapi.domain.coupon.service.impl;
 
+import com.park.restapi.domain.coupon.dto.request.UpdateCouponQuantityRequestDTO;
 import com.park.restapi.domain.coupon.dto.request.UpdateCouponSettingRequestDTO;
 import com.park.restapi.domain.coupon.dto.response.CouponSettingResponseDTO;
 import com.park.restapi.domain.coupon.entity.Coupon;
@@ -35,14 +36,13 @@ public class CouponServiceImpl implements CouponService {
     private final CouponHistoryRepository couponHistoryRepository;
     private final CouponSettingRepository couponSettingRepository;
     private final MemberRepository memberRepository;
+    private final JwtService jwtService;
     
     // 쿠폰 획득
     @Override
     @Transactional
     public void acquisitionCoupon() {
-        Long currentUserId = JwtService.getCurrentUserId();
-        Member member = memberRepository.findById(currentUserId)
-                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_USER, "유저 데이터 없음"));
+        Member member = getCurrentMember();
 
         // 오늘 획득한 이력이 있으면 중복 불가.
         LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
@@ -86,11 +86,6 @@ public class CouponServiceImpl implements CouponService {
                 .orElse(0);
     }
 
-    @Override
-    public void couponSettingChange() {
-
-    }
-
     // 쿠폰 설정 가져오기
     @Override
     @Transactional(readOnly = true)
@@ -109,10 +104,36 @@ public class CouponServiceImpl implements CouponService {
         couponSetting.updateCouponSetting(requestDTO);
     }
 
+    // 쿠폰 개수 업데이트
+    @Override
+    @Transactional
+    public int updateCouponQuantity(UpdateCouponQuantityRequestDTO requestDTO) {
+        Coupon coupon = null;
+
+        // 오늘 발급된 쿠폰이 있는지 확인
+        LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+
+        Optional<Coupon> byCouponForWrite = couponRepository.findByCouponForWrite(startOfDay, endOfDay);
+
+        // 발급된 쿠폰이 없으면 새로 발급
+        if (byCouponForWrite.isEmpty()) {
+            coupon = Coupon.builder()
+                    .totalQuantity(requestDTO.getDailyCouponQuantity())
+                    .remainingQuantity(requestDTO.getDailyCouponQuantity()).build();
+            couponRepository.save(coupon);
+        } else {
+            coupon = byCouponForWrite.get();
+            coupon.updateCouponQuantity(requestDTO.getDailyCouponQuantity());
+        }
+
+        return coupon.getRemainingQuantity();
+    }
+
     // 현재 로그인 유저 찾기
     private Member getCurrentMember() {
-        Long currentUserId = JwtService.getCurrentUserId();
+        Long currentUserId = jwtService.getCurrentUserId();
         return memberRepository.findById(currentUserId)
-                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_USER, currentUserId + "번 유저를 찾지 못했습니다."));
+                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 }

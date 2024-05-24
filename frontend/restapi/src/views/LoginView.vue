@@ -1,5 +1,5 @@
 <template>
-  <div class="login-container">
+  <div class="login-container bg-dark">
     <img src="/public/logo.png" alt="" class="logo" />
     <div class="form-group">
       <label for="email">이메일</label>
@@ -31,16 +31,25 @@
 
 <script setup>
 import { useMainStore } from "@/store/store.js";
-import { ref, computed } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { useGlobalProperties } from "@/composables/useGlobalProperties";
+import { apiPost, getBaseURL } from "@/utils/api";
 
-const { $axios, $apiBaseUrl } = useGlobalProperties();
 const store = useMainStore();
 const router = useRouter();
 
 const email = ref("");
 const password = ref("");
+const loginState = store.getLoginState;
+
+onMounted(() => {
+  checkLogin();
+});
+
+// 로그인 상태 검사
+const checkLogin = () => {
+  if (loginState) router.push("/chat");
+};
 
 // 이메일 검사
 const isValidEmail = (email) => {
@@ -49,7 +58,8 @@ const isValidEmail = (email) => {
 
 // 카카오 로그인 함수
 const kakaoLogin = () => {
-  window.location.href = `${$apiBaseUrl}/oauth2/authorization/kakao`;
+  const baseUrl = getBaseURL();
+  window.location.href = `${baseUrl}/oauth2/authorization/kakao`;
 };
 
 // 로그인 함수
@@ -71,16 +81,18 @@ const login = async () => {
   }
 
   try {
-    await $axios.post(
-      `${$apiBaseUrl}/api/login`,
-      { email: email.value, password: password.value },
-      { withCredentials: true }
-    );
+    await apiPost("/api/login", {
+      email: email.value,
+      password: password.value,
+    });
     store.loginState = true;
     router.push("/chat");
-  } catch (error) {
-    alert(error.response.data.message);
-  }
+  } catch (error) {}
+};
+
+// 회원가입 이동
+const register = () => {
+  router.push("/register");
 };
 </script>
 
@@ -91,7 +103,6 @@ const login = async () => {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #f7f7f7;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   top: 0;
   left: 0;
@@ -121,7 +132,7 @@ h1 {
   display: block;
   margin-bottom: 0.5rem;
   font-size: 16px;
-  color: #34495e;
+  color: #ffffff;
   font-weight: 500;
 }
 
@@ -163,6 +174,7 @@ h1 {
 button:hover,
 .button-group a:hover {
   transform: translateY(-2px);
+  cursor: pointer;
 }
 
 @media (max-width: 768px) {

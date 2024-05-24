@@ -1,107 +1,153 @@
 <template>
-  <div class="container">
-    <div class="from-title">데일리 쿠폰 발급 설정</div>
-    <div class="form-control">
-      <label for="status"
-        >쿠폰 발급 상태 <br />(매일 00:00시에 쿠폰이 발급됩니다.)</label
-      >
-      <select id="status" v-model="dailyCouponSetting.isDailyCouponGenerate">
-        <option value="true">On</option>
-        <option value="false">Off</option>
-      </select>
+  <div class="main">
+    <div class="main-form">
+      <div class="from-title">데일리 쿠폰 발급 설정</div>
+      <div class="form-control">
+        <label for="status"
+          >쿠폰 발급 상태 <br />(매일 00:00시에 쿠폰이 발급됩니다.)</label
+        >
+        <select id="status" v-model="isDailyCouponGenerate">
+          <option value="true">On</option>
+          <option value="false">Off</option>
+        </select>
+      </div>
+      <div class="form-control">
+        <label for="quantity"
+          >발급 쿠폰 개수<br />
+          (0~100개 설정 가능합니다.)</label
+        >
+        <input
+          id="quantity"
+          type="number"
+          min="0"
+          max="100"
+          v-model="dailyCouponQuantity"
+        />
+      </div>
+      <div class="buttons">
+        <button class="btn-immediately" @click="showModal = true">
+          즉시 발급
+        </button>
+        <button class="btn" @click="resetSettings">초기화</button>
+        <button class="btn" @click="applySettings">적용</button>
+      </div>
     </div>
-    <div class="form-control">
-      <label for="quantity"
-        >발급 쿠폰 개수<br />
-        (1~100개 설정 가능합니다.)</label
-      >
-      <input
-        id="quantity"
-        type="number"
-        v-model="dailyCouponSetting.dailyCouponQuantity"
-        min="0"
-      />
-    </div>
-    <div class="buttons">
-      <button @click="resetSettings">초기화</button>
-      <button @click="applySettings">적용</button>
-    </div>
+
+    <Modal
+      :isVisible="showModal"
+      @confirm="handleConfirm"
+      @cancel="handleCancel"
+    >
+      <template #header> 쿠폰을 즉시 발급하시겠습니까? </template>
+      <template #body> (현재 설정해놓은 개수로 발급됩니다.) </template>
+      <template #cancel-btn> 취소하기 </template>
+      <template #confirm-btn> 발급하기 </template>
+    </Modal>
   </div>
 </template>
 
-<script>
-export default {
-  name: "AdminView",
-  data() {
-    return {
-      dailyCouponSetting: {
-        isDailyCouponGenerate: false,
-        dailyCouponQuantity: 0,
-      },
-      originalSetting: {
-        isDailyCouponGenerate: false,
-        dailyCouponQuantity: 0,
-      },
-    };
-  },
-  mounted() {
-    this.getCouponSetting();
-  },
-  methods: {
-    // 쿠폰 설정 가져오기
-    getCouponSetting() {
-      this.$axios
-        .get(`${this.$apiBaseUrl}/api/admin/coupons/setting`, {
-          withCredentials: true,
-        })
-        .then((response) => {
-          this.dailyCouponSetting = response.data.data;
-          this.originalSetting = response.data.data;
-        })
-        .catch((error) => {
-          console.error("토큰 개수 갱신 중 오류 발생:", error);
-          alert(error.message);
-        });
-    },
-    // 쿠폰 설정 적용하기
-    applySettings() {
-      if (this.dailyCouponSetting.dailyCouponQuantity === 0) {
-        alert("데일리 쿠폰은 최소 1개부터 가능합니다.");
-      } else if (this.dailyCouponSetting.dailyCouponQuantity > 100) {
-        alert("데일리 쿠폰은 최대 100개까지 가능합니다.");
-      } else {
-        this.$axios
-          .patch(
-            `${this.$apiBaseUrl}/api/admin/coupons/setting`,
-            this.dailyCouponSetting,
-            {
-              withCredentials: true,
-            }
-          )
-          .then((response) => {
-            alert(response.data.message);
-            this.$router.go();
-          })
-          .catch((error) => {
-            console.error("토큰 개수 갱신 중 오류 발생:", error);
-          });
-      }
-    },
-    resetSettings() {
-      this.dailyCouponSetting = { ...this.originalSetting };
-    },
-  },
+<script setup>
+import { ref, onMounted } from "vue";
+import { useMainStore } from "@/store/store.js";
+import { useRouter } from "vue-router";
+import { apiGet, apiPost, apiPatch } from "@/utils/api";
+import Modal from "../components/Modal.vue";
+
+const store = useMainStore();
+const router = useRouter();
+
+const dailyCouponQuantity = ref(0);
+const isDailyCouponGenerate = ref(false);
+const originDailyCouponQuantity = ref(0);
+const originIsDailyCouponGenerate = ref(false);
+const showModal = ref(false);
+
+const handleConfirm = () => {
+  immediatelyCoupon();
+  showModal.value = false;
+};
+
+const handleCancel = () => {
+  showModal.value = false;
+};
+
+onMounted(() => {
+  getCouponSetting();
+});
+
+// 쿠폰 설정 가져오기
+const getCouponSetting = async () => {
+  try {
+    const data = await apiGet("/api/admin/coupons/setting");
+    dailyCouponQuantity.value = data.data.dailyCouponQuantity;
+    isDailyCouponGenerate.value = data.data.isDailyCouponGenerate;
+    originDailyCouponQuantity.value = dailyCouponQuantity.value;
+    originIsDailyCouponGenerate.value = isDailyCouponGenerate.value;
+  } catch (error) {
+    // 오류 처리
+  }
+};
+
+// 초기화 로직
+const resetSettings = () => {
+  dailyCouponQuantity.value = originDailyCouponQuantity.value;
+  isDailyCouponGenerate.value = originIsDailyCouponGenerate.value;
+};
+
+// 쿠폰 설정 변경
+const applySettings = async () => {
+  try {
+    if (!checkCouponData()) return;
+
+    const data = await apiPatch("/api/admin/coupons/setting", {
+      isDailyCouponGenerate: isDailyCouponGenerate.value,
+      dailyCouponQuantity: dailyCouponQuantity.value,
+    });
+    alert(data.message);
+    originDailyCouponQuantity.value = dailyCouponQuantity.value;
+    originIsDailyCouponGenerate.value = isDailyCouponGenerate.value;
+  } catch (error) {
+    // 오류 처리
+  }
+};
+
+// 쿠폰 상태 체크
+const checkCouponData = () => {
+  if (dailyCouponQuantity.value < 0 || dailyCouponQuantity.value > 100) {
+    alert("쿠폰은 0 ~ 100개 까지 설정이 가능합니다.");
+    return false;
+  }
+  return true;
+};
+
+// 쿠폰 즉시 발급
+const immediatelyCoupon = async () => {
+  try {
+    if (!checkCouponData()) return;
+
+    const data = await apiPost("/api/admin/coupons", {
+      dailyCouponQuantity: dailyCouponQuantity.value,
+    });
+    alert(data.message);
+  } catch (error) {
+    // 오류 처리
+  }
 };
 </script>
 
 <style scoped>
-.container {
-  max-width: 300px; /* 폼의 최대 너비 설정 */
-  margin: 150px auto; /* 상하 여백과 가운데 정렬 */
+.main {
+  display: flex;
+  justify-content: center;
+  margin-top: 100px;
+}
+
+.main-form {
+  display: flex;
+  flex-direction: column;
   padding: 50px;
-  background-color: #fff; /* 배경색 */
-  border: 1px solid #e0e0e0; /* 경계선 */
-  border-radius: 4px; /* 경계 둥글기 */
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
 }
 
 .from-title {
@@ -113,69 +159,66 @@ export default {
 }
 
 .form-control {
-  margin-bottom: 20px; /* 하단 여백 */
+  margin-bottom: 20px;
 }
 
 label {
   display: block;
-  font-size: 16px; /* 글꼴 크기 조정 */
-  color: #333; /* 글꼴색 */
-  margin-bottom: 10px; /* 라벨 하단 여백 */
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 10px;
 }
 
 select {
-  width: 50%;
+  width: 100%;
 }
 
 select,
 input {
   padding: 10px;
-  border: 1px solid #e0e0e0; /* 경계선 스타일 */
-  border-radius: 4px; /* 입력 필드 경계 둥글기 */
-  font-size: 16px; /* 글꼴 크기 조정 */
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 16px;
 }
 
 .buttons {
   display: flex;
-  justify-content: space-between; /* 버튼 사이의 간격을 균등하게 분배 */
-  margin-top: 20px; /* 버튼 상단 여백 */
+  justify-content: space-between;
+  margin-top: 50px;
 }
 
-button {
-  padding: 10px 20px; /* 패딩 */
-  font-size: 16px; /* 글꼴 크기 */
-  cursor: pointer; /* 포인터 모양 변경 */
-  border: 1px solid #3498db; /* 버튼 경계선 */
-  border-radius: 4px; /* 버튼 경계 둥글기 */
-  background-color: #3498db; /* 버튼 배경색 */
-  color: white; /* 글꼴색 */
-  outline: none; /* 윤곽선 제거 */
-  transition: background-color 0.2s, border-color 0.2s; /* 색상 전환 효과 */
+.btn {
+  background-color: #eeeeee;
+}
+.btn,
+.btn-immediately {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 1000;
+  cursor: pointer;
+  border-radius: 4px;
+  color: #5c5c5c;
+  outline: none;
+  border: none;
+  transition: background-color 0.2s, border-color 0.2s;
 }
 
-button:hover {
-  background-color: #2980b9; /* 호버 시 배경색 변경 */
-  border-color: #2980b9; /* 호버 시 경계선 색상 변경 */
+.btn:hover {
+  background-color: #c7c7c7;
+  border-color: #c7c7c7;
 }
 
-button:active {
-  background-color: #2471a3; /* 클릭 시 배경색 */
-  border-color: #2471a3; /* 클릭 시 경계선 색상 */
+.btn:active {
+  background-color: #c7c7c7;
+  border-color: #c7c7c7;
 }
 
-/* 선택된 버튼 스타일을 다르게 하고 싶다면 추가 클래스를 사용 */
-button.apply {
-  background-color: #28a745; /* 적용 버튼의 배경색 */
-  border-color: #28a745; /* 적용 버튼의 경계선 색상 */
+.btn-immediately:hover {
+  background-color: #ffcdb8;
+  border-color: #ffcdb8;
 }
-
-button.apply:hover {
-  background-color: #218838; /* 적용 버튼 호버 시 배경색 */
-  border-color: #218838; /* 적용 버튼 호버 시 경계선 색상 */
-}
-
-button.apply:active {
-  background-color: #1e7e34; /* 적용 버튼 클릭 시 배경색 */
-  border-color: #1e7e34; /* 적용 버튼 클릭 시 경계선 색상 */
+.btn-immediately {
+  background-color: #ffe8de;
+  color: #db0700;
 }
 </style>

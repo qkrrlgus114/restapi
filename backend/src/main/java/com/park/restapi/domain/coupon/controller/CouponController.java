@@ -1,5 +1,6 @@
 package com.park.restapi.domain.coupon.controller;
 
+import com.park.restapi.domain.coupon.dto.request.UpdateCouponQuantityRequestDTO;
 import com.park.restapi.domain.coupon.dto.request.UpdateCouponSettingRequestDTO;
 import com.park.restapi.domain.coupon.dto.response.CouponSettingResponseDTO;
 import com.park.restapi.domain.coupon.service.CouponService;
@@ -47,5 +48,13 @@ public class CouponController {
         couponService.updateCouponSetting(requestDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("쿠폰 설정이 변경되었습니다."));
+    }
+
+    // 쿠폰 즉시 발급하기(관리자)
+    @PostMapping("admin/coupons")
+    public ResponseEntity<ApiResponse<?>> updateCouponQuantity(@Valid @RequestBody UpdateCouponQuantityRequestDTO requestDTO){
+        int result = couponService.updateCouponQuantity(requestDTO);
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(result, "쿠폰이 발급되었습니다."));
     }
 }

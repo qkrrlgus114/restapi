@@ -54,14 +54,14 @@ public class JwtService {
     }
 
     // 시큐리티 컨텍스트 홀더에서 유저 ID 추출
-    public static Long getCurrentUserId() {
+    public Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null) {
             return (Long) authentication.getPrincipal();
         }
 
-        throw new MemberException(MemberExceptionInfo.NOT_FOUND_USER, "시큐리티 컨텍스트 홀더에서 유저 ID 추출을 실패하였습니다.");
+        throw new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, "시큐리티 컨텍스트 홀더에서 유저 ID 추출을 실패하였습니다.");
     }
 
     // 액세스 토큰 생성
@@ -88,7 +88,7 @@ public class JwtService {
         Optional<Member> userOptional = memberRepository.findById(userId);
         if(userOptional.isEmpty() && check) return "유저 없음";
         else if(userOptional.isEmpty() && !check){
-            throw new MemberException(MemberExceptionInfo.NOT_FOUND_USER, "유저 데이터 없음");
+            throw new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, "유저 데이터 없음");
         }
 
         Member member = userOptional.get();

@@ -11,14 +11,18 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @EntityListeners(AuditingEntityListener.class)
+@EqualsAndHashCode
 public class Coupon {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
     private Integer remainingQuantity;
+
     @Column(nullable = false)
     private Integer totalQuantity;
+
     @Column(nullable = false)
     @CreatedDate
     private LocalDateTime createDate;
@@ -31,5 +35,10 @@ public class Coupon {
 
     public void decreasedCoupon(){
         this.remainingQuantity--;
+    }
+
+    public void updateCouponQuantity(int quantity){
+        this.remainingQuantity = quantity;
+        this.totalQuantity = quantity;
     }
 }
