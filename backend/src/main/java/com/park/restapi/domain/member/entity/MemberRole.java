@@ -9,21 +9,24 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode
 public class MemberRole {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     @JsonIgnore
     private Member member;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
     @Builder
-    public MemberRole(Member member, Role role) {
+    public MemberRole(Member member) {
         this.member = member;
-        this.role = role;
+        this.role = Role.USER;
     }
 
     @Override

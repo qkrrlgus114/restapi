@@ -3,6 +3,7 @@ package com.park.restapi.domain.api.repository.impl;
 import com.park.restapi.domain.api.dto.response.RequestHistoryResponseDTO;
 import com.park.restapi.domain.api.entity.ApiRequestHistory;
 import com.park.restapi.domain.api.repository.ApiRequestHistoryCustomRepository;
+import com.park.restapi.domain.member.entity.Member;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -94,6 +95,7 @@ public class ApiRequestHistoryRepositoryImpl implements ApiRequestHistoryCustomR
 
         return new PageImpl<>(dtoList, pageable, total);
     }
+
 
     // 이메일 검색
     private BooleanExpression emailContains(String keyword) {

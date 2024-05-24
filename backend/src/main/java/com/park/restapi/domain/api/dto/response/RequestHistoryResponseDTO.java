@@ -12,11 +12,17 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RequestHistoryResponseDTO {
+
     private Long memberId;
+
     private LocalDateTime requestDate;
+
     private String email;
+
     private MethodType methodType;
+
     private String requestContent;
+
     private String responseContent;
 
     @Builder

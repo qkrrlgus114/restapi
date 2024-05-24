@@ -1,8 +1,9 @@
 package com.park.restapi.domain.coupon.controller;
 
+import com.park.restapi.domain.coupon.dto.request.UpdateCouponQuantityRequestDTO;
 import com.park.restapi.domain.coupon.dto.request.UpdateCouponSettingRequestDTO;
 import com.park.restapi.domain.coupon.dto.response.CouponSettingResponseDTO;
-import com.park.restapi.domain.coupon.service.impl.CouponServiceImpl;
+import com.park.restapi.domain.coupon.service.CouponService;
 import com.park.restapi.util.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class CouponController {
 
-    private final CouponServiceImpl couponService;
+    private final CouponService couponService;
 
     // 유저가 쿠폰을 획득하는 API
     @PostMapping("coupons")
@@ -47,5 +48,13 @@ public class CouponController {
         couponService.updateCouponSetting(requestDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("쿠폰 설정이 변경되었습니다."));
+    }
+
+    // 쿠폰 즉시 발급하기(관리자)
+    @PostMapping("admin/coupons")
+    public ResponseEntity<ApiResponse<?>> updateCouponQuantity(@Valid @RequestBody UpdateCouponQuantityRequestDTO requestDTO){
+        int result = couponService.updateCouponQuantity(requestDTO);
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(result, "쿠폰이 발급되었습니다."));
     }
 }

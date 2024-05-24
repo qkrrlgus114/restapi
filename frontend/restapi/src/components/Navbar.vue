@@ -1,110 +1,150 @@
 <template>
-  <div v-if="!shouldHideNavbar">
+  <div class="main">
     <nav class="navbar">
-      <a @click="goHome" img>RESTAPI</a>
+      <a @click="goHome" class="navbar-brand">RESTAPI</a>
       <div class="user-info">
-        <button v-if="isAdmin" @click="goAdmin">관리자 설정</button>
+        <button class="custom-btn" v-if="isAdmin" @click="goAdmin">
+          관리자 설정
+        </button>
+        <button @click="renewToken" class="refresh-button custom-btn">
+          토큰 갱신
+        </button>
         <h2>{{ nickname }}</h2>
-        <h2>토큰 개수 : {{ token }}</h2>
-        <div class="buttons">
-          <button @click="refreshTokenCount" class="refresh-button">
-            토큰 갱신
+        <h2>남은 토큰 : {{ token }} 개</h2>
+        <div class="btn-group">
+          <button
+            class="btn btn-secondary dropdown-toggle custom-btn"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            메뉴
           </button>
-          <button @click="logout" class="logout-button">로그아웃</button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <button class="dropdown-item" @click="goMyInfo">내정보</button>
+            </li>
+            <li>
+              <button class="dropdown-item" @click="logout">로그아웃</button>
+            </li>
+          </ul>
         </div>
       </div>
     </nav>
     <div class="coupon-info">
-      <h2>오늘의 선착순 쿠폰(토큰) : {{ coupon }}개</h2>
-      <button class="receive-button" @click="acquiredToken">토큰 받기</button>
+      <h2>오늘의 선착순 쿠폰(토큰) : {{ coupon }} 개</h2>
+      <button class="receive-button custom-btn" @click="acquiredToken">
+        토큰 받기
+      </button>
     </div>
   </div>
 </template>
 
-<script>
-import { mapState } from "vuex";
+<script setup>
+import { useMainStore } from "@/store/store.js";
+import { computed, onMounted, ref } from "vue";
+import { apiGet, apiPost } from "@/utils/api";
+import { useRouter } from "vue-router";
 
-export default {
-  name: "Navbar",
-  methods: {
-    // 로그아웃
-    logout() {
-      this.$axios
-        .get(`${this.$apiBaseUrl}/api/logout`, {
-          withCredentials: true,
-        })
-        .then((response) => {
-          this.$store.dispatch("logout");
-          this.$router.push("/");
-        })
-        .catch((error) => {
-          console.error("토큰 개수 갱신 중 오류 발생:", error);
-        });
-    },
-    // 토큰 갱신
-    refreshTokenCount() {
-      this.$axios
-        .get(`${this.$apiBaseUrl}/api/tokens`, {
-          withCredentials: true,
-        })
-        .then((response) => {
-          const newTokenCount = response.data.data;
-          this.$store.dispatch("updateToken", response.data.data);
+const store = useMainStore();
+const router = useRouter();
 
-          alert("갱신 성공");
-        })
-        .catch((error) => {
-          console.error("토큰 개수 갱신 중 오류 발생:", error);
-        });
-    },
-    // 토큰 획득하기
-    acquiredToken() {
-      if (this.coupon <= 0) {
-        alert("쿠폰이 전부 소진되었습니다.");
-      } else {
-        this.$axios
-          .post(
-            `${this.$apiBaseUrl}/api/coupons`,
-            {},
-            {
-              withCredentials: true,
-            }
-          )
-          .then((response) => {
-            alert(response.data.message);
-            this.$store.commit("incrementToken");
-            this.$store.commit("decrementCoupon");
-          })
-          .catch((error) => {
-            alert(error.response.data.message);
-          });
-      }
-    },
-    goAdmin() {
-      this.$router.push("/admin/settings");
-    },
-    goHome() {
-      this.$router.push("/");
-    },
-  },
-  computed: {
-    shouldHideNavbar() {
-      return this.$route.meta.hideNavbar;
-    },
-    ...mapState(["nickname", "token", "coupon", "memberRoles"]),
-    isAdmin() {
-      return this.memberRoles.includes("ADMIN");
-    },
-  },
+const nickname = computed(() => store.nickname);
+const coupon = computed(() => store.coupon);
+const token = computed(() => store.token);
+const isAdmin = ref(false);
+
+onMounted(() => {
+  loadUserInfo();
+  loadCouponInfo();
+  const admin = store.getAdminRole;
+  if (admin) isAdmin.value = true;
+});
+
+// 유저 정보 호출
+const loadUserInfo = async () => {
+  try {
+    const data = await apiGet("api/members");
+    store.updateUserInfo(data.data);
+  } catch (error) {}
+};
+
+// 쿠폰 정보 호출
+const loadCouponInfo = async () => {
+  try {
+    const data = await apiGet("/api/coupons");
+    store.updateCouponInfo(data.data);
+  } catch (error) {}
+};
+
+// 로그아웃 함수
+const logout = async () => {
+  try {
+    await apiGet("/api/logout");
+    store.logout();
+    router.push("/");
+  } catch (error) {}
+};
+
+// 토큰 갱신
+const renewToken = async () => {
+  try {
+    const data = await apiGet("/api/tokens");
+    store.updateToken(data.data);
+    alert(data.message);
+  } catch (error) {}
+};
+
+// 데일리 쿠폰 사용하기(토큰 획득)
+const acquiredToken = async () => {
+  try {
+    // pinia에서 쿠폰 데이터 먼저 확인
+    if (store.coupon <= 0) {
+      alert("쿠폰이 전부 소진되었습니다.");
+      return;
+    }
+
+    await apiPost("/api/coupons");
+    store.incrementToken();
+    store.decrementCoupon();
+    alert("토큰 1개를 획득하셨습니다.");
+  } catch (error) {}
+};
+
+// 홈으로 이동
+const goHome = () => router.push("/");
+// 어드민 페이지로 이동
+const goAdmin = () => router.push("/admin/settings");
+// 내 정보 페이지로 이동
+// const goMyInfo = () => router.push("/my-info");
+const goMyInfo = () => {
+  alert("현재 준비중입니다.");
 };
 </script>
 
 <style scoped>
+.main {
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  background-color: #2c3e50;
+  color: white;
+}
+
+.navbar-brand {
+  display: flex;
+  justify-content: flex-start;
+}
+
 .user-info {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  width: 100%;
+  width: 80%;
 }
 
 .user-info h2 {
@@ -112,43 +152,22 @@ export default {
   color: white;
   font-size: 1rem;
 }
-.navbar,
+
 .coupon-info {
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 0.75rem 1.5rem;
-  background-color: #2c3e50;
   color: white;
-}
-
-.coupon-info {
-  margin-top: 4rem;
   background-color: #22252b;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  position: relative;
-  z-index: 998;
 }
 
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 1.5rem;
-  background-color: #2c3e50;
-  color: white;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 999;
+.coupon-info h2 {
+  font-size: 1.5rem;
+  margin: 0;
 }
 
-.buttons {
-  display: flex;
-  margin-right: 50px;
-}
-
-button {
+.custom-btn {
   padding: 0.5rem 1rem;
   margin-left: 10px;
   background-color: transparent;
@@ -159,15 +178,22 @@ button {
   transition: background-color 0.2s, border-color 0.2s, color 0.2s;
 }
 
-button:hover {
+.custom-btn:hover {
   background-color: white;
   color: #5a5a5a;
 }
 
 .refresh-button:hover,
-.logout-button:hover,
 .receive-button:hover {
   border-color: #e0e0e0;
+}
+
+.dropdown-item:hover {
+  background-color: #dadada;
+}
+.dropdown-item:active {
+  background-color: #dadada;
+  color: black;
 }
 
 @media (max-width: 768px) {
@@ -192,12 +218,11 @@ button:hover {
 }
 
 a {
-  flex-grow: 1; /* 로고, restapi 추천, user-info 사이의 공간을 균등하게 나눔 */
   text-decoration: none;
   color: white;
   font-size: 1.5rem;
   font-weight: bold;
-  text-align: center; /* 텍스트를 중앙 정렬 */
+  text-align: center;
   transition: transform 0.3s ease-in-out;
 }
 

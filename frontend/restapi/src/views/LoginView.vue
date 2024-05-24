@@ -1,5 +1,5 @@
 <template>
-  <div class="login-container">
+  <div class="login-container bg-dark">
     <img src="/public/logo.png" alt="" class="logo" />
     <div class="form-group">
       <label for="email">이메일</label>
@@ -29,54 +29,70 @@
   </div>
 </template>
 
-<script>
-import { mapState } from "vuex";
+<script setup>
+import { useMainStore } from "@/store/store.js";
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { apiPost, getBaseURL } from "@/utils/api";
 
-export default {
-  name: "LoginView",
-  data() {
-    return {
-      email: "",
-      password: "",
-    };
-  },
-  methods: {
-    kakaoLogin() {
-      window.location.href = `${this.$apiBaseUrl}/oauth2/authorization/kakao`;
-    },
-    login() {
-      this.$axios
-        .post(
-          `${this.$apiBaseUrl}/api/login`,
-          { email: this.email, password: this.password },
-          {
-            withCredentials: true, // 쿠키 포함하기 위해
-          }
-        )
-        .then((response) => {
-          // 스토어의 로그인 액션 호출
-          this.$store.dispatch("login", { loginState: true });
-          this.$router.push("/chat");
-        })
-        .catch((error) => {
-          if (error.response.data.status === "1002") {
-            alert(error.response.data.message);
-          }
-        });
-    },
-    register() {
-      // 회원가입 페이지로 리다이렉션
-      this.$router.push({ name: "Register" });
-    },
-  },
-  computed: {
-    ...mapState(["loginState"]),
-  },
-  mounted() {
-    if (this.loginState) {
-      this.$router.push("/chat");
-    }
-  },
+const store = useMainStore();
+const router = useRouter();
+
+const email = ref("");
+const password = ref("");
+const loginState = store.getLoginState;
+
+onMounted(() => {
+  checkLogin();
+});
+
+// 로그인 상태 검사
+const checkLogin = () => {
+  if (loginState) router.push("/chat");
+};
+
+// 이메일 검사
+const isValidEmail = (email) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
+// 카카오 로그인 함수
+const kakaoLogin = () => {
+  const baseUrl = getBaseURL();
+  window.location.href = `${baseUrl}/oauth2/authorization/kakao`;
+};
+
+// 로그인 함수
+const login = async () => {
+  if (!email.value) {
+    alert("이메일을 입력해주세요.");
+    return;
+  } else if (!isValidEmail(email.value)) {
+    alert("유효한 이메일 주소를 입력해주세요.");
+    return;
+  }
+
+  if (!password.value) {
+    alert("비밀번호를 입력해주세요.");
+    return;
+  } else if (password.value.length > 15 || password.value.length < 8) {
+    alert("비밀번호는 8자 이상 15자 이하로 입력해주세요.");
+    return;
+  }
+
+  try {
+    await apiPost("/api/login", {
+      email: email.value,
+      password: password.value,
+    });
+    store.loginState = true;
+    router.push("/chat");
+  } catch (error) {}
+};
+
+// 회원가입 이동
+const register = () => {
+  router.push("/register");
 };
 </script>
 
@@ -87,7 +103,6 @@ export default {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #f7f7f7;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   top: 0;
   left: 0;
@@ -117,7 +132,7 @@ h1 {
   display: block;
   margin-bottom: 0.5rem;
   font-size: 16px;
-  color: #34495e;
+  color: #ffffff;
   font-weight: 500;
 }
 
@@ -159,6 +174,7 @@ h1 {
 button:hover,
 .button-group a:hover {
   transform: translateY(-2px);
+  cursor: pointer;
 }
 
 @media (max-width: 768px) {

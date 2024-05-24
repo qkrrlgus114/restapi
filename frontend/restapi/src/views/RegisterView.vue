@@ -8,10 +8,10 @@
         type="email"
         id="email"
         v-model="email"
-        @input="validateEmail"
+        :disabled="isDisabled"
         required
       />
-      <button @click="sendCertificationCode" :disabled="!EmailValid">
+      <button @click="sendCertificationCode" :disabled="isDisabled">
         인증번호 전송
       </button>
     </div>
@@ -22,25 +22,28 @@
           type="text"
           id="certificationCode"
           v-model="certificationCode"
-          :disabled="isCertificationVerified"
+          :disabled="isDisabled"
           required
         />
-        <button class="auth-btn" @click="checkCertificationCode">인증</button>
-        <button @click="sendCertificationCode">재전송</button>
+        <button
+          class="auth-btn"
+          @click="checkCertificationCode"
+          :disabled="isDisabled"
+        >
+          인증
+        </button>
+        <button
+          class="auth-btn"
+          @click="sendCertificationCode"
+          :disabled="isDisabled"
+        >
+          재전송
+        </button>
       </div>
     </div>
     <div>
       <label for="password">비밀번호</label>
-      <input
-        type="password"
-        id="password"
-        v-model="password"
-        @input="validatePassword"
-        required
-      />
-      <p v-if="!passwordValid && password.length > 0">
-        비밀번호는 8~15자 영문+숫자여야 합니다.
-      </p>
+      <input type="password" id="password" v-model="password" required />
     </div>
     <div>
       <label for="passwordConfirm">비밀번호 확인</label>
@@ -48,137 +51,114 @@
         type="password"
         id="passwordConfirm"
         v-model="passwordConfirm"
-        @input="validatePassword"
         required
       />
-      <p v-if="!passwordsMatch && passwordConfirm.length > 0">
-        비밀번호가 일치하지 않습니다.
-      </p>
     </div>
     <div>
       <label for="nickname">닉네임</label>
-      <input
-        type="text"
-        id="nickname"
-        v-model="nickname"
-        @input="validateNickname"
-        required
-      />
+      <input type="text" id="nickname" v-model="nickname" required />
     </div>
-
     <button @click="register">회원가입</button>
   </div>
 </template>
 
-<script>
-export default {
-  name: "RegisterView",
-  data() {
-    return {
-      email: "",
-      certificationCode: "",
-      password: "",
-      passwordConfirm: "",
-      nickname: "",
-      showCertificationInput: false, // 인증번호 입력칸
-      isLoading: false, // 인증번호 전송중
-      isCertificationVerified: false, // 인증상태
-      passwordValid: false, // 비밀번호 검증
-      passwordsMatch: false, // 비밀번호 일치여부
-      EmailValid: false, // 이메일 입력여부
-      nicknameValid: false, // 닉네임 입력여부
-    };
-  },
-  methods: {
-    // 이메일로 인증번호 전송
-    sendCertificationCode() {
-      this.isLoading = true;
-      this.$axios
-        .post(`${this.$apiBaseUrl}/api/authentications/send`, {
-          email: this.email,
-        })
-        .then((response) => {
-          this.showCertificationInput = true;
-        })
-        .catch((error) => {
-          if (error.response.data.status === "2003") {
-            alert("이미 가입된 이메일입니다.");
-          }
-        })
-        .finally(() => {
-          this.isLoading = false;
-        });
-    },
-    // 인증번호 인증
-    checkCertificationCode() {
-      this.$axios
-        .post(`${this.$apiBaseUrl}/api/authentications/verify`, {
-          certificationCode: this.certificationCode,
-        })
-        .then((response) => {
-          alert("인증되었습니다.");
-          this.isCertificationVerified = true;
-        })
-        .catch((error) => {
-          if (error.response.data.status === "2001") {
-            alert(error.response.data.message);
-          } else if (error.response.data.status === "2002") {
-            alert(error.response.data.message);
-          }
-        });
-    },
-    // 비밀번호 입력 확인
-    validatePassword() {
-      // 영문, 숫자를 포함하며, 8자 이상 15자 이하인 경우에 유효
-      const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,15}$/;
-      this.passwordValid = regex.test(this.password);
-      this.passwordsMatch = this.password === this.passwordConfirm;
-    },
-    // 이메일 입력 확인
-    validateEmail() {
-      const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-      this.EmailValid = regex.test(this.email);
-    },
-    // 닉네임 입력 확인
-    validateNickname() {
-      // 한글, 영문, 숫자만 허용
-      const regex = /^[a-zA-Z가-힣0-9]*$/;
-      this.nicknameValid = regex.test(this.nickname);
-    },
-    // 회원가입
-    register() {
-      if (
-        this.EmailValid &&
-        this.passwordValid &&
-        this.passwordsMatch &&
-        this.isCertificationVerified &&
-        this.nicknameValid
-      ) {
-        // 입력값이 모두 유효한 경우에만 요청을 보냄
-        const userData = {
-          email: this.email,
-          password: this.password,
-          nickname: this.nickname,
-        };
+<script setup>
+import { useMainStore } from "@/store/store.js";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { apiPost, apiGet } from "@/utils/api";
 
-        this.$axios
-          .post(`${this.$apiBaseUrl}/api/signup`, userData)
-          .then((response) => {
-            // 회원가입 성공 처리
-            alert("회원가입이 성공적으로 완료되었습니다.");
-            this.$router.push("/loginview");
-          })
-          .catch((error) => {
-            // 회원가입 실패 처리
-            alert("회원가입 중 문제가 발생했습니다.");
-            console.error("회원가입 오류:", error);
-          });
-      } else {
-        // 입력값 중 하나라도 유효하지 않은 경우
-        alert("입력하신 정보를 다시 확인해주세요.");
-      }
-    },
-  },
+const store = useMainStore();
+const router = useRouter();
+
+const email = ref("");
+const certificationCode = ref("");
+const password = ref("");
+const passwordConfirm = ref("");
+const nickname = ref("");
+const showCertificationInput = ref(false);
+const isLoading = ref(false);
+// 이메일 인증 끝나면 버튼 비활성화 목적
+const isDisabled = ref(false);
+// 이메일 인증이 되었는지 확인
+const isCheckCertification = ref(false);
+
+// 입력값 체크
+const checkInputValue = () => {
+  if (
+    email.value.length === 0 ||
+    password.value.length === 0 ||
+    passwordConfirm.value.length === 0 ||
+    nickname.value.length === 0
+  ) {
+    alert("모든 값을 입력해주세요.");
+    return false;
+  }
+  if (!/\S+@\S+\.\S+/.test(email.value)) {
+    alert("유효한 이메일 주소를 입력해주세요.");
+    return false;
+  }
+  if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,15}$/.test(password.value)) {
+    alert("비밀번호는 8~15자리의 영문과 숫자를 포함해야 합니다.");
+    return false;
+  }
+  if (password.value !== passwordConfirm.value) {
+    alert("비밀번호가 일치하지 않습니다.");
+    return false;
+  }
+  if (!/^[가-힣a-zA-Z0-9]{1,10}$/.test(nickname.value)) {
+    alert("닉네임은 1~10자리의 한글, 영문, 숫자만 포함해야 합니다.");
+    return false;
+  }
+  if (isCheckCertification.value === false) {
+    alert("이메일 인증이 필요합니다.");
+    return false;
+  }
+  return true;
+};
+
+// 인증번호 전송
+const sendCertificationCode = async () => {
+  if (!/\S+@\S+\.\S+/.test(email.value)) {
+    alert("유효한 이메일 주소를 입력해주세요.");
+    return;
+  }
+  isLoading.value = true;
+  try {
+    await apiPost("/api/authentications/send", { email: email.value });
+    showCertificationInput.value = true;
+    alert("인증번호가 전송되었습니다.");
+  } catch (error) {
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// 인증번호 확인
+const checkCertificationCode = async () => {
+  try {
+    const data = await apiPost("/api/authentications/verify", {
+      certificationCode: certificationCode.value,
+    });
+    alert(data.message);
+    isDisabled.value = true;
+    isCheckCertification.value = true;
+  } catch (error) {}
+};
+
+// 회원가입
+const register = async () => {
+  if (!checkInputValue()) return;
+
+  try {
+    const data = await apiPost("/api/signup", {
+      email: email.value,
+      password: password.value,
+      nickname: nickname.value,
+    });
+    alert(data.message);
+    router.push("/login");
+  } catch (error) {}
 };
 </script>
 

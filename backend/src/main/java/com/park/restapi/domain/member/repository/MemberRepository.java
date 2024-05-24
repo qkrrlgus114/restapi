@@ -10,12 +10,16 @@ import java.util.Optional;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
+
     Optional<Member> findByEmail(String email);
+
     boolean existsByEmail(String email);
 
-    //  로그인
+    // 로그인
     @Query("select m from Member m where m.email = :email")
     Optional<Member> findByMemberLogin(@Param("email") String email);
+
+    // 소셜 로그인 회원가입
 
     @Query("select m from Member m join fetch m.memberRoles where m.id = :id" )
     Optional<Member> findByIdLogin(@Param("id") Long id);

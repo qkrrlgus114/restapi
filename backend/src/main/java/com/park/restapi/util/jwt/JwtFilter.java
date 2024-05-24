@@ -45,10 +45,10 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("jwt 필터 동작");
 
-        Optional<String> accessTokenOptional = findCookieToken(request, "accessToken");
+        Optional<String> accessTokenOptional = findAccessToken(request, "accessToken");
         // 쿠키 자체가 없으면 401 에러 발생
-        if (!accessTokenOptional.isPresent()) {
-            log.error("쿠키 없음.");
+        if (accessTokenOptional.isEmpty()) {
+            log.error("요청 경로 : " + request.getRequestURI() + "/ 쿠키 없음.");
             sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "쿠키가 존재하지 않습니다.");
             return;
         }
@@ -72,6 +72,7 @@ public class JwtFilter extends OncePerRequestFilter {
             log.info("유저 인증 완료");
             filterChain.doFilter(request, response);
         } catch (Exception e) {
+            log.error("JWT 필터 처리 중 예외 발생", e);
             e.printStackTrace();
         }
     }
@@ -86,7 +87,7 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     // 쿠키에서 토큰 찾기
-    private Optional<String> findCookieToken(HttpServletRequest request, String name) {
+    private Optional<String> findAccessToken(HttpServletRequest request, String name) {
         Cookie[] cookies = request.getCookies();
 
         return cookies == null ? Optional.empty() : Arrays.stream(cookies)
