@@ -96,7 +96,6 @@ public class ApiRequestHistoryRepositoryImpl implements ApiRequestHistoryCustomR
         return new PageImpl<>(dtoList, pageable, total);
     }
 
-
     // 이메일 검색
     private BooleanExpression emailContains(String keyword) {
         return apiRequestHistory.member.email.contains(keyword);

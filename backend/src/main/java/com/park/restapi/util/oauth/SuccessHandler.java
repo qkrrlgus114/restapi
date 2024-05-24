@@ -34,6 +34,7 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     // oauth 성공 핸들러
@@ -84,17 +85,17 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
     }
 
     // 리다이렉트 주소
-    private String makeRedirectUrl() {
-        return UriComponentsBuilder.fromUriString("https://restapi.store/success")
-                .encode(StandardCharsets.UTF_8)
-                .build().toUriString();
-    }
-
-    // 리다이렉트 주소
 //    private String makeRedirectUrl() {
-//        return UriComponentsBuilder.fromUriString("http://localhost:5173/success")
+//        return UriComponentsBuilder.fromUriString("https://restapi.store/success")
 //                .encode(StandardCharsets.UTF_8)
 //                .build().toUriString();
 //    }
+
+    // 리다이렉트 주소
+    private String makeRedirectUrl() {
+        return UriComponentsBuilder.fromUriString("http://localhost:5173/success")
+                .encode(StandardCharsets.UTF_8)
+                .build().toUriString();
+    }
 
 }
