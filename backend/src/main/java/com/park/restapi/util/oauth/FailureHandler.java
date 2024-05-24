@@ -32,8 +32,15 @@ public class FailureHandler implements AuthenticationFailureHandler {
 
     // 리다이렉트 주소
     private String makeRedirectUrl() {
-        return UriComponentsBuilder.fromUriString("http://localhost:5173/failure")
+        return UriComponentsBuilder.fromUriString("https://restapi.store/failure")
                 .encode(StandardCharsets.UTF_8)
                 .build().toUriString();
     }
+
+    // 리다이렉트 주소
+//    private String makeRedirectUrl() {
+//        return UriComponentsBuilder.fromUriString("http://localhost:5173/failure")
+//                .encode(StandardCharsets.UTF_8)
+//                .build().toUriString();
+//    }
 }
