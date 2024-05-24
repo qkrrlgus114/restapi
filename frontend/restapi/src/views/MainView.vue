@@ -61,26 +61,4 @@ const goToLogin = () => {
   padding: 50px 0px;
   color: white;
 }
-
-.custom-button {
-  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-  border: none;
-  color: white;
-  font-size: 1.25rem;
-  padding: 10px 20px;
-  border-radius: 50px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.custom-button:hover {
-  background: linear-gradient(135deg, #2575fc 0%, #6a11cb 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-}
-
-.custom-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 4px rgba(98, 182, 239, 0.5);
-}
 </style>

@@ -115,7 +115,10 @@ const goHome = () => router.push("/");
 // 어드민 페이지로 이동
 const goAdmin = () => router.push("/admin/settings");
 // 내 정보 페이지로 이동
-const goMyInfo = () => router.push("/my-info");
+// const goMyInfo = () => router.push("/my-info");
+const goMyInfo = () => {
+  alert("현재 준비중입니다.");
+};
 </script>
 
 <style scoped>

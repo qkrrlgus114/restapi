@@ -30,7 +30,7 @@ const routes = [
     path: "/chat",
     name: "Chat",
     component: ChatView,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, showNavbar: true },
   },
   {
     path: "/",
@@ -42,7 +42,7 @@ const routes = [
     path: "/my-info",
     name: "MyInfo",
     component: MyInfoView,
-    meta: { showNavbar: true },
+    meta: { requiresAuth: true, showNavbar: true },
     children: [],
   },
   {
@@ -67,19 +67,26 @@ const routes = [
     path: "/admin",
     name: "Admin",
     component: AdminView,
-    meta: { requiresAdmin: true, requiresAuth: true },
+    meta: { requiresAdmin: true, requiresAuth: true, showNavbar: true },
     children: [
       {
         path: "settings",
         name: "Settings",
         component: SettingsView,
+        meta: { showNavbar: true },
       },
       {
         path: "requests/:page",
         name: "RequestLog",
         component: RequestLogView,
+        meta: { showNavbar: true },
       },
-      { path: "ban", name: "UserBan", component: UserBanView },
+      {
+        path: "ban",
+        name: "UserBan",
+        component: UserBanView,
+        meta: { showNavbar: true },
+      },
     ],
   },
 ];
