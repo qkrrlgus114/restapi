@@ -48,7 +48,7 @@ public class JwtFilter extends OncePerRequestFilter {
         Optional<String> accessTokenOptional = findAccessToken(request, "accessToken");
         // 쿠키 자체가 없으면 401 에러 발생
         if (accessTokenOptional.isEmpty()) {
-            log.error("쿠키 없음.");
+            log.error("요청 경로 : " + request.getRequestURI() + "/ 쿠키 없음.");
             sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "쿠키가 존재하지 않습니다.");
             return;
         }

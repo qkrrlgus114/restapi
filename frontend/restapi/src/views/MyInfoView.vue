@@ -1,9 +1,15 @@
 <template>
   <div class="main">
     <div class="side-menu">
-      <div class="menu">개인 정보</div>
-      <div class="menu">회원 탈퇴</div>
-      <div class="menu">1:1 문의</div>
+      <div class="menu">
+        <button class="btn menu-category">개인 정보</button>
+      </div>
+      <div class="menu">
+        <button class="btn menu-category">회원 탈퇴</button>
+      </div>
+      <div class="menu">
+        <button class="btn menu-category">1:1 문의</button>
+      </div>
     </div>
     <div class="content">컨텐츠</div>
   </div>
@@ -53,7 +59,7 @@ const submitForm = async () => {
 
 .side-menu {
   flex: 2;
-  background-color: aquamarine;
+  background-color: #f5f5f5;
   margin: 20px;
   padding-top: 150px;
   display: flex;
@@ -61,15 +67,29 @@ const submitForm = async () => {
   align-items: center;
 }
 
-.menu {
-  font-size: 2rem;
-  padding: 50px 20px;
-}
-
 .content {
   flex: 8;
   background-color: rgb(113, 122, 119);
   padding: 10px;
   margin: 20px;
+}
+
+.btn {
+  font-size: 2.5rem;
+}
+
+.menu {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.menu-category {
+  margin: 40px 0px;
+  width: 100%;
+}
+
+.menu-category:hover {
+  background-color: #e0e0e0;
 }
 </style>

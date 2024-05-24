@@ -16,6 +16,8 @@ import java.util.List;
 @EqualsAndHashCode
 public class Member {
 
+    private static final Integer DEFAULT_TOKEN = 10;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -47,7 +49,7 @@ public class Member {
 
 
     @Column(nullable = false)
-    private Integer token = 3;
+    private Integer token = DEFAULT_TOKEN;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
     private List<MemberRole> memberRoles = new ArrayList<>();
