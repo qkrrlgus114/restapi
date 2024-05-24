@@ -11,8 +11,11 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor
 public class MemberInfoResponseDTO {
+
     private String nickname;
+
     private int token;
+  
     private List<String> memberRoles;
 
     @Builder

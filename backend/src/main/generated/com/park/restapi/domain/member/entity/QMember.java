@@ -20,6 +20,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public static final QMember member = new QMember("member1");
 
+    public final DateTimePath<java.time.LocalDateTime> bannedDate = createDateTime("bannedDate", java.time.LocalDateTime.class);
+
     public final DateTimePath<java.time.LocalDateTime> createDate = createDateTime("createDate", java.time.LocalDateTime.class);
 
     public final StringPath email = createString("email");
@@ -37,6 +39,8 @@ public class QMember extends EntityPathBase<Member> {
     public final EnumPath<SocialType> socialType = createEnum("socialType", SocialType.class);
 
     public final NumberPath<Integer> token = createNumber("token", Integer.class);
+
+    public final DateTimePath<java.time.LocalDateTime> withdrawalDate = createDateTime("withdrawalDate", java.time.LocalDateTime.class);
 
     public QMember(String variable) {
         super(Member.class, forVariable(variable));

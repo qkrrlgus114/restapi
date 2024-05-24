@@ -1,60 +1,52 @@
 <template>
-  <div class="container">
-    <div>
-      <div class="api-container">
-        <h1>REST API 생성하기</h1>
-        <div v-if="isLoading" class="overlay">REST API 생성중...</div>
-        <div class="form-wrapper">
-          <div class="form-group">
-            <label for="model">GPT 모델 선택</label>
-            <select v-model="formData.model" id="model">
-              <option disabled value="">모델 선택</option>
-              <option value="gpt-3.5-turbo">GPT-3.5</option>
-              <option value="gpt-4">GPT-4</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="methodType">메서드 타입</label>
-            <select v-model="formData.methodType" id="methodType">
-              <option disabled value="">메서드 타입 선택</option>
-              <option value="GET">GET</option>
-              <option value="POST">POST</option>
-              <option value="PUT">PUT</option>
-              <option value="PATCH">PATCH</option>
-              <option value="DELETE">DELETE</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="resource">자원(ex user, hotel, room)</label>
-            <p2></p2>
-            <input
-              type="text"
-              v-model="formData.resource"
-              id="resource"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="content">설명(상세할수록 좋습니다.)</label>
-            <textarea
-              v-model="formData.content"
-              id="content"
-              required
-            ></textarea>
-          </div>
-          <div class="form-actions">
-            <button :disabled="!isFormValid" @click="submitForm">제출</button>
-            <button type="button" @click="resetForm">초기화</button>
-          </div>
+  <div class="main">
+    <div class="api-container">
+      <h1>REST API 생성하기</h1>
+      <div v-if="isLoading" class="overlay">REST API 생성중...</div>
+      <div class="form-wrapper">
+        <div class="form-group">
+          <label for="model">GPT 모델 선택</label>
+          <select v-model="formData.model" id="model">
+            <option disabled value="">모델 선택</option>
+            <option value="gpt-4o">GPT-4o</option>
+          </select>
         </div>
-        <div v-if="contentItems.length > 0">
-          <h2>추천 결과:</h2>
-          <ul>
-            <li v-for="(item, index) in contentItems" :key="index">
-              {{ item }}
-            </li>
-          </ul>
+        <div class="form-group">
+          <label for="methodType">메서드 타입</label>
+          <select v-model="formData.methodType" id="methodType">
+            <option disabled value="">메서드 타입 선택</option>
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="PATCH">PATCH</option>
+            <option value="DELETE">DELETE</option>
+          </select>
         </div>
+        <div class="form-group">
+          <label for="resource">자원(ex user, hotel, room)</label>
+          <p2></p2>
+          <input
+            type="text"
+            v-model="formData.resource"
+            id="resource"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="content">설명(상세할수록 좋습니다.)</label>
+          <textarea v-model="formData.content" id="content" required></textarea>
+        </div>
+        <div class="form-actions">
+          <button class="btn" @click="checkFormData">제출</button>
+        </div>
+      </div>
+      <div v-if="contentItems.length > 0">
+        <h2>추천 결과</h2>
+        <ul>
+          <li v-for="(item, index) in contentItems" :key="index">
+            {{ index + 1 }}. {{ item }}
+          </li>
+        </ul>
       </div>
     </div>
   </div>
@@ -62,46 +54,64 @@
 
 <script setup>
 import { useMainStore } from "@/store/store.js";
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { useGlobalProperties } from "@/composables/useGlobalProperties";
+import { apiPost } from "@/utils/api";
 
-const { $axios, $apiBaseUrl } = useGlobalProperties();
 const store = useMainStore();
 const router = useRouter();
 
 const formData = ref({ model: "", methodType: "", resource: "", content: "" });
 const isLoading = ref(false);
 const contentItems = ref([]);
+
+// form 데이터 검사
+const checkFormData = () => {
+  const { model, methodType, resource, content } = formData.value;
+
+  if (!model || !methodType || !resource || !content) {
+    alert("모든 필드를 채워주세요.");
+    return;
+  }
+
+  submitForm();
+};
+
+// rest api 제출
+const submitForm = async () => {
+  if (store.getToken <= 0) {
+    alert("토큰이 부족합니다.");
+    return;
+  }
+  isLoading.value = true;
+
+  try {
+    const data = await apiPost("/api/gpt/recommendations", formData.value);
+    alert(data.message);
+    const choices = data.data.choices;
+    const recommendations = choices[0].message.content.split(", ");
+    contentItems.value = recommendations;
+    store.decrementToken();
+  } catch (error) {
+  } finally {
+    isLoading.value = false;
+  }
+};
 </script>
 
 <style scoped>
-body,
-html {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-}
-.container {
+.main {
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #fafafa;
 }
 
 .api-container {
-  box-sizing: border-box;
-  margin: auto;
-  padding: 100px;
-  max-width: 500px;
+  margin-top: 50px;
+  padding: 50px 100px 100px 100px;
+  max-width: 40%;
   width: 100%;
   background-color: #ffffff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 1px 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   position: relative;
 }
@@ -148,33 +158,35 @@ html {
   background-color: #f8f9fa;
 }
 
-button {
-  padding: 10px 20px;
-  margin-top: 10px;
-  width: auto;
-  background-color: #3498db;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+.form-actions {
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
+}
+
+.btn {
+  background-color: #eeeeee;
+}
+.btn {
+  padding: 10px 50px;
   font-size: 16px;
-  font-weight: bold;
-  transition: all 0.3s ease;
-  display: inline-block;
-  margin-right: 10px;
+  font-weight: 1000;
+  cursor: pointer;
+  border-radius: 4px;
+  color: #5c5c5c;
+  outline: none;
+  border: none;
+  transition: background-color 0.2s, border-color 0.2s;
 }
 
-button:last-child {
-  margin-right: 0;
+.btn:hover {
+  background-color: #c7c7c7;
+  border-color: #c7c7c7;
 }
 
-button:disabled {
-  background-color: #95a5a6;
-  cursor: not-allowed;
-}
-
-button:hover:not(:disabled) {
-  background-color: #2980b9;
+.btn:active {
+  background-color: #c7c7c7;
+  border-color: #c7c7c7;
 }
 
 h1 {
@@ -199,16 +211,5 @@ li {
   border-radius: 4px;
   margin-bottom: 10px;
   text-align: left;
-}
-
-@media (max-width: 768px) {
-  .api-container {
-    padding: 20px;
-  }
-
-  .form-wrapper,
-  .form-actions button {
-    width: 100%;
-  }
 }
 </style>

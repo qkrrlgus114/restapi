@@ -3,6 +3,7 @@ package com.park.restapi.domain.api.repository.impl;
 import com.park.restapi.domain.api.dto.response.RequestHistoryResponseDTO;
 import com.park.restapi.domain.api.entity.ApiRequestHistory;
 import com.park.restapi.domain.api.repository.ApiRequestHistoryCustomRepository;
+import com.park.restapi.domain.member.entity.Member;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

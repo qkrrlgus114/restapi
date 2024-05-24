@@ -8,6 +8,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatGPTResponseDTO {
+
     private List<Choice> choices;
 
     @Getter

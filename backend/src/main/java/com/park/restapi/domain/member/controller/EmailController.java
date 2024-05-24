@@ -35,6 +35,6 @@ public class EmailController {
     public ResponseEntity<?> verifyCertificationNumber(@Valid @RequestBody CertificationCodeRequestDTO dto) {
         emailService.checkCertificationCode(dto.getCertificationCode());
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("인증 성공"));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("이메일 인증이 완료되었습니다."));
     }
 }
