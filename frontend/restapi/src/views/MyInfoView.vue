@@ -1,17 +1,17 @@
 <template>
   <div class="main">
     <div class="side-menu">
-      <div class="menu">
-        <button class="btn menu-category">개인 정보</button>
-      </div>
-      <div class="menu">
-        <button class="btn menu-category">회원 탈퇴</button>
-      </div>
-      <div class="menu">
-        <button class="btn menu-category">1:1 문의</button>
-      </div>
+      <router-link class="btn menu-category" :to="{ name: 'MyInfo' }"
+        >개인 정보</router-link
+      >
+      <router-link class="btn menu-category" :to="{ name: 'Withdraw' }"
+        >회원 탈퇴</router-link
+      >
+      <router-link class="btn menu-category" :to="{ name: 'Inquiry' }"
+        >1:1 문의</router-link
+      >
     </div>
-    <div class="content">컨텐츠</div>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -67,21 +67,8 @@ const submitForm = async () => {
   align-items: center;
 }
 
-.content {
-  flex: 8;
-  background-color: rgb(113, 122, 119);
-  padding: 10px;
-  margin: 20px;
-}
-
 .btn {
   font-size: 2.5rem;
-}
-
-.menu {
-  width: 100%;
-  display: flex;
-  justify-content: center;
 }
 
 .menu-category {

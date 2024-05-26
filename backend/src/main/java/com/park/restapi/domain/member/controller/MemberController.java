@@ -9,6 +9,7 @@ import com.park.restapi.domain.member.entity.SocialType;
 import com.park.restapi.domain.member.service.MemberService;
 import com.park.restapi.domain.member.service.impl.MemberServiceImpl;
 import com.park.restapi.util.response.ApiResponse;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -69,7 +70,7 @@ public class MemberController {
 
     // 토큰 조회
     @GetMapping("tokens")
-    public ResponseEntity<ApiResponse<?>> getToken() {
+    public ResponseEntity<ApiResponse<?>> getToken(HttpServletResponse response) {
         int token = memberService.getToken();
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(token, "토큰 개수 조회 성공"));

@@ -12,6 +12,9 @@ import RequestLogView from "@/views/RequestLogView.vue";
 import UserBanView from "@/views/UserBanView.vue";
 import SettingsView from "../views/SettingsView.vue";
 import MyInfoView from "../views/MyInfoView.vue";
+import WithdrawComponent from "@/components/WithdrawComponent.vue";
+import MyInfoComponent from "@/components/MyInfoComponent.vue";
+import InquiryComponent from "@/components/InquiryComponent.vue";
 
 const routes = [
   {
@@ -39,11 +42,27 @@ const routes = [
     meta: { showNavbar: false },
   },
   {
-    path: "/my-info",
-    name: "MyInfo",
+    path: "/my",
+    name: "My",
     component: MyInfoView,
     meta: { requiresAuth: true, showNavbar: true },
-    children: [],
+    children: [
+      {
+        path: "my-info",
+        name: "MyInfo",
+        component: MyInfoComponent,
+      },
+      {
+        path: "withdraw",
+        name: "Withdraw",
+        component: WithdrawComponent,
+      },
+      {
+        path: "inquiry",
+        name: "Inquiry",
+        component: InquiryComponent,
+      },
+    ],
   },
   {
     path: "/success",
