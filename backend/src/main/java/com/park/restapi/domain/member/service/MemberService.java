@@ -2,6 +2,7 @@ package com.park.restapi.domain.member.service;
 
 import com.park.restapi.domain.member.dto.request.DeactivateRequestDTO;
 import com.park.restapi.domain.member.dto.request.LoginInfoRequestDTO;
+import com.park.restapi.domain.member.dto.request.PasswordCheckRequestDTO;
 import com.park.restapi.domain.member.dto.request.SignUpRequestDTO;
 import com.park.restapi.domain.member.dto.response.MemberInfoResponseDTO;
 import com.park.restapi.domain.member.dto.response.MyInfoResponseDTO;
@@ -32,4 +33,6 @@ public interface MemberService {
     void bannedMember(Long id);
     // 유저 개인 정보 제공
     MyInfoResponseDTO getMemberInfo();
+    // 유저 탈퇴 비밀번호 검증
+    boolean passwordCheck(PasswordCheckRequestDTO requestDTO);
 }

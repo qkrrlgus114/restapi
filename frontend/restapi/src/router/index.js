@@ -4,13 +4,13 @@ import RegisterView from "../views/RegisterView.vue";
 import ChatView from "../views/ChatView.vue";
 import MainView from "../views/MainView.vue";
 import NotFoundComponent from "../components/NotFoundComponent.vue";
-import Success from "../views/Success.vue";
+import SuccessView from "../views/SuccessView.vue";
 import Failure from "../views/Failure.vue";
 import AdminView from "../views/AdminView.vue";
 import { useMainStore } from "../store/store.js";
 import RequestLogView from "@/views/RequestLogView.vue";
-import UserBanView from "@/views/UserBanView.vue";
-import SettingsView from "../views/SettingsView.vue";
+import UserBanComponent from "@/components/UserBanComponent.vue";
+import SettingsComponent from "../components/SettingsComponent.vue";
 import MyInfoView from "../views/MyInfoView.vue";
 import WithdrawComponent from "@/components/WithdrawComponent.vue";
 import MyInfoComponent from "@/components/MyInfoComponent.vue";
@@ -66,8 +66,8 @@ const routes = [
   },
   {
     path: "/success",
-    name: "Success",
-    component: Success,
+    name: "SuccessView",
+    component: SuccessView,
     meta: { showNavbar: false },
   },
   {
@@ -90,8 +90,8 @@ const routes = [
     children: [
       {
         path: "settings",
-        name: "Settings",
-        component: SettingsView,
+        name: "SettingsComponent",
+        component: SettingsComponent,
         meta: { showNavbar: true },
       },
       {
@@ -103,7 +103,7 @@ const routes = [
       {
         path: "ban",
         name: "UserBan",
-        component: UserBanView,
+        component: UserBanComponent,
         meta: { showNavbar: true },
       },
     ],

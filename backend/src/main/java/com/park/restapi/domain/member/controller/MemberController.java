@@ -2,6 +2,7 @@ package com.park.restapi.domain.member.controller;
 
 import com.park.restapi.domain.member.dto.request.DeactivateRequestDTO;
 import com.park.restapi.domain.member.dto.request.LoginInfoRequestDTO;
+import com.park.restapi.domain.member.dto.request.PasswordCheckRequestDTO;
 import com.park.restapi.domain.member.dto.request.SignUpRequestDTO;
 import com.park.restapi.domain.member.dto.response.MemberInfoResponseDTO;
 import com.park.restapi.domain.member.dto.response.MyInfoResponseDTO;
@@ -120,5 +121,15 @@ public class MemberController {
         MyInfoResponseDTO memberInfo = memberService.getMemberInfo();
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(memberInfo, "회원 개인정보 조회 성공."));
+    }
+
+    // 탈퇴 비밀번호 검증
+    @PostMapping("members/password-check")
+    public ResponseEntity<ApiResponse<?>> getMemberDeepInfo(@RequestBody PasswordCheckRequestDTO requestDTO){
+        boolean result = memberService.passwordCheck(requestDTO);
+
+        System.out.println(result);
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(result, "비밀번호 검증 결과(true = 일치, false = 불일치)"));
     }
 }

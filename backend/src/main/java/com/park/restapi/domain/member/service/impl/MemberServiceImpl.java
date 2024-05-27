@@ -7,6 +7,7 @@ import com.park.restapi.domain.exception.exception.MemberException;
 import com.park.restapi.domain.exception.info.MemberExceptionInfo;
 import com.park.restapi.domain.member.dto.request.DeactivateRequestDTO;
 import com.park.restapi.domain.member.dto.request.LoginInfoRequestDTO;
+import com.park.restapi.domain.member.dto.request.PasswordCheckRequestDTO;
 import com.park.restapi.domain.member.dto.request.SignUpRequestDTO;
 import com.park.restapi.domain.member.dto.response.MemberInfoResponseDTO;
 import com.park.restapi.domain.member.dto.response.MyInfoResponseDTO;
@@ -187,7 +188,19 @@ public class MemberServiceImpl implements MemberService {
         // 유저가 여태 획득했던 토큰 개수
         int totalAcquisitionToken = couponHistoryRepository.findByMemberTotalAcquisitionToken(currentMember);
 
-        return MyInfoResponseDTO.toDTO(currentMember, totalUseToken, totalAcquisitionToken);
+        return MyInfoResponseDTO.toDTO(totalUseToken, totalAcquisitionToken);
+    }
+
+    // 유저 탈퇴 비밀번호 검증
+    @Override
+    public boolean passwordCheck(PasswordCheckRequestDTO requestDTO) {
+        Member currentMember = getCurrentMember();
+
+        if(encoder.matches(requestDTO.getPassword(), currentMember.getPassword())){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     // 쿠키 저장

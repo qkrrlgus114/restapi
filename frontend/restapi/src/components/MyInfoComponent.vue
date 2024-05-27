@@ -27,15 +27,15 @@
 
 <script setup>
 import { useMainStore } from "@/store/store.js";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { apiGet } from "@/utils/api";
 import { useRouter } from "vue-router";
 
 const store = useMainStore();
 const router = useRouter();
 
-const social = ref(false);
-const nickname = ref("");
+const social = computed(() => store.social);
+const nickname = computed(() => store.nickname);
 const totalUseToken = ref(0);
 const totalAcquisitionToken = ref(0);
 
@@ -79,9 +79,6 @@ const loadUserInfo = async () => {
 
 .info {
   padding: 30px 0px;
-}
-
-.info {
   display: flex;
   width: 100%;
   justify-content: flex-start;

@@ -7,6 +7,7 @@ export const useMainStore = defineStore("main", {
     token: 0,
     coupon: 0,
     memberRoles: [],
+    social: false,
     isDailyCouponGenerate: false,
     dailyCouponQuantity: 0,
   }),
@@ -31,6 +32,7 @@ export const useMainStore = defineStore("main", {
       this.nickname = payload.nickname;
       this.token = payload.token;
       this.memberRoles = payload.memberRoles;
+      this.social = payload.social;
     },
     updateCouponInfo(payload) {
       this.coupon = payload;

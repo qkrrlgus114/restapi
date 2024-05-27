@@ -51,6 +51,7 @@ const router = useRouter();
 const nickname = computed(() => store.nickname);
 const coupon = computed(() => store.coupon);
 const token = computed(() => store.token);
+const social = computed(() => store.social);
 const isAdmin = ref(false);
 
 onMounted(() => {
