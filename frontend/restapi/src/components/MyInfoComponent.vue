@@ -15,11 +15,11 @@
       </div>
       <div class="info">
         <span class="label">누적 사용 토큰 :</span>
-        <span class="value"> {{ totalUseToken }}개</span>
+        <span class="value"> {{ totalUseToken }} 개</span>
       </div>
       <div class="info">
-        <span class="label">누적 획득 토큰 :</span>
-        <span class="value"> {{ totalAcquisitionToken }}개</span>
+        <span class="label">누적 획득 토큰(쿠폰) :</span>
+        <span class="value"> {{ totalAcquisitionToken }} 개</span>
       </div>
     </div>
   </div>
@@ -59,7 +59,7 @@ const loadUserInfo = async () => {
 <style scoped>
 .content {
   flex: 8;
-  background-color: rgb(113, 122, 119);
+  background-color: rgb(223, 223, 223);
   padding: 10px;
   margin: 20px;
   display: flex;
@@ -78,27 +78,27 @@ const loadUserInfo = async () => {
 }
 
 .info {
-  padding: 50px 0px;
-  font-size: 3rem;
+  padding: 30px 0px;
 }
 
 .info {
   display: flex;
   width: 100%;
   justify-content: flex-start;
-  margin: 10px 0;
-  font-size: 1.5rem;
+  font-size: 2.5rem;
 }
 
 .label {
+  flex: 4;
   width: 200px;
+  margin-right: 50px;
   font-weight: bold;
   display: flex;
   justify-content: flex-end;
 }
 
 .value {
-  flex: 1;
+  flex: 6;
   text-align: left;
 }
 </style>
