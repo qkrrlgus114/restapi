@@ -123,10 +123,8 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     @Transactional(readOnly = true)
     public Page<RequestHistoryResponseDTO> getApiRequestHistory(Pageable pageable) {
         Long startTime = System.currentTimeMillis();
-        log.info("쿼리 시작 시간 : " + startTime);
         Page<RequestHistoryResponseDTO> requestHistoryResponseDTOS = apiRequestHistoryRepository.searchApiRequestHistory(pageable);
         Long endTime = System.currentTimeMillis();
-        log.info("쿼리 걸린 시간 : " + (endTime - startTime) + "밀리초");
 
         return requestHistoryResponseDTOS;
     }
@@ -136,10 +134,8 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     @Transactional(readOnly = true)
     public Page<RequestHistoryResponseDTO> getApiRequestHistoryByCondition(Pageable pageable, String searchType, String keyword) {
         Long startTime = System.currentTimeMillis();
-        log.info("쿼리 시작 시간 : " + startTime);
         Page<RequestHistoryResponseDTO> requestHistoryResponseDTOS = apiRequestHistoryRepository.searchApiRequestHistoryByCondition(pageable, searchType, keyword);
         Long endTime = System.currentTimeMillis();
-        log.info("쿼리 걸린 시간 : " + (endTime - startTime) + "밀리초");
 
         return requestHistoryResponseDTOS;
     }
