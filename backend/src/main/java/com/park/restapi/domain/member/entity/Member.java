@@ -1,5 +1,8 @@
 package com.park.restapi.domain.member.entity;
 
+import com.park.restapi.domain.api.entity.ApiRequestHistory;
+import com.park.restapi.domain.coupon.entity.CouponHistory;
+import com.park.restapi.domain.refreshtoken.entity.RefreshToken;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -47,12 +50,20 @@ public class Member {
     @Column(nullable = true)
     private LocalDateTime withdrawalDate;
 
-
     @Column(nullable = false)
     private Integer token = DEFAULT_TOKEN;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberRole> memberRoles = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RefreshToken> refreshTokens = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ApiRequestHistory> apiRequestHistories = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CouponHistory> couponHistories = new ArrayList<>();
 
     @Builder
     public Member(String email, String password, String nickname, LocalDateTime loginLastDate, SocialType socialType) {
@@ -76,7 +87,7 @@ public class Member {
     }
 
     public void resetToken() {
-        this.token = token < 4 ? 3 : this.token;
+        this.token = this.token < DEFAULT_TOKEN ? DEFAULT_TOKEN : this.token;
     }
 
     public void updateLoginDate() {

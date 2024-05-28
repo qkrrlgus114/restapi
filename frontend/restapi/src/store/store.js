@@ -7,6 +7,7 @@ export const useMainStore = defineStore("main", {
     token: 0,
     coupon: 0,
     memberRoles: [],
+    social: false,
     isDailyCouponGenerate: false,
     dailyCouponQuantity: 0,
   }),
@@ -25,12 +26,16 @@ export const useMainStore = defineStore("main", {
       this.token = 0;
       this.coupon = 0;
       this.memberRoles = [];
+      this.social = false;
+      this.isDailyCouponGenerate = false;
+      this.dailyCouponQuantity = 0;
     },
     // 유저 정보 갱신
     updateUserInfo(payload) {
       this.nickname = payload.nickname;
       this.token = payload.token;
       this.memberRoles = payload.memberRoles;
+      this.social = payload.social;
     },
     updateCouponInfo(payload) {
       this.coupon = payload;

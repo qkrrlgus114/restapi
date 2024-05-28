@@ -53,8 +53,6 @@ public class CouponServiceImpl implements CouponService {
             throw new MemberException(MemberExceptionInfo.ALREADY_GET_COUPON, "이미 쿠폰 획득 완료.");
         }
 
-        Integer integer = Integer.valueOf(1);
-
         // 쿠폰이 남아있는지 확인
         Coupon coupon = couponRepository.findByCouponForWrite(startOfDay, endOfDay)
                 .orElseThrow(() -> new CouponException(CouponExceptionInfo.FAIL_COUPON_DATA, "DB에 쿠폰 데이터 존재하지 않음."));
