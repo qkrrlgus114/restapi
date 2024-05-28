@@ -26,6 +26,9 @@ export const useMainStore = defineStore("main", {
       this.token = 0;
       this.coupon = 0;
       this.memberRoles = [];
+      this.social = false;
+      this.isDailyCouponGenerate = false;
+      this.dailyCouponQuantity = 0;
     },
     // 유저 정보 갱신
     updateUserInfo(payload) {

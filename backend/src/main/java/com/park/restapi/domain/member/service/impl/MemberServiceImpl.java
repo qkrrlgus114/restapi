@@ -14,8 +14,10 @@ import com.park.restapi.domain.member.dto.response.MyInfoResponseDTO;
 import com.park.restapi.domain.member.entity.Member;
 import com.park.restapi.domain.member.entity.MemberRole;
 import com.park.restapi.domain.member.entity.SocialType;
+import com.park.restapi.domain.member.entity.WithdrawalMember;
 import com.park.restapi.domain.member.repository.MemberRepository;
 import com.park.restapi.domain.member.repository.MemberRoleRepository;
+import com.park.restapi.domain.member.repository.WithdrawalMemberRepository;
 import com.park.restapi.domain.member.service.MemberService;
 import com.park.restapi.util.jwt.JwtService;
 import jakarta.servlet.http.Cookie;
@@ -28,6 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -39,6 +43,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRoleRepository memberRoleRepository;
     private final ApiRequestHistoryRepository apiRequestHistoryRepository;
     private final CouponHistoryRepository couponHistoryRepository;
+    private final WithdrawalMemberRepository withdrawalMemberRepository;
     private final JwtService jwtService;
     private final BCryptPasswordEncoder encoder;
 
@@ -71,6 +76,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional(readOnly = true)
     public boolean existEmailCheck(String email) {
+
         return memberRepository.existsByEmail(email);
     }
 
@@ -123,6 +129,7 @@ public class MemberServiceImpl implements MemberService {
 
     // 유저 정보 조회
     @Override
+    @Transactional(readOnly = true)
     public MemberInfoResponseDTO getUserInfo() {
         Member currentMember = getCurrentMember();
 
@@ -131,6 +138,7 @@ public class MemberServiceImpl implements MemberService {
 
     // 토큰 조회
     @Override
+    @Transactional(readOnly = true)
     public int getToken() {
         Member currentMember = getCurrentMember();
 
@@ -191,15 +199,26 @@ public class MemberServiceImpl implements MemberService {
         return MyInfoResponseDTO.toDTO(totalUseToken, totalAcquisitionToken);
     }
 
-    // 유저 탈퇴 비밀번호 검증
+    // 유저 데일리 토큰 초기화(스케줄러)
     @Override
-    public boolean passwordCheck(PasswordCheckRequestDTO requestDTO) {
-        Member currentMember = getCurrentMember();
+    @Transactional
+    public void resetAllTokens() {
+        List<Member> all = memberRepository.findAll();
+        for(Member u : all){
+            u.resetToken();
+        }
+    }
 
-        if(encoder.matches(requestDTO.getPassword(), currentMember.getPassword())){
-            return true;
-        }else{
-            return false;
+    // 유저 탈퇴 판단(스케줄러)
+    @Override
+    @Transactional
+    public void withdrawalMember() {
+        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+        List<Member> byWithdrawalMember = memberRepository.findByWithdrawalMember(thirtyDaysAgo);
+
+        for(Member m : byWithdrawalMember){
+            memberRepository.delete(m);
+            withdrawalMemberRepository.save(WithdrawalMember.builder().email(m.getEmail()).build());
         }
     }
 

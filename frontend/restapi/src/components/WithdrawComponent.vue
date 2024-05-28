@@ -15,16 +15,29 @@
       </div>
     </div>
     <div class="withdraw-btn">
-      <button @click="withdraw">탈퇴하기</button>
+      <button @click="checkInput">탈퇴하기</button>
     </div>
+    <Modal
+      :isVisible="showModal"
+      @confirm="handleConfirm"
+      @cancel="handleCancel"
+    >
+      <template #header> 정말로 탈퇴하시겠습니까? </template>
+      <template #body>
+        (탈퇴하면 해당 이메일로 재가입이 불가능합니다.)
+      </template>
+      <template #cancel-btn> 취소하기 </template>
+      <template #confirm-btn> 탈퇴하기 </template>
+    </Modal>
   </div>
 </template>
 
 <script setup>
 import { useMainStore } from "@/store/store.js";
 import { ref, computed } from "vue";
-import { apiPost } from "@/utils/api";
+import { apiPatch } from "@/utils/api";
 import { useRouter } from "vue-router";
+import Modal from "./Modal.vue";
 
 const store = useMainStore();
 const router = useRouter();
@@ -32,48 +45,50 @@ const router = useRouter();
 const password = ref("");
 const passwordConfirm = ref("");
 const social = computed(() => store.social);
+const showModal = ref(false);
 
-// 비밀번호 입력 확인
+// 탈퇴하기
+const handleConfirm = () => {
+  withdrawAPI();
+  showModal.value = false;
+};
+
+// 취소하기
+const handleCancel = () => {
+  showModal.value = false;
+};
+
+// 비밀번호 입력 확인 -> 모달 띄우기
 const checkInput = () => {
   if (social.value) {
-    return true;
+    showModal.value = true;
+    return;
   }
   if (password.value.length === 0) {
     alert("비밀번호를 입력해주세요.");
-    return false;
-  }
-  if (passwordConfirm.value.length === 0) {
+  } else if (passwordConfirm.value.length === 0) {
     alert("비밀번호 확인을 입력해주세요.");
-    return false;
-  }
-  if (password.value != passwordConfirm.value) {
+  } else if (password.value != passwordConfirm.value) {
     alert("비밀번호 확인이 일치하지 않습니다.");
-    return false;
+  } else {
+    showModal.value = true;
   }
-  return true;
+  return;
 };
 
 // 탈퇴하기 진행
-const withdraw = async () => {
-  if (checkInput()) {
-    var isPassword = await passwordConfirmAPI();
-    if (social.value) isPassword = true;
-    if (isPassword) {
-      alert("탈퇴 진행");
-    } else {
-      alert("비밀번호가 일치하지 않습니다.");
-    }
-  }
-};
+const withdrawAPI = async () => {
+  const socialType = social.value ? "KAKAO" : "GENERAL";
 
-// 비밀번호 확인
-const passwordConfirmAPI = async () => {
   try {
-    const data = await apiPost("api/members/password-check", {
+    const data = await apiPatch("api/members/deactivate", {
+      socialType: socialType,
       password: password.value,
     });
 
-    return data.data;
+    alert(data.message);
+    store.logout();
+    router.push("/login");
   } catch (error) {}
 };
 </script>

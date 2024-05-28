@@ -1,11 +1,15 @@
 package com.park.restapi.domain.member.service.impl;
 
 import com.park.restapi.domain.exception.exception.EmailException;
+import com.park.restapi.domain.exception.exception.MemberException;
 import com.park.restapi.domain.exception.info.EmailExceptionInfo;
+import com.park.restapi.domain.exception.info.MemberExceptionInfo;
 import com.park.restapi.domain.member.entity.EmailConfirm;
 import com.park.restapi.domain.member.entity.Member;
+import com.park.restapi.domain.member.entity.WithdrawalMember;
 import com.park.restapi.domain.member.repository.EmailConfirmRepository;
 import com.park.restapi.domain.member.repository.MemberRepository;
+import com.park.restapi.domain.member.repository.WithdrawalMemberRepository;
 import com.park.restapi.domain.member.service.EmailService;
 import jakarta.mail.Message;
 import jakarta.mail.internet.InternetAddress;
@@ -30,6 +34,7 @@ public class EmailServiceImpl implements EmailService {
     private final JavaMailSender emailSender;
     private final EmailConfirmRepository emailConfirmRepository;
     private final MemberRepository memberRepository;
+    private final WithdrawalMemberRepository withdrawalMemberRepository;
 
 
     private MimeMessage createMessageChange(String to, String authCode)throws Exception{
@@ -118,12 +123,18 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Transactional
-    public boolean sendSimpleMessageRegist(String to)throws Exception {
-        Optional<Member> byEmail = memberRepository.findByEmail(to);
+    public boolean sendSimpleMessageRegist(String email)throws Exception {
+
+        Optional<WithdrawalMember> withdrawalMemberRepositoryByEmail = withdrawalMemberRepository.findByEmail(email);
+        if (withdrawalMemberRepositoryByEmail.isPresent()) {
+            throw new MemberException(MemberExceptionInfo.WITHDRAWAL_MEMBER, email + "로 회원가입을 시도했습니다.(탈퇴 유저)");
+        }
+
+        Optional<Member> byEmail = memberRepository.findByEmail(email);
         if(byEmail.isPresent()) throw new EmailException(EmailExceptionInfo.ALREADY_SIGN_UP_EMAIL, "이미 가입된 이메일입니다.");
 
         String authCode =  createKey(); // 인증코드 생성
-        MimeMessage message = createMessageRegist(to, authCode); // 메시지 생성
+        MimeMessage message = createMessageRegist(email, authCode); // 메시지 생성
 
         EmailConfirm confirm = EmailConfirm.builder()
                 .certificationNumber(authCode)

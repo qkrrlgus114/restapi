@@ -6,7 +6,7 @@
 import { useMainStore } from "@/store/store.js";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { apiPost, apiGet } from "@/utils/api";
+import { apiPost } from "@/utils/api";
 
 const store = useMainStore();
 const router = useRouter();

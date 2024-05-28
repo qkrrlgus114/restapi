@@ -20,7 +20,11 @@ public class QMember extends EntityPathBase<Member> {
 
     public static final QMember member = new QMember("member1");
 
+    public final ListPath<com.park.restapi.domain.api.entity.ApiRequestHistory, com.park.restapi.domain.api.entity.QApiRequestHistory> apiRequestHistories = this.<com.park.restapi.domain.api.entity.ApiRequestHistory, com.park.restapi.domain.api.entity.QApiRequestHistory>createList("apiRequestHistories", com.park.restapi.domain.api.entity.ApiRequestHistory.class, com.park.restapi.domain.api.entity.QApiRequestHistory.class, PathInits.DIRECT2);
+
     public final DateTimePath<java.time.LocalDateTime> bannedDate = createDateTime("bannedDate", java.time.LocalDateTime.class);
+
+    public final ListPath<com.park.restapi.domain.coupon.entity.CouponHistory, com.park.restapi.domain.coupon.entity.QCouponHistory> couponHistories = this.<com.park.restapi.domain.coupon.entity.CouponHistory, com.park.restapi.domain.coupon.entity.QCouponHistory>createList("couponHistories", com.park.restapi.domain.coupon.entity.CouponHistory.class, com.park.restapi.domain.coupon.entity.QCouponHistory.class, PathInits.DIRECT2);
 
     public final DateTimePath<java.time.LocalDateTime> createDate = createDateTime("createDate", java.time.LocalDateTime.class);
 
@@ -35,6 +39,8 @@ public class QMember extends EntityPathBase<Member> {
     public final StringPath nickname = createString("nickname");
 
     public final StringPath password = createString("password");
+
+    public final ListPath<com.park.restapi.domain.refreshtoken.entity.RefreshToken, com.park.restapi.domain.refreshtoken.entity.QRefreshToken> refreshTokens = this.<com.park.restapi.domain.refreshtoken.entity.RefreshToken, com.park.restapi.domain.refreshtoken.entity.QRefreshToken>createList("refreshTokens", com.park.restapi.domain.refreshtoken.entity.RefreshToken.class, com.park.restapi.domain.refreshtoken.entity.QRefreshToken.class, PathInits.DIRECT2);
 
     public final EnumPath<SocialType> socialType = createEnum("socialType", SocialType.class);
 
