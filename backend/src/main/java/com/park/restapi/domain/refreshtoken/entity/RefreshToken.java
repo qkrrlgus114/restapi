@@ -16,16 +16,21 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RefreshToken {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
     @Column(nullable = true, length = 200)
     private String accessToken;
+
     @Column(nullable = true, length = 200)
     private String refreshToken;
+
     private LocalDateTime expireDate;
 
     @Builder

@@ -1,15 +1,13 @@
 import axios from "./axios";
-import { useRouter } from "vue-router";
+import router from "@/router";
 import { useMainStore } from "@/store/store.js";
 
 const handleApiError = (error) => {
   const store = useMainStore();
-  const router = useRouter();
 
   if (
-    error.response &&
     error.response.status === 401 &&
-    error.response.data.error == "쿠키가 존재하지 않습니다."
+    error.response.data.error === "쿠키가 존재하지 않습니다."
   ) {
     store.logout();
     router.push("/login");

@@ -2,6 +2,7 @@ package com.park.restapi.domain.member.controller;
 
 import com.park.restapi.domain.member.dto.request.DeactivateRequestDTO;
 import com.park.restapi.domain.member.dto.request.LoginInfoRequestDTO;
+import com.park.restapi.domain.member.dto.request.PasswordCheckRequestDTO;
 import com.park.restapi.domain.member.dto.request.SignUpRequestDTO;
 import com.park.restapi.domain.member.dto.response.MemberInfoResponseDTO;
 import com.park.restapi.domain.member.dto.response.MyInfoResponseDTO;
@@ -9,6 +10,7 @@ import com.park.restapi.domain.member.entity.SocialType;
 import com.park.restapi.domain.member.service.MemberService;
 import com.park.restapi.domain.member.service.impl.MemberServiceImpl;
 import com.park.restapi.util.response.ApiResponse;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -69,7 +71,7 @@ public class MemberController {
 
     // 토큰 조회
     @GetMapping("tokens")
-    public ResponseEntity<ApiResponse<?>> getToken() {
+    public ResponseEntity<ApiResponse<?>> getToken(HttpServletResponse response) {
         int token = memberService.getToken();
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(token, "토큰 개수 조회 성공"));
@@ -99,7 +101,7 @@ public class MemberController {
         switch (socialType) {
             case KAKAO -> memberService.deactivateSocialMember();
             case GENERAL -> memberService.deactivateGeneralMember(requestDTO);
-            default -> throw new IllegalArgumentException("잘못된 타입");
+            default -> throw new IllegalArgumentException("9000 타입 에러 발생. 관리자에게 문의가 필요합니다.");
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("회원 탈퇴에 성공했습니다."));
