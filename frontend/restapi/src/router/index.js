@@ -4,14 +4,20 @@ import RegisterView from "../views/RegisterView.vue";
 import ChatView from "../views/ChatView.vue";
 import MainView from "../views/MainView.vue";
 import NotFoundComponent from "../components/NotFoundComponent.vue";
-import Success from "../views/Success.vue";
+import SuccessView from "../views/SuccessView.vue";
 import Failure from "../views/Failure.vue";
 import AdminView from "../views/AdminView.vue";
 import { useMainStore } from "../store/store.js";
 import RequestLogView from "@/views/RequestLogView.vue";
-import UserBanView from "@/views/UserBanView.vue";
-import SettingsView from "../views/SettingsView.vue";
+import UserBanComponent from "@/components/UserBanComponent.vue";
+import SettingsComponent from "../components/SettingsComponent.vue";
 import MyInfoView from "../views/MyInfoView.vue";
+import WithdrawComponent from "@/components/WithdrawComponent.vue";
+import MyInfoComponent from "@/components/MyInfoComponent.vue";
+import InquiryBoardComponent from "@/components/InquiryBoardComponent.vue";
+import InquiryDetailComponent from "@/components/InquiryDetailComponent.vue";
+import InquiryFormComponent from "@/components/InquiryFormComponent.vue";
+import AnswerFormComponent from "@/components/AnswerFormComponent.vue";
 
 const routes = [
   {
@@ -39,16 +45,42 @@ const routes = [
     meta: { showNavbar: false },
   },
   {
-    path: "/my-info",
-    name: "MyInfo",
+    path: "/my",
+    name: "My",
     component: MyInfoView,
     meta: { requiresAuth: true, showNavbar: true },
-    children: [],
+    children: [
+      {
+        path: "my-info",
+        name: "MyInfo",
+        component: MyInfoComponent,
+      },
+      {
+        path: "withdraw",
+        name: "Withdraw",
+        component: WithdrawComponent,
+      },
+      {
+        path: "inquiry/:page",
+        name: "InquiryBoard",
+        component: InquiryBoardComponent,
+      },
+      {
+        path: "inquiry/view/:id",
+        name: "InquiryDetail",
+        component: InquiryDetailComponent,
+      },
+      {
+        path: "inquiry/write",
+        name: "InquiryForm",
+        component: InquiryFormComponent,
+      },
+    ],
   },
   {
     path: "/success",
-    name: "Success",
-    component: Success,
+    name: "SuccessView",
+    component: SuccessView,
     meta: { showNavbar: false },
   },
   {
@@ -71,21 +103,24 @@ const routes = [
     children: [
       {
         path: "settings",
-        name: "Settings",
-        component: SettingsView,
-        meta: { showNavbar: true },
+        name: "SettingsComponent",
+        component: SettingsComponent,
       },
       {
         path: "requests/:page",
         name: "RequestLog",
         component: RequestLogView,
-        meta: { showNavbar: true },
       },
       {
         path: "ban",
         name: "UserBan",
-        component: UserBanView,
-        meta: { showNavbar: true },
+        component: UserBanComponent,
+      },
+      {
+        path: "answer/:id/write",
+        name: "AnswerForm",
+        component: AnswerFormComponent,
+        props: true,
       },
     ],
   },

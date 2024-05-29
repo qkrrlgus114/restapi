@@ -51,6 +51,7 @@ const router = useRouter();
 const nickname = computed(() => store.nickname);
 const coupon = computed(() => store.coupon);
 const token = computed(() => store.token);
+const social = computed(() => store.social);
 const isAdmin = ref(false);
 
 onMounted(() => {
@@ -117,7 +118,8 @@ const goAdmin = () => router.push("/admin/settings");
 // 내 정보 페이지로 이동
 // const goMyInfo = () => router.push("/my-info");
 const goMyInfo = () => {
-  alert("현재 준비중입니다.");
+  // alert("현재 준비중입니다.");
+  router.push("/my/my-info");
 };
 
 // 홈으로 이동

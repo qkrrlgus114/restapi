@@ -46,7 +46,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/authentications/**", "/api/signup",
                         "/api/email-check", "/api/login", "/oauth2/authorization/kakao", "/login/oauth2/code/kakao", "/ws"
                         ,"/api/auth/**").permitAll()
-                                .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
+                                .requestMatchers("/api/admin/**", "/api/answers/**").hasAuthority("ADMIN")
                                 .requestMatchers("/api/**").hasAuthority("USER")
                                 .anyRequest().authenticated()
                 )

@@ -24,7 +24,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
-
+    @Transactional
     public void reGenerateToken(HttpServletResponse response, String accessToken, String refreshToken) {
         log.info("리프레시 토큰 재발급 시작");
         // 1. 리프레시 토큰 살아있는지 검증
@@ -41,7 +41,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     // 쿠키 저장
-    @Transactional
     public void saveCookie(String token, HttpServletResponse response, String name){
         Cookie cookie = new Cookie(name, token);
         cookie.setHttpOnly(true);

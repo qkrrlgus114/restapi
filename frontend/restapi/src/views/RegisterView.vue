@@ -63,12 +63,10 @@
 </template>
 
 <script setup>
-import { useMainStore } from "@/store/store.js";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { apiPost, apiGet } from "@/utils/api";
+import { apiPost } from "@/utils/api";
 
-const store = useMainStore();
 const router = useRouter();
 
 const email = ref("");
@@ -94,26 +92,24 @@ const checkInputValue = () => {
     alert("모든 값을 입력해주세요.");
     return false;
   }
+
   if (!/\S+@\S+\.\S+/.test(email.value)) {
     alert("유효한 이메일 주소를 입력해주세요.");
     return false;
-  }
-  if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,15}$/.test(password.value)) {
+  } else if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,15}$/.test(password.value)) {
     alert("비밀번호는 8~15자리의 영문과 숫자를 포함해야 합니다.");
     return false;
-  }
-  if (password.value !== passwordConfirm.value) {
+  } else if (password.value !== passwordConfirm.value) {
     alert("비밀번호가 일치하지 않습니다.");
     return false;
-  }
-  if (!/^[가-힣a-zA-Z0-9]{1,10}$/.test(nickname.value)) {
+  } else if (!/^[가-힣a-zA-Z0-9]{1,10}$/.test(nickname.value)) {
     alert("닉네임은 1~10자리의 한글, 영문, 숫자만 포함해야 합니다.");
     return false;
-  }
-  if (isCheckCertification.value === false) {
+  } else if (isCheckCertification.value === false) {
     alert("이메일 인증이 필요합니다.");
     return false;
   }
+
   return true;
 };
 

@@ -2,12 +2,10 @@ package com.park.restapi.util.oauth;
 
 import com.park.restapi.domain.exception.exception.MemberException;
 import com.park.restapi.domain.exception.info.MemberExceptionInfo;
+import com.park.restapi.domain.member.entity.*;
+import com.park.restapi.domain.member.repository.WithdrawalMemberRepository;
 import com.park.restapi.domain.refreshtoken.entity.RefreshToken;
 import com.park.restapi.domain.refreshtoken.repository.RefreshTokenRepository;
-import com.park.restapi.domain.member.entity.Role;
-import com.park.restapi.domain.member.entity.SocialType;
-import com.park.restapi.domain.member.entity.Member;
-import com.park.restapi.domain.member.entity.MemberRole;
 import com.park.restapi.domain.member.repository.MemberRepository;
 import com.park.restapi.domain.member.repository.MemberRoleRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +33,7 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
 
     private final MemberRepository memberRepository;
     private final MemberRoleRepository memberRoleRepository;
+    private final WithdrawalMemberRepository withdrawalMemberRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -54,6 +53,13 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
         }
 
         String email = oAuth2UserInfo.getEmail();
+        // 블랙리스트에 있는지 확인
+        Optional<WithdrawalMember> byEmail = withdrawalMemberRepository.findByEmail(email);
+        if(byEmail.isPresent()){
+            OAuth2Error error = new OAuth2Error("탈퇴한", email + " 유저가 로그인 시도를 진행했습니다.(탈퇴한 유저, 카카오)", null);
+            throw new OAuth2AuthenticationException(error);
+        }
+
         String nickname = oAuth2UserInfo.getNickname();
 
         // 유저가 db에 있는지 판단.
@@ -61,7 +67,6 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
 
         /*
          * 만약에 유저가 없으면 회원가입 진행
-         * 랜덤 닉네임 생성 및 기본 프로필사진 설정
          * */
         if (byUser.isEmpty()) {
             Member member = new Member(email, nickname, SocialType.KAKAO);
