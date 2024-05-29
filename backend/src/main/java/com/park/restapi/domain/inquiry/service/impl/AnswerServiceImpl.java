@@ -33,7 +33,7 @@ public class AnswerServiceImpl implements AnswerService {
     // 문의내역 답변 등록하기
     @Override
     @Transactional
-    public void createAnswer(AnswerRequestDTO requestDTO) {
+    public Inquiry createAnswer(AnswerRequestDTO requestDTO) {
         Member currentMember = getCurrentMember();
 
         Inquiry inquiry = inquiryRepository.findById(requestDTO.getInquiryId())
@@ -48,6 +48,8 @@ public class AnswerServiceImpl implements AnswerService {
         answerRepository.save(answer);
 
         inquiry.registerAnswer(answer);
+
+        return inquiry;
     }
 
     // 문의내역 답변 수정하기

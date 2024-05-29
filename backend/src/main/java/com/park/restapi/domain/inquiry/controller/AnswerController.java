@@ -1,7 +1,9 @@
 package com.park.restapi.domain.inquiry.controller;
 
 import com.park.restapi.domain.inquiry.dto.request.AnswerRequestDTO;
+import com.park.restapi.domain.inquiry.entity.Inquiry;
 import com.park.restapi.domain.inquiry.service.AnswerService;
+import com.park.restapi.domain.member.service.EmailService;
 import com.park.restapi.util.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +17,13 @@ import org.springframework.web.bind.annotation.*;
 public class AnswerController {
 
     private final AnswerService answerService;
+    private final EmailService emailService;
 
     // 답변 등록
     @PostMapping("answers")
-    public ResponseEntity<ApiResponse<?>> createAnswer(@RequestBody @Valid AnswerRequestDTO answerRequestDTO){
-        answerService.createAnswer(answerRequestDTO);
+    public ResponseEntity<ApiResponse<?>> createAnswer(@RequestBody @Valid AnswerRequestDTO answerRequestDTO) throws Exception {
+        Inquiry inquiry = answerService.createAnswer(answerRequestDTO);
+        emailService.sendAnsweredMessage(inquiry.getMember().getEmail(), inquiry.getTitle());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.createSuccessNoContent("문의 답변 등록이 완료되었습니다."));
     }
