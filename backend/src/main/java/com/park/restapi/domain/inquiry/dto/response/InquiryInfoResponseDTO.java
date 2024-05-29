@@ -17,9 +17,11 @@ public class InquiryInfoResponseDTO {
 
     private Long id;
 
-    private String title;
+    private String inquiryTitle;
 
     private String inquiryContent;
+
+    private String email;
 
     private LocalDateTime inquiryCreateDate;
 
@@ -32,10 +34,11 @@ public class InquiryInfoResponseDTO {
     private boolean isAnswered;
 
     @Builder
-    public InquiryInfoResponseDTO(Long id, String title, String inquiryContent, LocalDateTime inquiryCreateDate, InquiryCategory inquiryCategory, String answeredContent, LocalDateTime answeredCreateDate, boolean isAnswered) {
+    public InquiryInfoResponseDTO(Long id, String inquiryTitle, String inquiryContent, String email, LocalDateTime inquiryCreateDate, InquiryCategory inquiryCategory, String answeredContent, LocalDateTime answeredCreateDate, boolean isAnswered) {
         this.id = id;
-        this.title = title;
+        this.inquiryTitle = inquiryTitle;
         this.inquiryContent = inquiryContent;
+        this.email = email;
         this.inquiryCreateDate = inquiryCreateDate;
         this.inquiryCategory = inquiryCategory;
         this.answeredContent = answeredContent;
@@ -47,18 +50,20 @@ public class InquiryInfoResponseDTO {
         if (answer == null) {
             return InquiryInfoResponseDTO.builder()
                     .id(inquiry.getId())
-                    .title(inquiry.getTitle())
+                    .inquiryTitle(inquiry.getTitle())
                     .inquiryCreateDate(inquiry.getCreateDate())
                     .inquiryContent(inquiry.getContent())
+                    .email(inquiry.getMember().getEmail())
                     .isAnswered(inquiry.isAnswered())
                     .inquiryCategory(inquiry.getInquiryCategory()).build();
         }
         return InquiryInfoResponseDTO.builder()
                 .id(inquiry.getId())
-                .title(inquiry.getTitle())
+                .inquiryTitle(inquiry.getTitle())
                 .inquiryCreateDate(inquiry.getCreateDate())
                 .inquiryContent(inquiry.getContent())
                 .answeredContent(answer.getContent())
+                .email(inquiry.getMember().getEmail())
                 .answeredCreateDate(answer.getCreateDate())
                 .isAnswered(inquiry.isAnswered())
                 .inquiryCategory(inquiry.getInquiryCategory()).build();

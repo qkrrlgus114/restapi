@@ -7,7 +7,9 @@
       <router-link class="btn menu-category" :to="{ name: 'Withdraw' }"
         >회원 탈퇴</router-link
       >
-      <router-link class="btn menu-category" :to="{ name: 'Inquiry' }"
+      <router-link
+        class="btn menu-category"
+        :to="{ name: 'InquiryBoard', params: { page: 1 } }"
         >1:1 문의</router-link
       >
     </div>

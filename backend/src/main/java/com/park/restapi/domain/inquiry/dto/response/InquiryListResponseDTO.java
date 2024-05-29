@@ -12,12 +12,13 @@ import java.util.List;
 public class InquiryListResponseDTO {
 
     private List<InquiryResponseDTO> inquiryResponseDTOS;
-
-    private int totalCount;
+    private int totalPages;
+    private int currentPage;
 
     @Builder
-    public InquiryListResponseDTO(List<InquiryResponseDTO> inquiryResponseDTOS, int totalCount) {
+    public InquiryListResponseDTO(List<InquiryResponseDTO> inquiryResponseDTOS, int totalPages, int currentPage) {
         this.inquiryResponseDTOS = inquiryResponseDTOS;
-        this.totalCount = totalCount;
+        this.totalPages = totalPages;
+        this.currentPage = currentPage;
     }
 }

@@ -16,12 +16,14 @@ import com.park.restapi.domain.inquiry.repository.AnswerRepository;
 import com.park.restapi.domain.inquiry.repository.InquiryRepository;
 import com.park.restapi.domain.inquiry.service.InquiryService;
 import com.park.restapi.domain.member.entity.Member;
-import com.park.restapi.domain.member.entity.MemberRole;
 import com.park.restapi.domain.member.entity.Role;
 import com.park.restapi.domain.member.repository.MemberRepository;
 import com.park.restapi.util.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +40,8 @@ public class InquiryServiceImpl implements InquiryService {
     private final InquiryRepository inquiryRepository;
     private final AnswerRepository answerRepository;
 
+    private static final int DEFAULT_DATA_COUNT = 5;
+
     // 문의 등록하기
     @Override
     @Transactional
@@ -48,40 +52,41 @@ public class InquiryServiceImpl implements InquiryService {
         inquiryRepository.save(inquiry);
     }
 
-    // 내 모든 문의 가져오기
+    // 모든 문의 가져오기
     @Override
     @Transactional(readOnly = true)
-    public InquiryListResponseDTO getMyInquiries() {
-        Member currentMember = getCurrentMember();
+    public InquiryListResponseDTO getMyInquiries(int page) {
+        Member currentMember = getCurrentMemberFetchJoinMemberRoles();
 
-        List<Inquiry> inquiryList = inquiryRepository.findByMember(currentMember);
+        PageRequest pageRequest = PageRequest.of(page, DEFAULT_DATA_COUNT, Sort.Direction.DESC, "createDate");
+        Page<Inquiry> inquiries = inquiryRepository.findByInquires(currentMember, pageRequest, isAdmin(currentMember));
 
-        List<InquiryResponseDTO> inquiryResponseDTOS = inquiryList.stream()
+        List<InquiryResponseDTO> inquiryResponseDTOS = inquiries.getContent().stream()
                 .map(InquiryResponseDTO::toDTO)
                 .collect(Collectors.toList());
 
         return InquiryListResponseDTO.builder()
                 .inquiryResponseDTOS(inquiryResponseDTOS)
-                .totalCount(inquiryList.size()).build();
+                .currentPage(inquiries.getNumber())
+                .totalPages(inquiries.getTotalPages()).build();
     }
 
     // 질문 상세내용 가져오기
     @Override
     @Transactional(readOnly = true)
     public InquiryInfoResponseDTO getTargetInquiry(Long inquiryId) {
-        Member currentMember = getCurrentMember();
+        Member currentMember = getCurrentMemberFetchJoinMemberRoles();
         Answer answer = null;
 
         Inquiry inquiry = inquiryRepository.findById(inquiryId)
                 .orElseThrow(() -> new InquiryException(InquiryExceptionInfo.NOT_FOUND_INQUIRY, inquiryId + "번 문의 내역을 찾을 수 없습니다."));
 
-        if (!inquiry.getMember().equals(currentMember) && !isAdmin(currentMember)){
+        if (!inquiry.getMember().equals(currentMember) && !isAdmin(currentMember)) {
             throw new InquiryException(InquiryExceptionInfo.NOT_MATCH_MEMBER, currentMember.getEmail() + " 유저가 " + inquiryId + "질문에 접근했습니다.(접근 차단)");
         }
 
         if (inquiry.isAnswered()) {
-            answer = answerRepository.findByInquiry(inquiry)
-                    .orElseThrow(() -> new AnswerException(AnswerExceptionInfo.NOT_FOUND_ANSWER, inquiryId + "번 문의 답변 내역을 찾을 수 없습니다."));
+            answer = inquiry.getAnswer();
         }
 
         return InquiryInfoResponseDTO.toDTO(answer, inquiry);
@@ -95,8 +100,17 @@ public class InquiryServiceImpl implements InquiryService {
                 .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 
+    // 현재 로그인 유저 찾기(유저 권한 FetchJoin)
+    private Member getCurrentMemberFetchJoinMemberRoles() {
+        Long currentUserId = jwtService.getCurrentUserId();
+
+        return memberRepository.findByIdFetchRole(currentUserId)
+                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
+    }
+
+
     // 관리자 권한 확인
-    private boolean isAdmin(Member member){
+    private boolean isAdmin(Member member) {
         return member.getMemberRoles().stream()
                 .anyMatch(role -> role.getRole().equals(Role.ADMIN));
     }

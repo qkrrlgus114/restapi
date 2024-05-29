@@ -58,7 +58,7 @@ public class QInquiry extends EntityPathBase<Inquiry> {
 
     public QInquiry(Class<? extends Inquiry> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.answer = inits.isInitialized("answer") ? new QAnswer(forProperty("answer"), inits.get("answer")) : null;
+        this.answer = inits.isInitialized("answer") ? new QAnswer(forProperty("answer")) : null;
         this.member = inits.isInitialized("member") ? new com.park.restapi.domain.member.entity.QMember(forProperty("member")) : null;
     }
 

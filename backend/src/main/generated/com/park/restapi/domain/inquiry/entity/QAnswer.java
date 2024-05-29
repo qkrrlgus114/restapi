@@ -7,7 +7,6 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
-import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -18,8 +17,6 @@ public class QAnswer extends EntityPathBase<Answer> {
 
     private static final long serialVersionUID = 922433847L;
 
-    private static final PathInits INITS = PathInits.DIRECT2;
-
     public static final QAnswer answer = new QAnswer("answer");
 
     public final StringPath content = createString("content");
@@ -28,29 +25,18 @@ public class QAnswer extends EntityPathBase<Answer> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final QInquiry inquiry;
-
     public final DateTimePath<java.time.LocalDateTime> updateDate = createDateTime("updateDate", java.time.LocalDateTime.class);
 
     public QAnswer(String variable) {
-        this(Answer.class, forVariable(variable), INITS);
+        super(Answer.class, forVariable(variable));
     }
 
     public QAnswer(Path<? extends Answer> path) {
-        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
+        super(path.getType(), path.getMetadata());
     }
 
     public QAnswer(PathMetadata metadata) {
-        this(metadata, PathInits.getFor(metadata, INITS));
-    }
-
-    public QAnswer(PathMetadata metadata, PathInits inits) {
-        this(Answer.class, metadata, inits);
-    }
-
-    public QAnswer(Class<? extends Answer> type, PathMetadata metadata, PathInits inits) {
-        super(type, metadata, inits);
-        this.inquiry = inits.isInitialized("inquiry") ? new QInquiry(forProperty("inquiry"), inits.get("inquiry")) : null;
+        super(Answer.class, metadata);
     }
 
 }

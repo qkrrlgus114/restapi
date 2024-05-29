@@ -14,7 +14,10 @@ import SettingsComponent from "../components/SettingsComponent.vue";
 import MyInfoView from "../views/MyInfoView.vue";
 import WithdrawComponent from "@/components/WithdrawComponent.vue";
 import MyInfoComponent from "@/components/MyInfoComponent.vue";
-import InquiryComponent from "@/components/InquiryComponent.vue";
+import InquiryBoardComponent from "@/components/InquiryBoardComponent.vue";
+import InquiryDetailComponent from "@/components/InquiryDetailComponent.vue";
+import InquiryFormComponent from "@/components/InquiryFormComponent.vue";
+import AnswerFormComponent from "@/components/AnswerFormComponent.vue";
 
 const routes = [
   {
@@ -58,9 +61,19 @@ const routes = [
         component: WithdrawComponent,
       },
       {
-        path: "inquiry",
-        name: "Inquiry",
-        component: InquiryComponent,
+        path: "inquiry/:page",
+        name: "InquiryBoard",
+        component: InquiryBoardComponent,
+      },
+      {
+        path: "inquiry/view/:id",
+        name: "InquiryDetail",
+        component: InquiryDetailComponent,
+      },
+      {
+        path: "inquiry/write",
+        name: "InquiryForm",
+        component: InquiryFormComponent,
       },
     ],
   },
@@ -92,19 +105,22 @@ const routes = [
         path: "settings",
         name: "SettingsComponent",
         component: SettingsComponent,
-        meta: { showNavbar: true },
       },
       {
         path: "requests/:page",
         name: "RequestLog",
         component: RequestLogView,
-        meta: { showNavbar: true },
       },
       {
         path: "ban",
         name: "UserBan",
         component: UserBanComponent,
-        meta: { showNavbar: true },
+      },
+      {
+        path: "answer/:id/write",
+        name: "AnswerForm",
+        component: AnswerFormComponent,
+        props: true,
       },
     ],
   },

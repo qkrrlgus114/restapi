@@ -9,7 +9,7 @@ public interface InquiryService {
     void inquiryRegister(InquiryRequestDTO inquiryRequestDTO);
 
     // 내 모든 문의 가져오기
-    InquiryListResponseDTO getMyInquiries();
+    InquiryListResponseDTO getMyInquiries(int page);
 
     // 특정 상세 문의 내역 가져오기
     InquiryInfoResponseDTO getTargetInquiry(Long inquiryId);

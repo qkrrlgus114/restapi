@@ -7,9 +7,14 @@ import com.park.restapi.domain.inquiry.service.InquiryService;
 import com.park.restapi.util.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.awt.print.Pageable;
 
 @RestController
 @RequestMapping("/api")
@@ -28,8 +33,8 @@ public class InquiryController {
 
     // 현재 유저의 문의 내역 가져오기
     @GetMapping("inquiries")
-    public ResponseEntity<ApiResponse<?>> getInquiries(){
-        InquiryListResponseDTO myInquiries = inquiryService.getMyInquiries();
+    public ResponseEntity<ApiResponse<?>> getInquiries(@RequestParam(value = "page", defaultValue = "1") int page){
+        InquiryListResponseDTO myInquiries = inquiryService.getMyInquiries(page - 1);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.createSuccess(myInquiries, "내 문의내역 가져오기 성공"));
     }

@@ -20,10 +20,9 @@ public class AnswerRequestDTO {
     @NotNull(message = "문의 번호가 없습니다.")
     private Long inquiryId;
 
-    public Answer toEntity(Inquiry inquiry) {
+    public Answer toEntity() {
         return Answer.builder()
-                .content(content)
-                .inquiry(inquiry).build();
+                .content(content).build();
     }
 
 }

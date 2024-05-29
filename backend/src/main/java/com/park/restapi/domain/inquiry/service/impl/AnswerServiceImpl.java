@@ -43,7 +43,7 @@ public class AnswerServiceImpl implements AnswerService {
             throw new AnswerException(AnswerExceptionInfo.EXISTS_ANSWERED, requestDTO.getInquiryId() + "번 문의에는 이미 답변이 존재합니다.");
         }
 
-        Answer answer = requestDTO.toEntity(inquiry);
+        Answer answer = requestDTO.toEntity();
 
         answerRepository.save(answer);
 

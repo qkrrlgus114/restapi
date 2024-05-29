@@ -28,13 +28,9 @@ public class Answer {
     @Column(nullable = true)
     private LocalDateTime updateDate;
 
-    @OneToOne(mappedBy = "answer", fetch = FetchType.LAZY)
-    private Inquiry inquiry;
-
     @Builder
-    public Answer(String content, Inquiry inquiry) {
+    public Answer(String content) {
         this.content = content;
-        this.inquiry = inquiry;
     }
 
     public void updateAnswer(String content){
