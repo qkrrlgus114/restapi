@@ -59,7 +59,7 @@ const loadUserInfo = async () => {
 <style scoped>
 .content {
   flex: 8;
-  background-color: rgb(223, 223, 223);
+  background-color: rgb(255, 255, 255);
   padding: 10px;
   margin: 20px;
   display: flex;

@@ -96,7 +96,7 @@ const withdrawAPI = async () => {
 <style scoped>
 .content {
   flex: 8;
-  background-color: rgb(223, 223, 223);
+  background-color: rgb(255, 255, 255);
   padding: 10px;
   margin: 20px;
   display: flex;
@@ -144,20 +144,18 @@ const withdrawAPI = async () => {
 .withdraw-btn button {
   padding: 10px 20px;
   font-size: 1.5rem;
-  font-weight: 800;
   margin-top: 150px;
-  cursor: pointer;
-  border-radius: 4px;
-  color: #5c5c5c;
-  outline: none;
-  border: none;
-  background-color: #ffe8de;
-  color: #db0700;
+  padding: 0.5rem 1rem;
+  margin-left: 10px;
+  background-color: #fff7f7;
+  color: rgb(0, 0, 0);
+  border: 1px solid rgb(109, 109, 109);
+  border-radius: 0.375rem;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
 }
 
 .withdraw-btn button:hover {
-  background-color: #ffcdb8;
-  border-color: #ffcdb8;
+  background-color: #ffe9e0;
 }
 
 @media (max-width: 768px) {
