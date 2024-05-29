@@ -1,9 +1,6 @@
 package com.park.restapi.domain.exception.handler;
 
-import com.park.restapi.domain.exception.exception.CouponException;
-import com.park.restapi.domain.exception.exception.EmailException;
-import com.park.restapi.domain.exception.exception.GPTException;
-import com.park.restapi.domain.exception.exception.MemberException;
+import com.park.restapi.domain.exception.exception.*;
 import com.park.restapi.util.response.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
@@ -46,6 +43,22 @@ public class GlobalExceptionHandler {
     // 쿠폰 예외처리
     @ExceptionHandler(CouponException.class)
     public ResponseEntity<ApiResponse<Void>> handleCouponException(CouponException e , HttpServletRequest request){
+        log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(), e.getLog());
+
+        return ResponseEntity.status(e.getException().getStatus()).body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
+    }
+
+    // 문의내역 예외처리
+    @ExceptionHandler(InquiryException.class)
+    public ResponseEntity<ApiResponse<Void>> handleInquiryException(InquiryException e , HttpServletRequest request){
+        log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(), e.getLog());
+
+        return ResponseEntity.status(e.getException().getStatus()).body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
+    }
+
+    // 문의내역 답변 예외처리
+    @ExceptionHandler(AnswerException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAnswerException(AnswerException e , HttpServletRequest request){
         log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(), e.getLog());
 
         return ResponseEntity.status(e.getException().getStatus()).body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));

@@ -13,7 +13,8 @@ public enum MemberExceptionInfo {
     NOT_FOUND_REFRESH_TOKEN(HttpStatus.NOT_FOUND, "1006", "리프레시 토큰을 찾을 수 없습니다."),
     BANNED_MEMBER(HttpStatus.BAD_REQUEST, "1007", "이용이 불가능한 계정입니다."),
     WITHDRAWAL_MEMBER(HttpStatus.BAD_REQUEST, "1008", "이용이 불가능한 계정입니다."),
-    NOT_MATCH_PASSWORD(HttpStatus.BAD_REQUEST, "1009", "비밀번호가 일치하지 않습니다.");
+    NOT_MATCH_PASSWORD(HttpStatus.BAD_REQUEST, "1009", "비밀번호가 일치하지 않습니다."),
+    NOT_WITHDRAWAL_ADMIN(HttpStatus.BAD_REQUEST, "1010", "관리자는 계정 탈퇴가 불가능합니다.");
 
 
     private HttpStatus status;

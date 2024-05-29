@@ -11,10 +11,7 @@ import com.park.restapi.domain.member.dto.request.PasswordCheckRequestDTO;
 import com.park.restapi.domain.member.dto.request.SignUpRequestDTO;
 import com.park.restapi.domain.member.dto.response.MemberInfoResponseDTO;
 import com.park.restapi.domain.member.dto.response.MyInfoResponseDTO;
-import com.park.restapi.domain.member.entity.Member;
-import com.park.restapi.domain.member.entity.MemberRole;
-import com.park.restapi.domain.member.entity.SocialType;
-import com.park.restapi.domain.member.entity.WithdrawalMember;
+import com.park.restapi.domain.member.entity.*;
 import com.park.restapi.domain.member.repository.MemberRepository;
 import com.park.restapi.domain.member.repository.MemberRoleRepository;
 import com.park.restapi.domain.member.repository.WithdrawalMemberRepository;
@@ -160,6 +157,8 @@ public class MemberServiceImpl implements MemberService {
             throw new MemberException(MemberExceptionInfo.NOT_MATCH_PASSWORD, currentMember.getEmail() + " 유저 비밀번호 불일치 발생(회원 탈퇴)");
         }
 
+        if (isAdmin(currentMember)) throw new MemberException(MemberExceptionInfo.NOT_WITHDRAWAL_ADMIN, currentMember.getEmail() + " 관리자 계정 탈퇴 시도.");
+
         currentMember.updateWithdrawalDate();
     }
 
@@ -168,6 +167,8 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void deactivateSocialMember() {
         Member currentMember = getCurrentMember();
+
+        if (isAdmin(currentMember)) throw new MemberException(MemberExceptionInfo.NOT_WITHDRAWAL_ADMIN, currentMember.getEmail() + " 관리자 계정 탈퇴 시도.");
 
         currentMember.updateWithdrawalDate();
     }
@@ -244,6 +245,12 @@ public class MemberServiceImpl implements MemberService {
         Long currentUserId = jwtService.getCurrentUserId();
         return memberRepository.findById(currentUserId)
                 .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
+    }
+
+    // 관리자 권한 확인
+    private boolean isAdmin(Member member) {
+        return member.getMemberRoles().stream()
+                .anyMatch(role -> role.getRole().equals(Role.ADMIN));
     }
 
 }
