@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @Component
-public class FailureHandler implements AuthenticationFailureHandler {
+public final class FailureHandler implements AuthenticationFailureHandler {
 
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
