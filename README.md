@@ -10,9 +10,9 @@
 - **2024.03.21 ~ 2024.03.27** (V1 - RESTFUL API 추천 기능)
 - **2024.03.28 ~ 2024.03.31** (V2 - 데일리 선착순 쿠폰 도입)
 - **2024.04.01 ~ 2024.04.05** (V3 - 관리자 페이지 도입 완료(데일리 선착순 쿠폰 설정 기능 추가))
-- **2024.04.06 ~ 2024.04.08** (V3 - 관리자 요청 기록 확인 기능 추가)
-- **2024.04.10 ~ 2024.05.24** (V4 - 전체적인 css 디자인 변경, 버그 수정, GPT-4o 변경)
-- **2024.05.25 ~ 2024.05.30** (V5 - 1:1 문의 게시판 추가, 관리자 답변 기능 추가)
+- **2024.04.06 ~ 2024.04.08** (V4 - 관리자 요청 기록 확인 기능 추가)
+- **2024.04.10 ~ 2024.05.24** (V5 - 전체적인 css 디자인 변경, 버그 수정, GPT-4o 변경)
+- **2024.05.25 ~ 2024.05.30** (V6 - 1:1 문의 게시판 추가, 관리자 답변 기능 추가, 답변 달리면 이메일 체크 추가)
 <br>
 
 ### 역할 분담
@@ -132,19 +132,31 @@
 
 # 5️⃣ **사진 및 사용 영상**
 ## 메인 화면
-![image](https://github.com/qkrrlgus114/restapi/assets/121294224/f91ff6a3-b446-46cf-a6d9-c949f7307345)
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/2702b632-13ca-4c02-981f-4d86eb2ffca1)
 ## 로그인 화면
 ![image](https://github.com/qkrrlgus114/restapi/assets/121294224/c8522933-3450-41f2-b2e8-390739ca8260)
 ## 메인 서비스 화면
 ![image](https://github.com/qkrrlgus114/restapi/assets/121294224/a80ac608-ec77-4343-bbd4-901f8ff225fb)
 ## RESTAPI 추천 결과
 ![image](https://github.com/qkrrlgus114/restapi/assets/121294224/36a00312-395c-4b3e-9b0e-3de796732ee9)
-## 관리자 페이지(데일리 쿠폰 설정)
+## 관리자 화면(데일리 쿠폰 설정)
 - 데일리 쿠폰 발급 조건 설정 가능.
 - 쿠폰 즉시 발급 가능.
 
-![image](https://github.com/qkrrlgus114/restapi/assets/121294224/ba666e99-c0a9-422f-b43f-bf2b46f39141)
-![image](https://github.com/qkrrlgus114/restapi/assets/121294224/c9cad4dd-1a1b-410d-8152-4814b0889966)
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/c923663e-27e4-4d04-8689-ddd29d567a56)
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/50a2410d-cf75-4262-812b-9ac946d62e6a)
+
+## 개인정보 화면
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/45096152-592d-4252-905a-752908845243)
+
+## 회원탈퇴 화면
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/79725138-e10c-42cc-9b63-9ae443f747be)
+
+## 1:1 문의하기 서비스
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/a458d007-918c-43ec-9919-f8613896284d)
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/f1797c4f-55a4-4f72-baef-220ae41712fe)
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/0e92770d-77f4-4f87-a1a3-20840025d429)
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/91033f42-77b8-42ef-b81e-e073759a2afd)
 
 
 
