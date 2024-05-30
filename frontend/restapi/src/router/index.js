@@ -8,7 +8,7 @@ import SuccessView from "../views/SuccessView.vue";
 import Failure from "../views/Failure.vue";
 import AdminView from "../views/AdminView.vue";
 import { useMainStore } from "../store/store.js";
-import RequestLogView from "@/views/RequestLogView.vue";
+import ApiRequestLogComponent from "@/components/ApiRequestLogComponent.vue";
 import UserBanComponent from "@/components/UserBanComponent.vue";
 import SettingsComponent from "../components/SettingsComponent.vue";
 import MyInfoView from "../views/MyInfoView.vue";
@@ -107,9 +107,9 @@ const routes = [
         component: SettingsComponent,
       },
       {
-        path: "requests/:page",
-        name: "RequestLog",
-        component: RequestLogView,
+        path: "log/:page",
+        name: "ApiRequestLog",
+        component: ApiRequestLogComponent,
       },
       {
         path: "ban",

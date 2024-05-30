@@ -38,7 +38,6 @@ public class InquiryServiceImpl implements InquiryService {
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
     private final InquiryRepository inquiryRepository;
-    private final AnswerRepository answerRepository;
 
     private static final int DEFAULT_DATA_COUNT = 5;
 
