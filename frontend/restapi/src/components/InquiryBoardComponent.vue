@@ -14,7 +14,9 @@
         class="board-item"
         :to="{ name: 'InquiryDetail', params: { id: item.id } }"
       >
-        <div class="board-cell category">{{ item.inquiryCategory }}</div>
+        <div class="board-cell category">
+          {{ translateCategory(item.inquiryCategory) }}
+        </div>
         <div class="board-cell title">{{ item.title }}</div>
         <div class="board-cell date">{{ formatDate(item.createDate) }}</div>
         <div
@@ -30,10 +32,10 @@
     </div>
     <div class="pagination">
       <button
-        @click="changePage(currentPage - 1)"
-        :disabled="currentPage === 1"
+        @click="changePageGroup('prev')"
+        :disabled="currentPageGroup === 1"
       >
-        &lt;
+        이전
       </button>
       <button
         v-for="page in pageNumbers"
@@ -45,10 +47,10 @@
         {{ page }}
       </button>
       <button
-        @click="changePage(currentPage + 1)"
-        :disabled="currentPage === totalPages"
+        @click="changePageGroup('next')"
+        :disabled="currentPageGroup === totalPageGroups"
       >
-        &gt;
+        다음
       </button>
     </div>
     <div class="write-form">
@@ -70,6 +72,20 @@ const router = useRouter();
 const boardItems = ref([]);
 const currentPage = ref(1); // 현재 페이지 번호
 const totalPages = ref(0); // 총 페이지 수
+const currentPageGroup = ref(1); // 현재 페이지 그룹
+const itemsPerPageGroup = 5; // 한 번에 표시할 페이지 번호 수
+
+const categoryMap = {
+  ACCOUNT: "계정 관련 문의",
+  TECHNICAL: "기술 관련 문의",
+  FEEDBACK: "피드백 및 제안",
+  OTHER: "기타 문의 사항",
+};
+
+// 카테고리 변환 함수
+const translateCategory = (category) => {
+  return categoryMap[category] || category;
+};
 
 onMounted(() => {
   watch(
@@ -77,6 +93,7 @@ onMounted(() => {
     (newPage) => {
       const page = parseInt(newPage) || 1;
       currentPage.value = page;
+      currentPageGroup.value = Math.ceil(page / itemsPerPageGroup);
       getInquiries(page);
     },
     { immediate: true }
@@ -100,12 +117,32 @@ const changePage = (page) => {
   }
 };
 
+// 페이지 그룹 변경
+const changePageGroup = (direction) => {
+  if (direction === "prev" && currentPageGroup.value > 1) {
+    currentPageGroup.value--;
+    changePage((currentPageGroup.value - 1) * itemsPerPageGroup + 1);
+  } else if (
+    direction === "next" &&
+    currentPageGroup.value < totalPageGroups.value
+  ) {
+    currentPageGroup.value++;
+    changePage((currentPageGroup.value - 1) * itemsPerPageGroup + 1);
+  }
+};
+
 const pageNumbers = computed(() => {
+  const startPage = (currentPageGroup.value - 1) * itemsPerPageGroup + 1;
+  const endPage = Math.min(startPage + itemsPerPageGroup - 1, totalPages.value);
   const pages = [];
-  for (let i = 1; i <= totalPages.value; i++) {
+  for (let i = startPage; i <= endPage; i++) {
     pages.push(i);
   }
   return pages;
+});
+
+const totalPageGroups = computed(() => {
+  return Math.ceil(totalPages.value / itemsPerPageGroup);
 });
 
 // 날짜 형식 변환 함수
@@ -243,5 +280,10 @@ const formatDate = (dateString) => {
 
 .custom-btn:hover {
   background-color: #e7e7e7;
+}
+
+button:hover {
+  background-color: #e7e7e7;
+  color: black;
 }
 </style>

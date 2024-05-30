@@ -10,6 +10,9 @@ export const useMainStore = defineStore("main", {
     social: false,
     isDailyCouponGenerate: false,
     dailyCouponQuantity: 0,
+    inquiryContent: "",
+    answeredContent: "",
+    isAnswered: false,
   }),
   getters: {
     getToken: (state) => state.token,
@@ -63,6 +66,11 @@ export const useMainStore = defineStore("main", {
     // 멤버 권한 갱신
     updateMemberRole(payload) {
       this.memberRoles = payload;
+    },
+    setInquiryData(payload) {
+      this.inquiryContent = payload.inquiryContent;
+      this.answeredContent = payload.answeredContent;
+      this.isAnswered = payload.isAnswered;
     },
   },
   persist: true, // persist 옵션을 스토어 정의 객체 내에 포함

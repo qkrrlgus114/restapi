@@ -51,12 +51,11 @@ const router = useRouter();
 const nickname = computed(() => store.nickname);
 const coupon = computed(() => store.coupon);
 const token = computed(() => store.token);
-const social = computed(() => store.social);
 const isAdmin = ref(false);
 
-onMounted(() => {
-  loadUserInfo();
-  loadCouponInfo();
+onMounted(async () => {
+  await loadUserInfo();
+  await loadCouponInfo();
   const admin = store.getAdminRole;
   if (admin) isAdmin.value = true;
 });
@@ -112,7 +111,7 @@ const acquiredToken = async () => {
 };
 
 // 홈으로 이동
-const goHome = () => router.push("/");
+const goHome = () => router.push("/chat");
 // 어드민 페이지로 이동
 const goAdmin = () => router.push("/admin/settings");
 // 내 정보 페이지로 이동
