@@ -42,16 +42,6 @@ const goToLogin = () => {
   padding: 50px 0px;
 }
 
-.btn {
-  background-color: #3498db;
-  border: none;
-}
-
-.btn:hover {
-  background-color: #2980b9;
-  border: none;
-}
-
 .header img {
   width: 600px;
 }
@@ -60,5 +50,27 @@ const goToLogin = () => {
   font-size: 40px;
   padding: 50px 0px;
   color: white;
+}
+
+.btn {
+  background-color: #3498db;
+  border: none;
+  padding: 15px 30px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.btn:hover {
+  background-color: #2980b9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn:active {
+  background-color: #1c6694;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 </style>

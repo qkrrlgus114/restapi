@@ -1,34 +1,21 @@
 <template>
   <div class="content">
-    <div class="content-title">1:1 문의 게시판</div>
+    <div class="content-title">API 요청 기록</div>
     <div class="content-board">
       <div class="board-header">
-        <div class="board-cell category">카테고리</div>
-        <div class="board-cell title">제목</div>
-        <div class="board-cell date">문의 날짜</div>
-        <div class="board-cell answered">답변 등록 여부</div>
+        <div class="board-cell email">이메일</div>
+        <div class="board-cell date">요청 날짜</div>
+        <div class="board-cell method">메소드 타입</div>
+        <div class="board-cell request">요청 내용</div>
+        <div class="board-cell response">응답 내용</div>
       </div>
-      <router-link
-        v-for="item in boardItems"
-        :key="item.id"
-        class="board-item"
-        :to="{ name: 'InquiryDetail', params: { id: item.id } }"
-      >
-        <div class="board-cell category">
-          {{ translateCategory(item.inquiryCategory) }}
-        </div>
-        <div class="board-cell title">{{ item.title }}</div>
-        <div class="board-cell date">{{ formatDate(item.createDate) }}</div>
-        <div
-          class="board-cell answered"
-          :class="{
-            'answered-true': item.answered,
-            'answered-false': !item.answered,
-          }"
-        >
-          {{ item.answered ? "등록됨" : "등록안됨" }}
-        </div>
-      </router-link>
+      <div v-for="item in boardItems" :key="item.id" class="board-item">
+        <div class="board-cell email">{{ item.email }}</div>
+        <div class="board-cell date">{{ formatDate(item.requestDate) }}</div>
+        <div class="board-cell method">{{ item.methodType }}</div>
+        <div class="board-cell request">{{ item.requestContent }}</div>
+        <div class="board-cell response">{{ item.responseContent }}</div>
+      </div>
     </div>
     <div class="pagination">
       <button
@@ -53,11 +40,6 @@
         다음
       </button>
     </div>
-    <div class="write-form">
-      <router-link class="custom-btn" :to="{ name: 'InquiryForm' }"
-        >작성하기</router-link
-      >
-    </div>
   </div>
 </template>
 
@@ -75,18 +57,6 @@ const totalPages = ref(0); // 총 페이지 수
 const currentPageGroup = ref(1); // 현재 페이지 그룹
 const itemsPerPageGroup = 5; // 한 번에 표시할 페이지 번호 수
 
-const categoryMap = {
-  ACCOUNT: "계정 관련 문의",
-  TECHNICAL: "기술 관련 문의",
-  FEEDBACK: "피드백 및 제안",
-  OTHER: "기타 문의 사항",
-};
-
-// 카테고리 변환 함수
-const translateCategory = (category) => {
-  return categoryMap[category] || category;
-};
-
 onMounted(() => {
   watch(
     () => route.params.page,
@@ -94,17 +64,17 @@ onMounted(() => {
       const page = parseInt(newPage) || 1;
       currentPage.value = page;
       currentPageGroup.value = Math.ceil(page / itemsPerPageGroup);
-      getInquiries(page);
+      getRequestHistory(page);
     },
     { immediate: true }
   );
 });
 
-// 문의 내역 가져오기
-const getInquiries = async (page) => {
+// 요청 기록 가져오기
+const getRequestHistory = async (page) => {
   try {
-    const data = await apiGet(`api/inquiries?page=${page}`);
-    boardItems.value = data.data.inquiryResponseDTOS;
+    const data = await apiGet(`api/admin/requests?page=${page}`);
+    boardItems.value = data.data.apiRequestHistoryResponseDTOS;
     totalPages.value = data.data.totalPages;
     currentPage.value = data.data.currentPage + 1;
   } catch (error) {}
@@ -113,7 +83,7 @@ const getInquiries = async (page) => {
 // 페이지 변경
 const changePage = (page) => {
   if (page >= 1 && page <= totalPages.value) {
-    router.push({ name: "InquiryBoard", params: { page } });
+    router.push({ name: "ApiRequestLog", params: { page } });
   }
 };
 
@@ -206,35 +176,24 @@ const formatDate = (dateString) => {
   text-align: center;
 }
 
-.board-item:hover {
-  background-color: #e6e6e6;
-  cursor: pointer;
-}
-
-.category {
-  flex: 1;
-}
-
-.title {
-  flex: 4;
-  text-align: left;
-  padding-left: 10px;
+.email {
+  flex: 2;
 }
 
 .date {
   flex: 2;
 }
 
-.answered {
+.method {
   flex: 1;
 }
 
-.answered-true {
-  color: green;
+.request {
+  flex: 3;
 }
 
-.answered-false {
-  color: red;
+.response {
+  flex: 3;
 }
 
 .pagination {
@@ -258,32 +217,5 @@ const formatDate = (dateString) => {
 .pagination button.active {
   color: black;
   background-color: rgb(209, 209, 209);
-}
-
-.write-form {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-  margin-right: 20%;
-}
-
-.custom-btn {
-  padding: 0.5rem 1rem;
-  margin-left: 10px;
-  background-color: #ffffff;
-  color: rgb(0, 0, 0);
-  border: 1px solid rgb(109, 109, 109);
-  border-radius: 0.375rem;
-  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
-  text-decoration: none;
-}
-
-.custom-btn:hover {
-  background-color: #e7e7e7;
-}
-
-button:hover {
-  background-color: #e7e7e7;
-  color: black;
 }
 </style>

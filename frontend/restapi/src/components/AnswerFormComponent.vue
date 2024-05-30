@@ -21,7 +21,9 @@
         ></textarea>
       </div>
       <div class="form-footer">
-        <button @click="submitForm">답변하기</button>
+        <button @click="submitForm">
+          {{ isAnswered ? "수정하기" : "답변하기" }}
+        </button>
       </div>
     </div>
   </div>
@@ -30,18 +32,23 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { apiPost } from "@/utils/api";
+import { apiPost, apiPatch } from "@/utils/api";
+import { useMainStore } from "@/store/store";
 
 const router = useRouter();
 const route = useRoute();
-
-onMounted(() => {
-  console.log(inquiryContent.value);
-});
+const store = useMainStore();
 
 const inquiryId = ref(route.params.id);
-const inquiryContent = ref(route.query.inquiryContent);
+const isAnswered = ref(false);
+const inquiryContent = ref("");
 const answerContent = ref("");
+
+onMounted(() => {
+  inquiryContent.value = store.inquiryContent;
+  answerContent.value = store.answeredContent;
+  isAnswered.value = store.isAnswered;
+});
 
 // 내용 체크
 const checkContent = () => {
@@ -56,12 +63,19 @@ const checkContent = () => {
 const submitForm = async () => {
   if (checkContent()) {
     try {
-      const data = await apiPost(`api/answers`, {
-        content: answerContent.value,
-        inquiryId: inquiryId.value,
-      });
-
-      alert("답변이 등록되었습니다.");
+      if (isAnswered.value) {
+        await apiPatch(`api/answers`, {
+          content: answerContent.value,
+          inquiryId: inquiryId.value,
+        });
+        alert("답변이 수정되었습니다.");
+      } else {
+        await apiPost(`api/answers`, {
+          content: answerContent.value,
+          inquiryId: inquiryId.value,
+        });
+        alert("답변이 등록되었습니다.");
+      }
       router.push(`/my/inquiry/view/${inquiryId.value}`);
     } catch (error) {}
   }

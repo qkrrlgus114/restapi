@@ -1,9 +1,7 @@
 <template>
   <div class="admin-panel">
     <nav class="admin-nav">
-      <router-link class="nav-tab" to="/admin/requests/1"
-        >요청기록확인</router-link
-      >
+      <router-link class="nav-tab" to="/admin/log/1">요청기록확인</router-link>
       <router-link class="nav-tab" to="/admin/ban">유저추방</router-link>
       <router-link class="nav-tab" to="/admin/settings">설정</router-link>
     </nav>

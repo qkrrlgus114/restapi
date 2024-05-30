@@ -1,25 +1,21 @@
 <template>
   <div class="content">
-    <div class="social-type">
-      <img
-        src="/kakao_small_logo.png"
-        alt=""
-        v-if="social"
-        class="social-img"
-      />
+    <div class="social-type" v-if="social">
+      <img src="/kakao_small_logo.png" alt="Kakao" class="social-img" />
+      <span class="social-label">Kakao</span>
     </div>
     <div class="info-container">
       <div class="info">
         <span class="label">닉네임 :</span>
-        <span class="value"> {{ nickname }}</span>
+        <span class="value">{{ nickname }}</span>
       </div>
       <div class="info">
         <span class="label">누적 사용 토큰 :</span>
-        <span class="value"> {{ totalUseToken }} 개</span>
+        <span class="value">{{ totalUseToken }} 개</span>
       </div>
       <div class="info">
         <span class="label">누적 획득 토큰(쿠폰) :</span>
-        <span class="value"> {{ totalAcquisitionToken }} 개</span>
+        <span class="value">{{ totalAcquisitionToken }} 개</span>
       </div>
     </div>
   </div>
@@ -59,43 +55,67 @@ const loadUserInfo = async () => {
 <style scoped>
 .content {
   flex: 8;
-  background-color: rgb(255, 255, 255);
-  padding: 10px;
+  background-color: #ffffff;
+  padding: 20px;
   margin: 20px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.social-type {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 10px 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
 }
 
 .social-img {
-  width: 50px;
+  width: 40px;
+  margin-right: 10px;
+}
+
+.social-label {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffcc00;
 }
 
 .info-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  width: 100%;
   padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
 }
 
 .info {
-  padding: 30px 0px;
   display: flex;
   width: 100%;
-  justify-content: flex-start;
-  font-size: 2.5rem;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+  font-size: 1.2rem;
+}
+
+.info:last-child {
+  border-bottom: none;
 }
 
 .label {
-  flex: 4;
-  width: 200px;
-  margin-right: 50px;
   font-weight: bold;
-  display: flex;
-  justify-content: flex-end;
+  color: #333;
 }
 
 .value {
-  flex: 6;
-  text-align: left;
+  text-align: right;
+  color: #666;
 }
 </style>

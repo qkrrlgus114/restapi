@@ -145,17 +145,21 @@ const immediatelyCoupon = async () => {
 .main-form {
   display: flex;
   flex-direction: column;
-  padding: 50px;
+  padding: 40px;
   border: 1px solid #e0e0e0;
-  border-radius: 4px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+  background-color: #ffffff;
 }
 
 .from-title {
-  font-size: 20px;
-  font-weight: 1000;
-  display: flex;
-  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
   margin-bottom: 30px;
+  color: #333;
 }
 
 .form-control {
@@ -166,59 +170,62 @@ label {
   display: block;
   font-size: 16px;
   color: #333;
-  margin-bottom: 10px;
-}
-
-select {
-  width: 100%;
+  margin-bottom: 8px;
 }
 
 select,
 input {
+  width: 100%;
   padding: 10px;
   border: 1px solid #e0e0e0;
-  border-radius: 4px;
+  border-radius: 5px;
   font-size: 16px;
+  box-sizing: border-box;
 }
 
 .buttons {
   display: flex;
   justify-content: space-between;
-  margin-top: 50px;
+  margin-top: 30px;
 }
 
-.btn {
-  background-color: #eeeeee;
-}
 .btn,
 .btn-immediately {
   padding: 10px 20px;
   font-size: 16px;
-  font-weight: 1000;
+  font-weight: bold;
   cursor: pointer;
-  border-radius: 4px;
-  color: #5c5c5c;
-  outline: none;
+  border-radius: 5px;
   border: none;
   transition: background-color 0.2s, border-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn {
+  background-color: #eeeeee;
+  color: #333;
 }
 
 .btn:hover {
-  background-color: #c7c7c7;
-  border-color: #c7c7c7;
+  background-color: #cccccc;
 }
 
 .btn:active {
-  background-color: #c7c7c7;
-  border-color: #c7c7c7;
+  background-color: #aaaaaa;
+}
+
+.btn-immediately {
+  background-color: #ff6b6b;
+  color: white;
 }
 
 .btn-immediately:hover {
-  background-color: #ffcdb8;
-  border-color: #ffcdb8;
+  background-color: #ff4b4b;
 }
-.btn-immediately {
-  background-color: #ffe8de;
-  color: #db0700;
+
+.btn-immediately:active {
+  background-color: #ff2b2b;
 }
 </style>

@@ -96,105 +96,84 @@ const withdrawAPI = async () => {
 <style scoped>
 .content {
   flex: 8;
-  background-color: rgb(255, 255, 255);
-  padding: 10px;
+  background-color: #ffffff;
+  padding: 20px;
   margin: 20px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 }
 
 .input-container {
   display: flex;
   flex-direction: column;
-  margin-top: 100px;
+  margin-top: 50px;
+  width: 100%;
+  max-width: 500px;
 }
 
 .input {
-  padding: 20px 0;
-
+  padding: 15px 0;
   display: flex;
-  width: 80%;
-  justify-content: flex-start;
-  align-items: center;
-  font-size: 1.5rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  width: 100%;
 }
 
 .label {
-  flex: 1;
-  min-width: 100px;
-  margin-right: 10px;
   font-weight: bold;
-  display: flex;
-  justify-content: flex-end;
+  margin-bottom: 5px;
 }
 
 .input input {
-  flex: 2;
-  min-width: 200px;
   padding: 10px;
-  font-size: 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 100%;
+  font-size: 1.2rem;
+  box-sizing: border-box;
 }
 
 .withdraw-btn {
   display: flex;
   justify-content: center;
+  width: 100%;
+  margin-top: 30px;
 }
 
 .withdraw-btn button {
   padding: 10px 20px;
-  font-size: 1.5rem;
-  margin-top: 150px;
-  padding: 0.5rem 1rem;
-  margin-left: 10px;
-  background-color: #fff7f7;
-  color: rgb(0, 0, 0);
-  border: 1px solid rgb(109, 109, 109);
-  border-radius: 0.375rem;
-  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+  font-size: 1.2rem;
+  background-color: #ff7f7f;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .withdraw-btn button:hover {
-  background-color: #ffe9e0;
+  background-color: #ff4f4f;
 }
 
 @media (max-width: 768px) {
-  .input {
-    font-size: 1.2rem;
-  }
-
-  .label {
-    justify-content: flex-start;
-    margin-right: 5px;
-  }
-
   .input input {
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
 
   .withdraw-btn button {
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
 }
 
 @media (max-width: 480px) {
-  .input {
-    font-size: 1rem;
-    padding: 10px 0;
-  }
-
-  .label {
-    width: 100%;
-    margin-bottom: 5px;
-  }
-
   .input input {
-    width: 100%;
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
 
   .withdraw-btn button {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
 }
 </style>
