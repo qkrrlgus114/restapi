@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -106,13 +107,15 @@ public class EmailServiceImpl implements EmailService {
         return key.toString();
     }
 
+    // 답변 이메일 전송
+    @Async("taskExecutor")
     public void sendAnsweredMessage(String to, String inquiryTitle) throws Exception {
-        MimeMessage message = createAnswerMessage(to, inquiryTitle); // 메시지 생성
-        try { // 예외처리
+        MimeMessage message = createAnswerMessage(to, inquiryTitle);
+        try { 
             emailSender.send(message);
         } catch (MailException es) {
-            es.printStackTrace();
-            throw new IllegalArgumentException();
+            log.error("답변 이메일 전송 중 오류 발생: 대상 이메일 - {}, 오류 메시지 - {}", to, es.getMessage(), es);
+            throw new IllegalArgumentException("이메일 전송 실패", es);
         }
     }
 
@@ -145,7 +148,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    @Transactional
+//    @Transactional
     public void checkCertificationCode(String code) {
         EmailConfirm confirm = emailConfirmRepository.checkCode(code)
                 .orElseThrow(() -> new EmailException(EmailExceptionInfo.NO_MATCH_CERTIFICATION_CODE, "인증번호 일치하지 않음"));

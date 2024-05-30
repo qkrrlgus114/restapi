@@ -3,8 +3,9 @@ package com.park.restapi.domain.api.service.impl;
 import com.park.restapi.domain.api.dto.request.ApiRequestDTO;
 import com.park.restapi.domain.api.dto.request.ChatGPTRequestDTO;
 import com.park.restapi.domain.api.dto.request.Message;
+import com.park.restapi.domain.api.dto.response.ApiRequestHistoryListResponseDTO;
 import com.park.restapi.domain.api.dto.response.ChatGPTResponseDTO;
-import com.park.restapi.domain.api.dto.response.RequestHistoryResponseDTO;
+import com.park.restapi.domain.api.dto.response.ApiRequestHistoryResponseDTO;
 import com.park.restapi.domain.api.entity.ApiRequestHistory;
 import com.park.restapi.domain.api.repository.ApiRequestHistoryRepository;
 import com.park.restapi.domain.api.service.ApiRequestService;
@@ -13,13 +14,16 @@ import com.park.restapi.domain.exception.exception.MemberException;
 import com.park.restapi.domain.exception.info.GPTExceptionInfo;
 import com.park.restapi.domain.exception.info.MemberExceptionInfo;
 import com.park.restapi.domain.member.entity.Member;
+import com.park.restapi.domain.member.entity.Role;
 import com.park.restapi.domain.member.repository.MemberRepository;
 import com.park.restapi.util.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
@@ -28,6 +32,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +49,8 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     private final JwtService jwtService;
 
     private final Semaphore semaphore = new Semaphore(5);
+
+    private static final int DEFAULT_DATA_COUNT = 5;
 
     // ChatGPT API 호출
     @Override
@@ -121,20 +128,32 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     // API 요청 이력 조회
     @Override
     @Transactional(readOnly = true)
-    public Page<RequestHistoryResponseDTO> getApiRequestHistory(Pageable pageable) {
-        Long startTime = System.currentTimeMillis();
-        Page<RequestHistoryResponseDTO> requestHistoryResponseDTOS = apiRequestHistoryRepository.searchApiRequestHistory(pageable);
-        Long endTime = System.currentTimeMillis();
+    public ApiRequestHistoryListResponseDTO getApiRequestHistory(int page) {
+        Member currentMember = getCurrentMember();
 
-        return requestHistoryResponseDTOS;
+        if (!isAdmin(currentMember)) {
+            throw new MemberException(MemberExceptionInfo.USER_NOT_ADMIN, currentMember.getEmail() + " 유저가 api 요청 이력 조회를 시도했습니다.(관리자 아님)");
+        }
+
+        Pageable pageRequest = PageRequest.of(page, DEFAULT_DATA_COUNT, Sort.Direction.DESC, "requestDate");
+        Page<ApiRequestHistory> apiRequestHistories = apiRequestHistoryRepository.searchApiRequestHistory(pageRequest);
+
+        List<ApiRequestHistoryResponseDTO> result = apiRequestHistories.getContent().stream()
+                .map(ApiRequestHistoryResponseDTO::toDTO)
+                .collect(Collectors.toList());
+
+        return ApiRequestHistoryListResponseDTO.builder()
+                .apiRequestHistoryResponseDTOS(result)
+                .currentPage(apiRequestHistories.getNumber())
+                .totalPages(apiRequestHistories.getTotalPages()).build();
     }
 
     // 검색 조건에 따른 API 요청 이력 조회
     @Override
     @Transactional(readOnly = true)
-    public Page<RequestHistoryResponseDTO> getApiRequestHistoryByCondition(Pageable pageable, String searchType, String keyword) {
+    public Page<ApiRequestHistoryResponseDTO> getApiRequestHistoryByCondition(Pageable pageable, String searchType, String keyword) {
         Long startTime = System.currentTimeMillis();
-        Page<RequestHistoryResponseDTO> requestHistoryResponseDTOS = apiRequestHistoryRepository.searchApiRequestHistoryByCondition(pageable, searchType, keyword);
+        Page<ApiRequestHistoryResponseDTO> requestHistoryResponseDTOS = apiRequestHistoryRepository.searchApiRequestHistoryByCondition(pageable, searchType, keyword);
         Long endTime = System.currentTimeMillis();
 
         return requestHistoryResponseDTOS;
@@ -145,5 +164,11 @@ public class ApiRequestServiceImpl implements ApiRequestService {
         Long currentUserId = jwtService.getCurrentUserId();
         return memberRepository.findById(currentUserId)
                 .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
+    }
+
+    // 관리자 권한 확인
+    private boolean isAdmin(Member member) {
+        return member.getMemberRoles().stream()
+                .anyMatch(role -> role.getRole().equals(Role.ADMIN));
     }
 }
