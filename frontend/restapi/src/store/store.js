@@ -63,6 +63,10 @@ export const useMainStore = defineStore("main", {
         this.coupon -= 1;
       }
     },
+    // 쿠폰 갱신
+    updateCoupon(payload) {
+      this.coupon = payload;
+    },
     // 멤버 권한 갱신
     updateMemberRole(payload) {
       this.memberRoles = payload;

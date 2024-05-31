@@ -42,15 +42,13 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     private final RestTemplate restTemplate;
     @Value("${openai.url.prompt}")
     private String URL;
-    @Value("${chat-gpt.api-key}")
-    private String apiKey;
     private final MemberRepository memberRepository;
     private final ApiRequestHistoryRepository apiRequestHistoryRepository;
     private final JwtService jwtService;
 
     private final Semaphore semaphore = new Semaphore(5);
 
-    private static final int DEFAULT_DATA_COUNT = 5;
+    private static final int DEFAULT_DATA_COUNT = 10;
 
     // ChatGPT API 호출
     @Override
@@ -125,38 +123,29 @@ public class ApiRequestServiceImpl implements ApiRequestService {
         }
     }
 
-    // API 요청 이력 조회
+    // API 요청 기록 조회
     @Override
     @Transactional(readOnly = true)
-    public ApiRequestHistoryListResponseDTO getApiRequestHistory(int page) {
+    public ApiRequestHistoryListResponseDTO getApiRequestHistory(int page, String searchType, String keyword) {
         Member currentMember = getCurrentMember();
 
         if (!isAdmin(currentMember)) {
             throw new MemberException(MemberExceptionInfo.USER_NOT_ADMIN, currentMember.getEmail() + " 유저가 api 요청 이력 조회를 시도했습니다.(관리자 아님)");
         }
 
-        Pageable pageRequest = PageRequest.of(page, DEFAULT_DATA_COUNT, Sort.Direction.DESC, "requestDate");
-        Page<ApiRequestHistory> apiRequestHistories = apiRequestHistoryRepository.searchApiRequestHistory(pageRequest);
+        Pageable pageRequest = PageRequest.of(page, DEFAULT_DATA_COUNT);
+        Page<ApiRequestHistoryResponseDTO> apiRequestHistories = null;
 
-        List<ApiRequestHistoryResponseDTO> result = apiRequestHistories.getContent().stream()
-                .map(ApiRequestHistoryResponseDTO::toDTO)
-                .collect(Collectors.toList());
+        if (searchType != null && keyword != null && !searchType.isEmpty() && !keyword.isEmpty()) {
+            apiRequestHistories = apiRequestHistoryRepository.searchApiRequestHistoryByCondition(pageRequest, searchType, keyword);
+        } else {
+            apiRequestHistories = apiRequestHistoryRepository.searchApiRequestHistory(pageRequest);
+        }
 
         return ApiRequestHistoryListResponseDTO.builder()
-                .apiRequestHistoryResponseDTOS(result)
+                .apiRequestHistoryResponseDTOS(apiRequestHistories.getContent())
                 .currentPage(apiRequestHistories.getNumber())
                 .totalPages(apiRequestHistories.getTotalPages()).build();
-    }
-
-    // 검색 조건에 따른 API 요청 이력 조회
-    @Override
-    @Transactional(readOnly = true)
-    public Page<ApiRequestHistoryResponseDTO> getApiRequestHistoryByCondition(Pageable pageable, String searchType, String keyword) {
-        Long startTime = System.currentTimeMillis();
-        Page<ApiRequestHistoryResponseDTO> requestHistoryResponseDTOS = apiRequestHistoryRepository.searchApiRequestHistoryByCondition(pageable, searchType, keyword);
-        Long endTime = System.currentTimeMillis();
-
-        return requestHistoryResponseDTOS;
     }
 
     // 현재 로그인 유저 찾기
