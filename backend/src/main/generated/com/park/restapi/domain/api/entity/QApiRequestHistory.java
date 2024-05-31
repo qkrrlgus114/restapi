@@ -28,11 +28,11 @@ public class QApiRequestHistory extends EntityPathBase<ApiRequestHistory> {
 
     public final EnumPath<MethodType> methodType = createEnum("methodType", MethodType.class);
 
-    public final BooleanPath request_status = createBoolean("request_status");
-
     public final StringPath requestContent = createString("requestContent");
 
     public final DateTimePath<java.time.LocalDateTime> requestDate = createDateTime("requestDate", java.time.LocalDateTime.class);
+
+    public final BooleanPath requestStatus = createBoolean("requestStatus");
 
     public final StringPath responseContent = createString("responseContent");
 

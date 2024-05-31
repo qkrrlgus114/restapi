@@ -38,15 +38,9 @@ public class ApiRequestController {
                                                                 @RequestParam(value = "searchKey", required = false) String keyword){
 
         Long startTime = System.currentTimeMillis();
-        ApiRequestHistoryListResponseDTO apiRequestHistory = null;
-
-        if(searchType != null && keyword != null && !searchType.isEmpty() && !keyword.isEmpty()){
-//            Page<ApiRequestHistoryResponseDTO> apiRequestHistoryByCondition = apiRequestService.getApiRequestHistoryByCondition(pageable, searchType, keyword);
-        }else{
-            apiRequestHistory = apiRequestService.getApiRequestHistory(page - 1);
-        }
+        ApiRequestHistoryListResponseDTO apiRequestHistory = apiRequestService.getApiRequestHistory(page - 1, searchType, keyword);
         Long endTime = System.currentTimeMillis();
-        log.info("총 걸린 시간 : {}", endTime - startTime);
+        log.info("api 요청 이력 검색 시간 : {}", endTime - startTime);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(apiRequestHistory, "요청 이력 조회 성공"));
     }

@@ -28,7 +28,7 @@ public class ApiRequestDTO {
     public ApiRequestHistory toEntity(ChatGPTResponseDTO responseDTO, Member member, boolean access){
         return ApiRequestHistory.builder()
                 .member(member)
-                .request_status(access)
+                .requestStatus(access)
                 .requestContent(content)
                 .methodType(methodType)
                 .responseContent(responseDTO != null ? responseDTO.getChoices().get(0).getMessage().getContent() : null)
