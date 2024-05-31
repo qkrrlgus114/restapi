@@ -20,7 +20,6 @@ import java.util.List;
 public class MemberSchedulerService {
 
     private final MemberService memberService;
-    private final WithdrawalMemberRepository withdrawalMemberRepository;
 
     // 매일 12시에 토큰 리셋
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")

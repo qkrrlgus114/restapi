@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface CouponSettingRepository extends JpaRepository<CouponSetting, Long> {
 
     CouponSetting findTopByOrderByIdAsc();
+
 }

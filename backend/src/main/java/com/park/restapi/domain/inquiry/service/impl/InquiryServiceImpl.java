@@ -58,16 +58,12 @@ public class InquiryServiceImpl implements InquiryService {
         Member currentMember = getCurrentMemberFetchJoinMemberRoles();
 
         PageRequest pageRequest = PageRequest.of(page, DEFAULT_DATA_COUNT, Sort.Direction.DESC, "createDate");
-        Page<Inquiry> inquiries = inquiryRepository.findByInquires(currentMember, pageRequest, isAdmin(currentMember));
-
-        List<InquiryResponseDTO> inquiryResponseDTOS = inquiries.getContent().stream()
-                .map(InquiryResponseDTO::toDTO)
-                .collect(Collectors.toList());
+        Page<InquiryResponseDTO> inquires = inquiryRepository.findByInquires(currentMember, pageRequest, isAdmin(currentMember));
 
         return InquiryListResponseDTO.builder()
-                .inquiryResponseDTOS(inquiryResponseDTOS)
-                .currentPage(inquiries.getNumber())
-                .totalPages(inquiries.getTotalPages()).build();
+                .inquiryResponseDTOS(inquires.getContent())
+                .currentPage(inquires.getNumber())
+                .totalPages(inquires.getTotalPages()).build();
     }
 
     // 질문 상세내용 가져오기
@@ -77,7 +73,7 @@ public class InquiryServiceImpl implements InquiryService {
         Member currentMember = getCurrentMemberFetchJoinMemberRoles();
         Answer answer = null;
 
-        Inquiry inquiry = inquiryRepository.findById(inquiryId)
+        Inquiry inquiry = inquiryRepository.findByInquiryFetchJoinMember(inquiryId)
                 .orElseThrow(() -> new InquiryException(InquiryExceptionInfo.NOT_FOUND_INQUIRY, inquiryId + "번 문의 내역을 찾을 수 없습니다."));
 
         if (!inquiry.getMember().equals(currentMember) && !isAdmin(currentMember)) {

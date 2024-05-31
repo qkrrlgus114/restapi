@@ -1,8 +1,10 @@
 package com.park.restapi.domain.inquiry.repository.impl;
 
+import com.park.restapi.domain.inquiry.dto.response.InquiryResponseDTO;
 import com.park.restapi.domain.inquiry.entity.Inquiry;
 import com.park.restapi.domain.inquiry.repository.InquiryCustomRepository;
 import com.park.restapi.domain.member.entity.Member;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +26,16 @@ public class InquiryCustomRepositoryImpl implements InquiryCustomRepository {
 
     // 모든 문의 내역 탐색
     @Override
-    public Page<Inquiry> findByInquires(Member member, Pageable pageable, boolean isAdmin) {
+    public Page<InquiryResponseDTO> findByInquires(Member member, Pageable pageable, boolean isAdmin) {
 
-        List<Inquiry> inquiries = queryFactory
-                .selectFrom(inquiry)
+        List<InquiryResponseDTO> inquiries = queryFactory
+                .select(Projections.constructor(InquiryResponseDTO.class,
+                        inquiry.id,
+                        inquiry.title,
+                        inquiry.createDate,
+                        inquiry.inquiryCategory,
+                        inquiry.isAnswered))
+                .from(inquiry)
                 .where(allInquiresCondition(member, isAdmin))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
