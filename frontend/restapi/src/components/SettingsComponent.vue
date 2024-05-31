@@ -106,9 +106,7 @@ const applySettings = async () => {
     alert(data.message);
     originDailyCouponQuantity.value = dailyCouponQuantity.value;
     originIsDailyCouponGenerate.value = isDailyCouponGenerate.value;
-  } catch (error) {
-    // 오류 처리
-  }
+  } catch (error) {}
 };
 
 // 쿠폰 상태 체크
@@ -124,11 +122,11 @@ const checkCouponData = () => {
 const immediatelyCoupon = async () => {
   try {
     if (!checkCouponData()) return;
-
     const data = await apiPost("/api/admin/coupons", {
       dailyCouponQuantity: dailyCouponQuantity.value,
     });
     alert(data.message);
+    store.updateCoupon(dailyCouponQuantity.value);
   } catch (error) {
     // 오류 처리
   }

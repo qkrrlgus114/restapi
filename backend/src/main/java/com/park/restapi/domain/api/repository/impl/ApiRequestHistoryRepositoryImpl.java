@@ -1,8 +1,10 @@
 package com.park.restapi.domain.api.repository.impl;
 
+import com.park.restapi.domain.api.dto.response.ApiRequestHistoryListResponseDTO;
 import com.park.restapi.domain.api.dto.response.ApiRequestHistoryResponseDTO;
 import com.park.restapi.domain.api.entity.ApiRequestHistory;
 import com.park.restapi.domain.api.repository.ApiRequestHistoryCustomRepository;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -27,24 +29,33 @@ public class ApiRequestHistoryRepositoryImpl implements ApiRequestHistoryCustomR
 
     // 모든 api 요청 내역 조회
     @Override
-    public Page<ApiRequestHistory> searchApiRequestHistory(Pageable pageable) {
+    public Page<ApiRequestHistoryResponseDTO> searchApiRequestHistory(Pageable pageable) {
 
-        // 요청 이력 조회 쿼리 생성
-        List<ApiRequestHistory> results = queryFactory
-                .selectFrom(apiRequestHistory)
-                .leftJoin(apiRequestHistory.member, member).fetchJoin()
+        Long startTime = System.currentTimeMillis();
+
+        List<ApiRequestHistoryResponseDTO> results = queryFactory
+                .select(Projections.constructor(ApiRequestHistoryResponseDTO.class,
+                        apiRequestHistory.member.id,
+                        apiRequestHistory.requestDate,
+                        member.email,
+                        apiRequestHistory.methodType,
+                        apiRequestHistory.requestContent,
+                        apiRequestHistory.responseContent))
+                .from(apiRequestHistory)
+                .leftJoin(apiRequestHistory.member, member)
                 .orderBy(apiRequestHistory.requestDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        // 전체 요청 이력 수 조회를 위한 쿼리 생성
+        Long endTime = System.currentTimeMillis();
+        log.info("api 요청 이력 검색 시간 : {}", endTime - startTime);
+
         long total = queryFactory
                 .select(apiRequestHistory.count())
                 .from(apiRequestHistory)
                 .fetchOne();
 
-        // Page 객체 생성 및 반환
         return new PageImpl<>(results, pageable, total);
     }
 
@@ -54,37 +65,29 @@ public class ApiRequestHistoryRepositoryImpl implements ApiRequestHistoryCustomR
 
         BooleanExpression searchCondition = searchCondition(searchType, keyword);
 
-        // 요청 이력 조회 쿼리 생성
-        List<ApiRequestHistory> results = queryFactory
-                .selectFrom(apiRequestHistory)
+        List<ApiRequestHistoryResponseDTO> results = queryFactory
+                .select(Projections.constructor(ApiRequestHistoryResponseDTO.class,
+                        apiRequestHistory.member.id,
+                        apiRequestHistory.requestDate,
+                        member.email,
+                        apiRequestHistory.methodType,
+                        apiRequestHistory.requestContent,
+                        apiRequestHistory.responseContent))
+                .from(apiRequestHistory)
+                .leftJoin(apiRequestHistory.member, member)
                 .where(searchCondition)
-                .leftJoin(apiRequestHistory.member, member).fetchJoin()
-                .orderBy(apiRequestHistory.requestDate.desc()) // 요청 날짜 기준 내림차순 정렬
-                .offset(pageable.getOffset()) // 페이지네이션 시작점
-                .limit(pageable.getPageSize()) // 페이지 크기
-                .fetch();// 쿼리 실행 및 결과 fetch
+                .orderBy(apiRequestHistory.requestDate.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
 
-        // 결과를 DTO로 변환
-        List<ApiRequestHistoryResponseDTO> dtoList = results.stream()
-                .map(entity ->
-                        ApiRequestHistoryResponseDTO.builder()
-                                .memberId(entity.getMember().getId())
-                                .requestDate(entity.getRequestDate())
-                                .email(entity.getMember().getEmail())
-                                .methodType(entity.getMethodType())
-                                .requestContent(entity.getRequestContent())
-                                .responseContent(entity.getResponseContent())
-                                .build())
-                .collect(Collectors.toList());
-
-        // 전체 요청 이력 수 조회를 위한 쿼리 생성
         long total = queryFactory
                 .select(apiRequestHistory.count())
                 .from(apiRequestHistory)
                 .where(searchCondition)
                 .fetchOne();
 
-        return new PageImpl<>(dtoList, pageable, total);
+        return new PageImpl<>(results, pageable, total);
     }
 
 
@@ -102,9 +105,8 @@ public class ApiRequestHistoryRepositoryImpl implements ApiRequestHistoryCustomR
     private BooleanExpression searchCondition(String searchType, String keyword) {
         if ("email".equals(searchType)) {
             return emailContains(keyword);
-        } else if ("id".equals(searchType)) {
-            return idContains(Long.parseLong(keyword));
         }
+
         return null;
     }
 

@@ -40,6 +40,20 @@
         다음
       </button>
     </div>
+    <div class="search-bar">
+      <select v-model="searchField">
+        <option value="email">이메일</option>
+      </select>
+      <input
+        v-model="searchValue"
+        type="text"
+        placeholder="검색어를 입력해주세요"
+        @keyup.enter="searchRequestHistory(1, searchField, searchValue)"
+      />
+      <button @click="searchRequestHistory(1, searchField, searchValue)">
+        검색
+      </button>
+    </div>
   </div>
 </template>
 
@@ -56,38 +70,72 @@ const currentPage = ref(1); // 현재 페이지 번호
 const totalPages = ref(0); // 총 페이지 수
 const currentPageGroup = ref(1); // 현재 페이지 그룹
 const itemsPerPageGroup = 5; // 한 번에 표시할 페이지 번호 수
+const searchField = ref(route.query.searchType || "email");
+const searchValue = ref(route.query.searchKey || "");
 
+// 데이터 가져오기 함수
+const getRequestHistory = async (page, searchField = "", searchValue = "") => {
+  try {
+    let url = `/api/admin/requests?page=${page}`;
+    if (searchField && searchValue) {
+      url += `&searchType=${searchField}&searchKey=${searchValue}`;
+    }
+    const data = await apiGet(url);
+    boardItems.value = data.data.apiRequestHistoryResponseDTOS;
+    totalPages.value = data.data.totalPages;
+    currentPage.value = data.data.currentPage + 1;
+  } catch (error) {
+    console.error("Error fetching request history:", error);
+  }
+};
+
+// 초기 데이터 로드 및 URL 감시 설정
 onMounted(() => {
   watch(
-    () => route.params.page,
-    (newPage) => {
-      const page = parseInt(newPage) || 1;
+    [
+      () => route.params.page,
+      () => route.query.searchType,
+      () => route.query.searchKey,
+    ],
+    () => {
+      const page = parseInt(route.params.page) || 1;
       currentPage.value = page;
       currentPageGroup.value = Math.ceil(page / itemsPerPageGroup);
-      getRequestHistory(page);
+      const { searchType, searchKey } = route.query;
+      getRequestHistory(page, searchType, searchKey);
     },
     { immediate: true }
   );
 });
 
-// 요청 기록 가져오기
-const getRequestHistory = async (page) => {
-  try {
-    const data = await apiGet(`api/admin/requests?page=${page}`);
-    boardItems.value = data.data.apiRequestHistoryResponseDTOS;
-    totalPages.value = data.data.totalPages;
-    currentPage.value = data.data.currentPage + 1;
-  } catch (error) {}
+// 검색 요청 처리
+const searchRequestHistory = (page, searchField, searchValue) => {
+  if (searchValue == "") {
+    alert("검색어를 입력해주세요.");
+    return;
+  }
+  router.push({
+    name: "ApiRequestLog",
+    params: { page: 1 },
+    query: { searchType: searchField, searchKey: searchValue },
+  });
 };
 
-// 페이지 변경
+// 페이지 변경 처리
 const changePage = (page) => {
   if (page >= 1 && page <= totalPages.value) {
-    router.push({ name: "ApiRequestLog", params: { page } });
+    router.push({
+      name: "ApiRequestLog",
+      params: { page },
+      query: {
+        searchType: route.query.searchType,
+        searchKey: route.query.searchKey,
+      },
+    });
   }
 };
 
-// 페이지 그룹 변경
+// 페이지 그룹 변경 처리
 const changePageGroup = (direction) => {
   if (direction === "prev" && currentPageGroup.value > 1) {
     currentPageGroup.value--;
@@ -138,6 +186,7 @@ const formatDate = (dateString) => {
   background-color: rgb(255, 255, 255);
   padding: 10px;
   margin: 20px;
+  padding-bottom: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -217,5 +266,26 @@ const formatDate = (dateString) => {
 .pagination button.active {
   color: black;
   background-color: rgb(209, 209, 209);
+}
+
+.search-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.search-bar select,
+.search-bar input,
+.search-bar button {
+  margin: 0 5px;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.search-bar input {
+  flex: 1;
 }
 </style>
