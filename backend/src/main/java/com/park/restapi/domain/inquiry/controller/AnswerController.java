@@ -23,7 +23,7 @@ public class AnswerController {
     private final AnswerService answerService;
     private final EmailService emailService;
 
-    // 답변 등록
+    // 답변 등록 
     @PostMapping("answers")
     public ResponseEntity<ApiResponse<?>> createAnswer(@RequestBody @Valid AnswerRequestDTO answerRequestDTO) throws Exception {
         Inquiry inquiry = answerService.createAnswer(answerRequestDTO);
