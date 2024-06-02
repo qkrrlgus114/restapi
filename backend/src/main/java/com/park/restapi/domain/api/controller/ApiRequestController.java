@@ -30,7 +30,7 @@ public class ApiRequestController {
     }
 
     // API 요청 이력 조회
-    @GetMapping("admin/requests")
+    @GetMapping("gpt/admin/requests")
     public ResponseEntity<ApiResponse<?>> getApiRequestHistory(
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "searchType", required = false) String searchType,
