@@ -19,8 +19,7 @@ public class AnswerRequestDTO {
     private Long inquiryId;
 
     public Answer toEntity() {
-        return Answer.builder()
-                .content(content).build();
+        return Answer.builder().content(content).build();
     }
 
 }

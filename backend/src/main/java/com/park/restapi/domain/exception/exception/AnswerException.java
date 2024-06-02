@@ -4,7 +4,7 @@ import com.park.restapi.domain.exception.info.AnswerExceptionInfo;
 import lombok.Getter;
 
 @Getter
-public class AnswerException extends RuntimeException{
+public class AnswerException extends RuntimeException {
     private AnswerExceptionInfo exception;
     // 개발자에게 보여지는 로그
     private String log;

@@ -105,7 +105,7 @@ public class Member {
     }
 
     // 추방 로직
-    public void updateBannedDate(){
+    public void updateBannedDate() {
         this.bannedDate = LocalDateTime.now();
     }
 

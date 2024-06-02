@@ -111,7 +111,7 @@ public class MemberController {
 
     // 유저 개인 정보 제공
     @GetMapping("members/info")
-    public ResponseEntity<ApiResponse<?>> getMemberDeepInfo(){
+    public ResponseEntity<ApiResponse<?>> getMemberDeepInfo() {
         MyInfoResponseDTO memberInfo = memberService.getMemberInfo();
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(memberInfo, "회원 개인정보 조회 성공."));

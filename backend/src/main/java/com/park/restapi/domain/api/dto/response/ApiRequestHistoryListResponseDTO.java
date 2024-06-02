@@ -16,7 +16,8 @@ public class ApiRequestHistoryListResponseDTO {
     private int currentPage;
 
     @Builder
-    public ApiRequestHistoryListResponseDTO(List<ApiRequestHistoryResponseDTO> apiRequestHistoryResponseDTOS, int totalPages, int currentPage) {
+    public ApiRequestHistoryListResponseDTO(List<ApiRequestHistoryResponseDTO> apiRequestHistoryResponseDTOS,
+                                            int totalPages, int currentPage) {
         this.apiRequestHistoryResponseDTOS = apiRequestHistoryResponseDTOS;
         this.totalPages = totalPages;
         this.currentPage = currentPage;

@@ -36,7 +36,7 @@ public class EmailConfirm {
 
 
     // 사용으로 변경
-    public void changedUsing(){
+    public void changedUsing() {
         this.certificationStatus = true;
     }
 

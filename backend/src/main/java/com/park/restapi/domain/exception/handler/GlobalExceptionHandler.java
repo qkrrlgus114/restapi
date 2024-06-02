@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
 
     // 이메일 예외처리
     @ExceptionHandler(EmailException.class)
-    public ResponseEntity<ApiResponse<Void>> handleEmailException(EmailException e , HttpServletRequest request){
+    public ResponseEntity<ApiResponse<Void>> handleEmailException(EmailException e, HttpServletRequest request) {
         log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(), e.getLog());
 
         return ResponseEntity.status(e.getException().getStatus()).body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
 
     // 유저 예외처리
     @ExceptionHandler(MemberException.class)
-    public ResponseEntity<ApiResponse<Void>> handleUserException(MemberException e , HttpServletRequest request){
+    public ResponseEntity<ApiResponse<Void>> handleUserException(MemberException e, HttpServletRequest request) {
         log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(), e.getLog());
 
         return ResponseEntity.status(e.getException().getStatus()).body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
 
     // GPT 예외처리
     @ExceptionHandler(GPTException.class)
-    public ResponseEntity<ApiResponse<Void>> handleGPTException(GPTException e , HttpServletRequest request){
+    public ResponseEntity<ApiResponse<Void>> handleGPTException(GPTException e, HttpServletRequest request) {
         log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(), e.getLog());
 
         return ResponseEntity.status(e.getException().getStatus()).body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
 
     // 쿠폰 예외처리
     @ExceptionHandler(CouponException.class)
-    public ResponseEntity<ApiResponse<Void>> handleCouponException(CouponException e , HttpServletRequest request){
+    public ResponseEntity<ApiResponse<Void>> handleCouponException(CouponException e, HttpServletRequest request) {
         log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(), e.getLog());
 
         return ResponseEntity.status(e.getException().getStatus()).body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
 
     // 문의내역 예외처리
     @ExceptionHandler(InquiryException.class)
-    public ResponseEntity<ApiResponse<Void>> handleInquiryException(InquiryException e , HttpServletRequest request){
+    public ResponseEntity<ApiResponse<Void>> handleInquiryException(InquiryException e, HttpServletRequest request) {
         log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(), e.getLog());
 
         return ResponseEntity.status(e.getException().getStatus()).body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
@@ -58,7 +58,7 @@ public class GlobalExceptionHandler {
 
     // 문의내역 답변 예외처리
     @ExceptionHandler(AnswerException.class)
-    public ResponseEntity<ApiResponse<Void>> handleAnswerException(AnswerException e , HttpServletRequest request){
+    public ResponseEntity<ApiResponse<Void>> handleAnswerException(AnswerException e, HttpServletRequest request) {
         log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(), e.getLog());
 
         return ResponseEntity.status(e.getException().getStatus()).body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
 
     // Validated 유효성 검사 실패
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ApiResponse<?>> handleConstraintViolationException(ConstraintViolationException e){
+    public ResponseEntity<ApiResponse<?>> handleConstraintViolationException(ConstraintViolationException e) {
 
         String errorMessage = e.getConstraintViolations().stream()
                 .map(ConstraintViolation::getMessage)
@@ -79,7 +79,7 @@ public class GlobalExceptionHandler {
 
     // Valid 유효성 검사 실패
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<?>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
+    public ResponseEntity<ApiResponse<?>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
 
         String errorMessage = e.getBindingResult().getAllErrors().stream()
                 .map(ObjectError::getDefaultMessage)

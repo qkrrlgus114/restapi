@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 public interface CouponHistoryRepository extends JpaRepository<CouponHistory, Long> {
 
     @Query("select ch from CouponHistory ch where ch.createDate >= :startOfDay and ch.createDate <= :endOfDay and ch.member = :member")
-    CouponHistory findByCouponHistory(@Param("startOfDay")LocalDateTime startOfDay,
-                                      @Param("endOfDay")LocalDateTime endOfDay,
+    CouponHistory findByCouponHistory(@Param("startOfDay") LocalDateTime startOfDay,
+                                      @Param("endOfDay") LocalDateTime endOfDay,
                                       @Param("member") Member member);
 
     // 유저가 여태 획득했던 쿠폰

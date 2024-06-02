@@ -18,15 +18,15 @@ public class ChatGPTRequestDTO {
 
     private List<Message> messages;
 
-    private int temperature = 1;
+    private final int temperature = 1;
 
-    private int maxTokens = 256;
+    private final int maxTokens = 256;
 
-    private int topP = 1;
+    private final int topP = 1;
 
-    private int frequencyPenalty = 0;
+    private final int frequencyPenalty = 0;
 
-    private int presencePenalty = 0;
+    private final int presencePenalty = 0;
 
     @Builder
     public ChatGPTRequestDTO(String model, List<Message> messages) {

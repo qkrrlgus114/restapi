@@ -64,7 +64,8 @@ public class ApiRequestHistoryRepositoryImpl implements ApiRequestHistoryCustomR
 
     // 검색 조건에 따른 요청 이력 조회
     @Override
-    public Page<ApiRequestHistoryResponseDTO> searchApiRequestHistoryByCondition(Pageable pageable, String searchType, String keyword) {
+    public Page<ApiRequestHistoryResponseDTO> searchApiRequestHistoryByCondition(Pageable pageable, String searchType,
+                                                                                 String keyword) {
 
         BooleanExpression searchCondition = searchCondition(searchType, keyword);
 
@@ -92,7 +93,6 @@ public class ApiRequestHistoryRepositoryImpl implements ApiRequestHistoryCustomR
 
         return new PageImpl<>(results, pageable, total);
     }
-
 
     // 이메일 검색
     private BooleanExpression emailContains(String keyword) {

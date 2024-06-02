@@ -26,7 +26,9 @@ public class InquiryRequestDTO {
     private boolean emailSendCheck;
 
     @Builder
-    public InquiryRequestDTO(@NotNull(message = "제목을 입력해주세요.") String title, @NotNull(message = "내용을 입력해주세요.") String content, @NotNull(message = "문의 타입을 선택해주세요.") InquiryCategory inquiryCategory, boolean emailSendCheck) {
+    public InquiryRequestDTO(@NotNull(message = "제목을 입력해주세요.") String title,
+                             @NotNull(message = "내용을 입력해주세요.") String content,
+                             @NotNull(message = "문의 타입을 선택해주세요.") InquiryCategory inquiryCategory, boolean emailSendCheck) {
         this.title = title;
         this.content = content;
         this.inquiryCategory = inquiryCategory;

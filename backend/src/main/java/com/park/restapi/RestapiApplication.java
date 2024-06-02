@@ -15,13 +15,13 @@ import java.util.TimeZone;
 @EnableAsync
 public class RestapiApplication {
 
-	@PostConstruct
-	void started() {
-		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
-	}
+    @PostConstruct
+    void started() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(RestapiApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(RestapiApplication.class, args);
+    }
 
 }

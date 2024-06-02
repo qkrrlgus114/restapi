@@ -10,7 +10,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface ApiRequestHistoryRepository extends JpaRepository<ApiRequestHistory, Long>, ApiRequestHistoryCustomRepository {
+public interface ApiRequestHistoryRepository
+        extends JpaRepository<ApiRequestHistory, Long>, ApiRequestHistoryCustomRepository {
 
     @EntityGraph(attributePaths = {"member"})
     Slice<ApiRequestHistory> findSliceBy(Pageable pageable);

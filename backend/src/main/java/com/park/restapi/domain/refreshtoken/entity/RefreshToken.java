@@ -41,13 +41,13 @@ public class RefreshToken {
         this.expireDate = expireDate;
     }
 
-    public void addTokenValueAndExpireDate(String accessToken, String refreshToken, LocalDateTime expireDate){
+    public void addTokenValueAndExpireDate(String accessToken, String refreshToken, LocalDateTime expireDate) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.expireDate = expireDate;
     }
 
-    public static RefreshToken toEntity(String accessToken, String refreshToken, Member member, LocalDateTime expireDate){
+    public static RefreshToken toEntity(String accessToken, String refreshToken, Member member, LocalDateTime expireDate) {
         return RefreshToken.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)

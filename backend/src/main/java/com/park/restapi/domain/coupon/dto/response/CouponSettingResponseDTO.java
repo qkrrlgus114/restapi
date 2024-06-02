@@ -20,7 +20,7 @@ public class CouponSettingResponseDTO {
         this.dailyCouponQuantity = dailyCouponQuantity;
     }
 
-    public static CouponSettingResponseDTO fromEntity(CouponSetting couponSetting){
+    public static CouponSettingResponseDTO fromEntity(CouponSetting couponSetting) {
         return CouponSettingResponseDTO.builder()
                 .dailyCouponQuantity(couponSetting.getDailyCouponQuantity())
                 .isDailyCouponGenerate(couponSetting.getIsDailyCouponGenerate()).build();

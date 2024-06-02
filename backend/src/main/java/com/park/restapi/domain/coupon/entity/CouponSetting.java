@@ -15,7 +15,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EqualsAndHashCode
 public class CouponSetting {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -23,8 +24,8 @@ public class CouponSetting {
 
     @Column(nullable = false)
     private Integer dailyCouponQuantity;
-    
-    public void updateCouponSetting(UpdateCouponSettingRequestDTO requestDTO){
+
+    public void updateCouponSetting(UpdateCouponSettingRequestDTO requestDTO) {
         this.isDailyCouponGenerate = requestDTO.getIsDailyCouponGenerate();
         this.dailyCouponQuantity = requestDTO.getDailyCouponQuantity();
     }

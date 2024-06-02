@@ -25,7 +25,7 @@ public class ApiRequestDTO {
     @NotBlank(message = "내용을 입력해주세요.")
     private String content;
 
-    public ApiRequestHistory toEntity(ChatGPTResponseDTO responseDTO, Member member, boolean access){
+    public ApiRequestHistory toEntity(ChatGPTResponseDTO responseDTO, Member member, boolean access) {
         return ApiRequestHistory.builder()
                 .member(member)
                 .requestStatus(access)

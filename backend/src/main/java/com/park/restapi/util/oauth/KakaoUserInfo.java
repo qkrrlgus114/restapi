@@ -2,7 +2,7 @@ package com.park.restapi.util.oauth;
 
 import java.util.Map;
 
-public class KakaoUserInfo implements OAuth2UserInfo{
+public class KakaoUserInfo implements OAuth2UserInfo {
 
     private Map<String, Object> attributes;
 

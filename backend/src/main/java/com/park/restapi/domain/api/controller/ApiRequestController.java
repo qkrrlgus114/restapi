@@ -22,21 +22,24 @@ public class ApiRequestController {
 
     // 챗봇 API
     @PostMapping("gpt/recommendations")
-    public ResponseEntity<ApiResponse<?>> chatGpt(@Valid @RequestBody ApiRequestDTO dto){
-        System.out.println(dto.getContent());
+    public ResponseEntity<ApiResponse<?>> chatGpt(@Valid @RequestBody ApiRequestDTO dto) {
         ChatGPTResponseDTO chatGPTResponseDTO = apiRequestService.chatGpt(dto);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(chatGPTResponseDTO, "REST API 추천 완료."));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ApiResponse.createSuccess(chatGPTResponseDTO, "REST API 추천 완료."));
     }
 
     // API 요청 이력 조회
     @GetMapping("admin/requests")
-    public ResponseEntity<ApiResponse<?>> getApiRequestHistory(@RequestParam(value = "page", defaultValue = "1") int page,
-                                                               @RequestParam(value = "searchType", required = false) String searchType,
-                                                                @RequestParam(value = "searchKey", required = false) String keyword){
+    public ResponseEntity<ApiResponse<?>> getApiRequestHistory(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "searchType", required = false) String searchType,
+            @RequestParam(value = "searchKey", required = false) String keyword) {
 
         Long startTime = System.currentTimeMillis();
-        ApiRequestHistoryListResponseDTO apiRequestHistory = apiRequestService.getApiRequestHistory(page - 1, searchType, keyword);
+
+        ApiRequestHistoryListResponseDTO apiRequestHistory = apiRequestService.getApiRequestHistory(page - 1,
+                searchType, keyword);
         Long endTime = System.currentTimeMillis();
         log.info("api 요청 이력 검색 시간 : {}", endTime - startTime);
 

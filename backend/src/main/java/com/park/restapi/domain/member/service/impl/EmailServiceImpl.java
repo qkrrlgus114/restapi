@@ -111,7 +111,7 @@ public class EmailServiceImpl implements EmailService {
     @Async("taskExecutor")
     public void sendAnsweredMessage(String to, String inquiryTitle) throws Exception {
         MimeMessage message = createAnswerMessage(to, inquiryTitle);
-        try { 
+        try {
             emailSender.send(message);
         } catch (MailException es) {
             log.error("답변 이메일 전송 중 오류 발생: 대상 이메일 - {}, 오류 메시지 - {}", to, es.getMessage(), es);

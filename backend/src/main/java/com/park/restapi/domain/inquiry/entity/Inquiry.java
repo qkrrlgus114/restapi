@@ -58,7 +58,7 @@ public class Inquiry {
         this.emailSendCheck = emailSendCheck;
     }
 
-    public static Inquiry toEntity(InquiryRequestDTO inquiryRequestDTO, Member member){
+    public static Inquiry toEntity(InquiryRequestDTO inquiryRequestDTO, Member member) {
         return Inquiry.builder()
                 .member(member)
                 .title(inquiryRequestDTO.getTitle())
@@ -67,11 +67,10 @@ public class Inquiry {
                 .inquiryCategory(inquiryRequestDTO.getInquiryCategory()).build();
     }
 
-    public void registerAnswer(Answer answer){
+    public void registerAnswer(Answer answer) {
         this.isAnswered = true;
         this.answer = answer;
     }
-
 
 
 }

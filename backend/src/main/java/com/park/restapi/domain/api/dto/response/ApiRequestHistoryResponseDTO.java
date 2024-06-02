@@ -27,7 +27,8 @@ public class ApiRequestHistoryResponseDTO {
     private String responseContent;
 
     @Builder
-    public ApiRequestHistoryResponseDTO(Long memberId, LocalDateTime requestDate, String email, MethodType methodType, String requestContent, String responseContent) {
+    public ApiRequestHistoryResponseDTO(Long memberId, LocalDateTime requestDate, String email, MethodType methodType,
+                                        String requestContent, String responseContent) {
         this.memberId = memberId;
         this.requestDate = requestDate;
         this.email = email;
@@ -36,7 +37,7 @@ public class ApiRequestHistoryResponseDTO {
         this.responseContent = responseContent;
     }
 
-    public static ApiRequestHistoryResponseDTO toDTO(ApiRequestHistory apiRequestHistory){
+    public static ApiRequestHistoryResponseDTO toDTO(ApiRequestHistory apiRequestHistory) {
         return ApiRequestHistoryResponseDTO.builder()
                 .memberId(apiRequestHistory.getMember().getId())
                 .requestDate(apiRequestHistory.getRequestDate())

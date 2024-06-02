@@ -12,7 +12,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EqualsAndHashCode
 public class MemberRole {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

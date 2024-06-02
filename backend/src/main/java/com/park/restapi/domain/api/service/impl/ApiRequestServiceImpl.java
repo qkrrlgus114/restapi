@@ -82,7 +82,8 @@ public class ApiRequestServiceImpl implements ApiRequestService {
                             "4. URI에 파일 확장자는 포함하지 않습니다.\n" +
                             "5. CRUD 함수 이름을 URI에 포함하지 않고, 대신 적절한 HTTP 메서드를 사용합니다.\n" +
                             "6. 자원의 필터링을 위해서는 쿼리 파라미터를 사용합니다.\n\n" +
-                            "제안된 API 경로는 쉼표(,)로 구분해서 나열해주세요. 예: [POST] /users, [POST] /users/{id}/posts, [POST] /posts/{id}/comments\n\n" +
+                            "제안된 API 경로는 쉼표(,)로 구분해서 나열해주세요. 예: [POST] /users, [POST] /users/{id}/posts, [POST] /posts/{id}/comments\n\n"
+                            +
                             "답변에는 API의 경로만 있어야 합니다.",
                     method, resource, content
             );
@@ -97,12 +98,12 @@ public class ApiRequestServiceImpl implements ApiRequestService {
             ChatGPTRequestDTO requestDTO = ChatGPTRequestDTO.builder()
                     .model(model)
                     .messages(messages).build();
-            
+
             ChatGPTResponseDTO chatGPTResponseDTO = restTemplate.postForObject(
                     URL
                     , requestDTO
                     , ChatGPTResponseDTO.class);
-            
+
             // 응답이 왔다면
             ApiRequestHistory apiRequestHistory = dto.toEntity(chatGPTResponseDTO, member, true);
             apiRequestHistoryRepository.save(apiRequestHistory);
@@ -128,14 +129,16 @@ public class ApiRequestServiceImpl implements ApiRequestService {
         Member currentMember = getCurrentMember();
 
         if (!isAdmin(currentMember)) {
-            throw new MemberException(MemberExceptionInfo.USER_NOT_ADMIN, currentMember.getEmail() + " 유저가 api 요청 이력 조회를 시도했습니다.(관리자 아님)");
+            throw new MemberException(MemberExceptionInfo.USER_NOT_ADMIN,
+                    currentMember.getEmail() + " 유저가 api 요청 이력 조회를 시도했습니다.(관리자 아님)");
         }
 
         Pageable pageRequest = PageRequest.of(page, DEFAULT_DATA_COUNT);
         Page<ApiRequestHistoryResponseDTO> apiRequestHistories = null;
 
         if (searchType != null && keyword != null && !searchType.isEmpty() && !keyword.isEmpty()) {
-            apiRequestHistories = apiRequestHistoryRepository.searchApiRequestHistoryByCondition(pageRequest, searchType, keyword);
+            apiRequestHistories = apiRequestHistoryRepository.searchApiRequestHistoryByCondition(pageRequest,
+                    searchType, keyword);
         } else {
             apiRequestHistories = apiRequestHistoryRepository.searchApiRequestHistory(pageRequest);
         }
@@ -150,7 +153,8 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     private Member getCurrentMember() {
         Long currentUserId = jwtService.getCurrentUserId();
         return memberRepository.findById(currentUserId)
-                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
+                .orElseThrow(
+                        () -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 
     // 관리자 권한 확인

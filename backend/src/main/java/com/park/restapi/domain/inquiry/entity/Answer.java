@@ -33,7 +33,7 @@ public class Answer {
         this.content = content;
     }
 
-    public void updateAnswer(String content){
+    public void updateAnswer(String content) {
         this.content = content;
         this.updateDate = LocalDateTime.now();
     }

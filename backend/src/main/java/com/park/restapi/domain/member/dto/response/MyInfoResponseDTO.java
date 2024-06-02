@@ -17,7 +17,7 @@ public class MyInfoResponseDTO {
         this.totalAcquisitionToken = totalAcquisitionToken;
     }
 
-    public static MyInfoResponseDTO toDTO(int totalUseToken, int totalAcquisitionToken){
+    public static MyInfoResponseDTO toDTO(int totalUseToken, int totalAcquisitionToken) {
         return MyInfoResponseDTO.builder()
                 .totalAcquisitionToken(totalAcquisitionToken)
                 .totalUseToken(totalUseToken).build();

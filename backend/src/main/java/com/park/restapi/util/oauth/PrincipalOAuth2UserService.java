@@ -52,7 +52,7 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
         String email = oAuth2UserInfo.getEmail();
         // 블랙리스트에 있는지 확인
         Optional<WithdrawalMember> byEmail = withdrawalMemberRepository.findByEmail(email);
-        if(byEmail.isPresent()){
+        if (byEmail.isPresent()) {
             OAuth2Error error = new OAuth2Error("탈퇴한", email + " 유저가 로그인 시도를 진행했습니다.(탈퇴한 유저, 카카오)", null);
             throw new OAuth2AuthenticationException(error);
         }

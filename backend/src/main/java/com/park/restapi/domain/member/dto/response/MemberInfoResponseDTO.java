@@ -29,7 +29,7 @@ public class MemberInfoResponseDTO {
         this.social = social;
     }
 
-    public static MemberInfoResponseDTO toDTO(Member member){
+    public static MemberInfoResponseDTO toDTO(Member member) {
 
         boolean social = member.getSocialType().equals(SocialType.KAKAO) ? true : false;
 

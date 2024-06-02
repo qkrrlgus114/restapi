@@ -22,7 +22,7 @@ public class EmailController {
     private final EmailService emailService;
 
     // 인증번호 전송
-    @PostMapping ("authentications/send")
+    @PostMapping("authentications/send")
     public ResponseEntity<ApiResponse<?>> createCretificationNumber(@Valid @RequestBody EmailRequestDTO dto) throws Exception {
         emailService.sendSimpleMessageRegist(dto.getEmail());
 

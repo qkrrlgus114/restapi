@@ -14,7 +14,8 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode
 public class Coupon {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -33,11 +34,11 @@ public class Coupon {
         this.totalQuantity = totalQuantity;
     }
 
-    public void decreasedCoupon(){
+    public void decreasedCoupon() {
         this.remainingQuantity--;
     }
 
-    public void updateCouponQuantity(int quantity){
+    public void updateCouponQuantity(int quantity) {
         this.remainingQuantity = quantity;
         this.totalQuantity = quantity;
     }

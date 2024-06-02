@@ -6,5 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface ApiRequestHistoryCustomRepository {
     Page<ApiRequestHistoryResponseDTO> searchApiRequestHistory(Pageable pageable);
-    Page<ApiRequestHistoryResponseDTO> searchApiRequestHistoryByCondition(Pageable pageable, String searchType, String keyword);
+
+    Page<ApiRequestHistoryResponseDTO> searchApiRequestHistoryByCondition(Pageable pageable, String searchType,
+                                                                          String keyword);
 }

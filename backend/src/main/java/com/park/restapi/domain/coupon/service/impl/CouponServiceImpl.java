@@ -37,7 +37,7 @@ public class CouponServiceImpl implements CouponService {
     private final CouponSettingRepository couponSettingRepository;
     private final MemberRepository memberRepository;
     private final JwtService jwtService;
-    
+
     // 쿠폰 획득
     @Override
     @Transactional
@@ -49,7 +49,7 @@ public class CouponServiceImpl implements CouponService {
         LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
         CouponHistory byCouponHistory = couponHistoryRepository.findByCouponHistory(startOfDay, endOfDay, member);
 
-        if(byCouponHistory != null){
+        if (byCouponHistory != null) {
             throw new MemberException(MemberExceptionInfo.ALREADY_GET_COUPON, "이미 쿠폰 획득 완료.");
         }
 
@@ -57,7 +57,7 @@ public class CouponServiceImpl implements CouponService {
         Coupon coupon = couponRepository.findByCouponForWrite(startOfDay, endOfDay)
                 .orElseThrow(() -> new CouponException(CouponExceptionInfo.FAIL_COUPON_DATA, "DB에 쿠폰 데이터 존재하지 않음."));
 
-        if(coupon.getRemainingQuantity() < 1){
+        if (coupon.getRemainingQuantity() < 1) {
             throw new CouponException(CouponExceptionInfo.NOT_EXIST_COUPON, "쿠폰 품절");
         }
         // 쿠폰 감소
@@ -75,7 +75,7 @@ public class CouponServiceImpl implements CouponService {
     // 남은 선착순 쿠폰 조회
     @Override
     @Transactional(readOnly = true)
-    public int getCoupons(){
+    public int getCoupons() {
         LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
         LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
 

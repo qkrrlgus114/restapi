@@ -32,7 +32,7 @@ public class InquiryResponseDTO {
         this.isAnswered = isAnswered;
     }
 
-    public static InquiryResponseDTO toDTO(Inquiry inquiry){
+    public static InquiryResponseDTO toDTO(Inquiry inquiry) {
         return InquiryResponseDTO.builder()
                 .id(inquiry.getId())
                 .inquiryCategory(inquiry.getInquiryCategory())

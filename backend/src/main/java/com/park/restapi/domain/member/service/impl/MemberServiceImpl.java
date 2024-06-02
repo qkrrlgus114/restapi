@@ -156,7 +156,8 @@ public class MemberServiceImpl implements MemberService {
             throw new MemberException(MemberExceptionInfo.NOT_MATCH_PASSWORD, currentMember.getEmail() + " 유저 비밀번호 불일치 발생(회원 탈퇴)");
         }
 
-        if (isAdmin(currentMember)) throw new MemberException(MemberExceptionInfo.NOT_WITHDRAWAL_ADMIN, currentMember.getEmail() + " 관리자 계정 탈퇴 시도.");
+        if (isAdmin(currentMember))
+            throw new MemberException(MemberExceptionInfo.NOT_WITHDRAWAL_ADMIN, currentMember.getEmail() + " 관리자 계정 탈퇴 시도.");
 
         currentMember.updateWithdrawalDate();
     }
@@ -167,7 +168,8 @@ public class MemberServiceImpl implements MemberService {
     public void deactivateSocialMember() {
         Member currentMember = getCurrentMember();
 
-        if (isAdmin(currentMember)) throw new MemberException(MemberExceptionInfo.NOT_WITHDRAWAL_ADMIN, currentMember.getEmail() + " 관리자 계정 탈퇴 시도.");
+        if (isAdmin(currentMember))
+            throw new MemberException(MemberExceptionInfo.NOT_WITHDRAWAL_ADMIN, currentMember.getEmail() + " 관리자 계정 탈퇴 시도.");
 
         currentMember.updateWithdrawalDate();
     }
@@ -203,7 +205,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void resetAllTokens() {
         List<Member> all = memberRepository.findAll();
-        for(Member u : all){
+        for (Member u : all) {
             u.resetToken();
         }
     }
@@ -215,7 +217,7 @@ public class MemberServiceImpl implements MemberService {
         LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
         List<Member> byWithdrawalMember = memberRepository.findByWithdrawalMember(thirtyDaysAgo);
 
-        for(Member m : byWithdrawalMember){
+        for (Member m : byWithdrawalMember) {
             memberRepository.delete(m);
             withdrawalMemberRepository.save(WithdrawalMember.builder().email(m.getEmail()).build());
         }

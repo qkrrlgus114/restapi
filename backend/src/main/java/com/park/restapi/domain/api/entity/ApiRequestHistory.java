@@ -40,7 +40,8 @@ public class ApiRequestHistory {
     private String responseContent;
 
     @Builder
-    public ApiRequestHistory(Member member, boolean requestStatus, MethodType methodType, String requestContent, String responseContent) {
+    public ApiRequestHistory(Member member, boolean requestStatus, MethodType methodType, String requestContent,
+                             String responseContent) {
         this.member = member;
         this.requestStatus = requestStatus;
         this.methodType = methodType;
