@@ -36,12 +36,8 @@ public class ApiRequestController {
             @RequestParam(value = "searchType", required = false) String searchType,
             @RequestParam(value = "searchKey", required = false) String keyword) {
 
-        Long startTime = System.currentTimeMillis();
-
         ApiRequestHistoryListResponseDTO apiRequestHistory = apiRequestService.getApiRequestHistory(page - 1,
                 searchType, keyword);
-        Long endTime = System.currentTimeMillis();
-        log.info("api 요청 이력 검색 시간 : {}", endTime - startTime);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(apiRequestHistory, "요청 이력 조회 성공"));
     }

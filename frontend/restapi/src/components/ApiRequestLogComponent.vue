@@ -76,7 +76,7 @@ const searchValue = ref(route.query.searchKey || "");
 // 데이터 가져오기 함수
 const getRequestHistory = async (page, searchField = "", searchValue = "") => {
   try {
-    let url = `/api/admin/requests?page=${page}`;
+    let url = `/api/gpt/admin/requests?page=${page}`;
     if (searchField && searchValue) {
       url += `&searchType=${searchField}&searchKey=${searchValue}`;
     }
