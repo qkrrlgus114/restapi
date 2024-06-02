@@ -6,12 +6,14 @@ import com.park.restapi.domain.api.entity.ApiRequestHistory;
 import com.park.restapi.domain.api.repository.ApiRequestHistoryCustomRepository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -51,12 +53,16 @@ public class ApiRequestHistoryRepositoryImpl implements ApiRequestHistoryCustomR
         Long endTime = System.currentTimeMillis();
         log.info("api 요청 이력 검색 시간 : {}", endTime - startTime);
 
-        long total = queryFactory
-                .select(apiRequestHistory.count())
-                .from(apiRequestHistory)
-                .fetchOne();
+        startTime = System.currentTimeMillis();
 
-        return new PageImpl<>(results, pageable, total);
+        JPAQuery<Long> total = queryFactory
+                .select(apiRequestHistory.count())
+                .from(apiRequestHistory);
+
+        endTime = System.currentTimeMillis();
+        log.info("api 요청 이력 검색 시간 : {}", endTime - startTime);
+
+        return PageableExecutionUtils.getPage(results, pageable, total::fetchOne);
     }
 
     // 검색 조건에 따른 요청 이력 조회

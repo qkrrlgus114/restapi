@@ -18,8 +18,10 @@ public class CouponSetting {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private Boolean isDailyCouponGenerate;
 
+    @Column(nullable = false)
     private Integer dailyCouponQuantity;
     
     public void updateCouponSetting(UpdateCouponSettingRequestDTO requestDTO){

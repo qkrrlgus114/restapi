@@ -1,5 +1,6 @@
 package com.park.restapi.domain.member.repository;
 
+import com.park.restapi.domain.member.dto.response.MemberInfoResponseDTO;
 import com.park.restapi.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -25,10 +26,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByMemberLogin(@Param("email") String email);
 
     // 소셜 로그인 회원가입
-    @Query("select m from Member m join fetch m.memberRoles where m.id = :id" )
+    @Query("select m from Member m join fetch m.memberRoles where m.id = :id")
     Optional<Member> findByIdLogin(@Param("id") Long id);
 
     // 탈퇴한지 30일 지난 유저 탐색
     @Query("select m from Member m where m.withdrawalDate is not null and  m.withdrawalDate <= :thirtyDaysAgo")
-    List<Member> findByWithdrawalMember(@Param("thirtyDaysAgo")LocalDateTime thirtyDaysAgo);
+    List<Member> findByWithdrawalMember(@Param("thirtyDaysAgo") LocalDateTime thirtyDaysAgo);
 }
