@@ -27,7 +27,7 @@ class CouponRepositoryTest {
     Coupon savedCoupon;
 
     @BeforeEach
-    void setup(){
+    void setup() {
         Coupon coupon = Coupon.builder()
                 .remainingQuantity(5)
                 .totalQuantity(5).build();

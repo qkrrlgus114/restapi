@@ -49,7 +49,8 @@ public class Inquiry {
     private Answer answer;
 
     @Builder
-    public Inquiry(Member member, String title, String content, InquiryCategory inquiryCategory, boolean emailSendCheck) {
+    public Inquiry(Member member, String title, String content, InquiryCategory inquiryCategory,
+                   boolean emailSendCheck) {
         this.member = member;
         this.title = title;
         this.content = content;
@@ -71,6 +72,5 @@ public class Inquiry {
         this.isAnswered = true;
         this.answer = answer;
     }
-
 
 }

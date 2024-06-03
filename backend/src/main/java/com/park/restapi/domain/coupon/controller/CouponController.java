@@ -44,7 +44,8 @@ public class CouponController {
 
     // 쿠폰 설정 상태 변경하기(관리자)
     @PatchMapping("admin/coupons/setting")
-    public ResponseEntity<ApiResponse<?>> updateCouponSetting(@Valid @RequestBody UpdateCouponSettingRequestDTO requestDTO) {
+    public ResponseEntity<ApiResponse<?>> updateCouponSetting(
+            @Valid @RequestBody UpdateCouponSettingRequestDTO requestDTO) {
         couponService.updateCouponSetting(requestDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("쿠폰 설정이 변경되었습니다."));
@@ -52,7 +53,8 @@ public class CouponController {
 
     // 쿠폰 즉시 발급하기(관리자)
     @PostMapping("admin/coupons")
-    public ResponseEntity<ApiResponse<?>> updateCouponQuantity(@Valid @RequestBody UpdateCouponQuantityRequestDTO requestDTO) {
+    public ResponseEntity<ApiResponse<?>> updateCouponQuantity(
+            @Valid @RequestBody UpdateCouponQuantityRequestDTO requestDTO) {
         int result = couponService.updateCouponQuantity(requestDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(result, "쿠폰이 발급되었습니다."));

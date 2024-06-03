@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class TokenInfo {
-    private Long userId;
-    private boolean isExpired;
+	private Long userId;
+	private boolean isExpired;
 
-    @Builder
-    public TokenInfo(Long userId, boolean isExpired) {
-        this.userId = userId;
-        this.isExpired = isExpired;
-    }
+	@Builder
+	public TokenInfo(Long userId, boolean isExpired) {
+		this.userId = userId;
+		this.isExpired = isExpired;
+	}
 }

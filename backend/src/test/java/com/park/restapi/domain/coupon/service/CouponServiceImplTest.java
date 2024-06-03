@@ -67,7 +67,7 @@ class CouponServiceImplTest {
     }
 
     @Test
-    void 남은_선착순_쿠폰_데이터_없음_예외발생(){
+    void 남은_선착순_쿠폰_데이터_없음_예외발생() {
         // given
         LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
         LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
@@ -77,10 +77,10 @@ class CouponServiceImplTest {
         // when & then
         assertThrows(CouponException.class, () -> couponService.getCoupons());
     }
-    
+
     @Test
     @DisplayName("쿠폰 즉시발급 로직 테스트 성공(쿠폰이 있는 경우)")
-    void immediatelyCouponExistCoupon(){
+    void immediatelyCouponExistCoupon() {
         // given
         UpdateCouponQuantityRequestDTO requestDTO = new UpdateCouponQuantityRequestDTO(20);
         LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
@@ -98,7 +98,7 @@ class CouponServiceImplTest {
 
     @Test
     @DisplayName("쿠폰 즉시발급 로직 테스트 성공(쿠폰이 없는 경우)")
-    void immediatelyCouponNotExistCoupon(){
+    void immediatelyCouponNotExistCoupon() {
         // given
         UpdateCouponQuantityRequestDTO requestDTO = new UpdateCouponQuantityRequestDTO(20);
         LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);

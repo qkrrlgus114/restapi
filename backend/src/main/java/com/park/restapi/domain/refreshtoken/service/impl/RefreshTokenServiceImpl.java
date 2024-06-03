@@ -28,14 +28,16 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     public void reGenerateToken(HttpServletResponse response, String accessToken, String refreshToken) {
         log.info("리프레시 토큰 재발급 시작");
         // 1. 리프레시 토큰 살아있는지 검증
-        RefreshToken refreshTokenData = refreshTokenRepository.validatedRefreshToken(accessToken, refreshToken, LocalDateTime.now());
+        RefreshToken refreshTokenData = refreshTokenRepository.validatedRefreshToken(accessToken, refreshToken,
+                LocalDateTime.now());
         if (refreshTokenData == null)
             throw new MemberException(MemberExceptionInfo.NOT_FOUND_REFRESH_TOKEN, "리프레시 토큰이 존재하지 않습니다.");
 
         // 2. 액세스 토큰 재발급
         String reAccessToken = jwtService.createAccessToken(refreshTokenData.getMember().getId());
         // 3. 리프레시 토큰 재발급
-        String reRefreshToken = jwtService.createRefreshToken(refreshTokenData.getMember().getId(), false, reAccessToken);
+        String reRefreshToken = jwtService.createRefreshToken(refreshTokenData.getMember().getId(), false,
+                reAccessToken);
 
         saveCookie(reAccessToken, response, "accessToken");
         saveCookie(reRefreshToken, response, "refreshToken");

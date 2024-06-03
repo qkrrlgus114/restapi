@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CertificationCodeRequestDTO {
 
-    @NotBlank(message = "인증번호를 입력해주세요.")
-    private String certificationCode;
+	@NotBlank(message = "인증번호를 입력해주세요.")
+	private String certificationCode;
 }

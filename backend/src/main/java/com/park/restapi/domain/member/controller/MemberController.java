@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
-
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -33,23 +32,28 @@ public class MemberController {
 
     // 회원가입
     @PostMapping("signup")
-    public ResponseEntity<ApiResponse<Void>> signUp(@Valid @RequestBody SignUpRequestDTO dto) throws IOException, InterruptedException {
+    public ResponseEntity<ApiResponse<Void>> signUp(@Valid @RequestBody SignUpRequestDTO dto) throws
+            IOException,
+            InterruptedException {
         memberService.signUp(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.createSuccessNoContent("회원가입이 완료되었습니다."));
     }
 
     // 이메일 중복확인
     @GetMapping("email-check")
-    public ResponseEntity<ApiResponse<?>> checkEmail(@NotBlank(message = "이메일을 입력해주세요.") @Email(message = "이메일 형식이 아닙니다.")
-                                                     @RequestParam(name = "email") String email) throws IOException {
+    public ResponseEntity<ApiResponse<?>> checkEmail(
+            @NotBlank(message = "이메일을 입력해주세요.") @Email(message = "이메일 형식이 아닙니다.")
+            @RequestParam(name = "email") String email) throws IOException {
         boolean result = memberService.existEmailCheck(email);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(result, "true = 사용불가, false = 사용가능"));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ApiResponse.createSuccess(result, "true = 사용불가, false = 사용가능"));
     }
 
     // 로그인
     @PostMapping("login")
-    public ResponseEntity<ApiResponse<?>> login(@Valid @RequestBody LoginInfoRequestDTO dto, HttpServletResponse response) {
+    public ResponseEntity<ApiResponse<?>> login(@Valid @RequestBody LoginInfoRequestDTO dto,
+                                                HttpServletResponse response) {
         memberService.login(dto, response);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("로그인 성공"));

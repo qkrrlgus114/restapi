@@ -1,6 +1,5 @@
 package com.park.restapi.domain.refreshtoken.entity;
 
-
 import com.park.restapi.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -47,7 +46,8 @@ public class RefreshToken {
         this.expireDate = expireDate;
     }
 
-    public static RefreshToken toEntity(String accessToken, String refreshToken, Member member, LocalDateTime expireDate) {
+    public static RefreshToken toEntity(String accessToken, String refreshToken, Member member,
+                                        LocalDateTime expireDate) {
         return RefreshToken.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)

@@ -58,7 +58,8 @@ class RefreshTokenRepositoryTest {
         String accessToken = testAccessToken;
 
         // when
-        RefreshToken findRefreshToken = refreshTokenRepository.validatedRefreshToken(accessToken, testRefreshToken, LocalDateTime.now());
+        RefreshToken findRefreshToken = refreshTokenRepository.validatedRefreshToken(accessToken, testRefreshToken,
+                LocalDateTime.now());
 
         // then
         assertNotNull(findRefreshToken);
@@ -74,7 +75,8 @@ class RefreshTokenRepositoryTest {
         String refreshToken = "testRefreshFail"; // 일치하지 않는 리프레시 토큰
 
         // when
-        RefreshToken findRefreshToken = refreshTokenRepository.validatedRefreshToken(accessToken, refreshToken, LocalDateTime.now());
+        RefreshToken findRefreshToken = refreshTokenRepository.validatedRefreshToken(accessToken, refreshToken,
+                LocalDateTime.now());
 
         // then
         assertNull(findRefreshToken);
@@ -87,7 +89,8 @@ class RefreshTokenRepositoryTest {
         String accessToken = testAccessToken;
 
         // when
-        RefreshToken refreshToken = refreshTokenRepository.validatedRefreshToken(accessToken, testRefreshToken, LocalDateTime.now().plusDays(2));
+        RefreshToken refreshToken = refreshTokenRepository.validatedRefreshToken(accessToken, testRefreshToken,
+                LocalDateTime.now().plusDays(2));
 
         // then
         assertNull(refreshToken);

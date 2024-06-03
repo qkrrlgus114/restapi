@@ -26,12 +26,16 @@ public class ApiRequestDTO {
     private String content;
 
     public ApiRequestHistory toEntity(ChatGPTResponseDTO responseDTO, Member member, boolean access) {
+        String responseContent = null;
+        if (responseDTO != null && responseDTO.getChoices() != null && !responseDTO.getChoices().isEmpty()) {
+            responseContent = responseDTO.getChoices().get(0).getMessage().getContent();
+        }
         return ApiRequestHistory.builder()
                 .member(member)
                 .requestStatus(access)
                 .requestContent(content)
                 .methodType(methodType)
-                .responseContent(responseDTO != null ? responseDTO.getChoices().get(0).getMessage().getContent() : null)
+                .responseContent(responseContent)
                 .build();
     }
 }

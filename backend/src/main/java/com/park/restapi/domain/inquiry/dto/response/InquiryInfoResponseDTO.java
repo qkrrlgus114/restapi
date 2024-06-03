@@ -33,7 +33,9 @@ public class InquiryInfoResponseDTO {
     private boolean isAnswered;
 
     @Builder
-    public InquiryInfoResponseDTO(Long id, String inquiryTitle, String inquiryContent, String email, LocalDateTime inquiryCreateDate, InquiryCategory inquiryCategory, String answeredContent, LocalDateTime answeredCreateDate, boolean isAnswered) {
+    public InquiryInfoResponseDTO(Long id, String inquiryTitle, String inquiryContent, String email,
+                                  LocalDateTime inquiryCreateDate, InquiryCategory inquiryCategory, String answeredContent,
+                                  LocalDateTime answeredCreateDate, boolean isAnswered) {
         this.id = id;
         this.inquiryTitle = inquiryTitle;
         this.inquiryContent = inquiryContent;

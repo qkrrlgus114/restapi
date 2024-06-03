@@ -24,7 +24,8 @@ public class InquiryResponseDTO {
     private boolean isAnswered;
 
     @Builder
-    public InquiryResponseDTO(Long id, String title, LocalDateTime createDate, InquiryCategory inquiryCategory, boolean isAnswered) {
+    public InquiryResponseDTO(Long id, String title, LocalDateTime createDate, InquiryCategory inquiryCategory,
+                              boolean isAnswered) {
         this.id = id;
         this.title = title;
         this.createDate = createDate;

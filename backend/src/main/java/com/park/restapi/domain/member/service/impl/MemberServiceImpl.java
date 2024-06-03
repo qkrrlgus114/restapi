@@ -1,6 +1,5 @@
 package com.park.restapi.domain.member.service.impl;
 
-
 import com.park.restapi.domain.api.repository.ApiRequestHistoryRepository;
 import com.park.restapi.domain.coupon.repository.CouponHistoryRepository;
 import com.park.restapi.domain.exception.exception.MemberException;
@@ -27,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-
 
 @Service
 @RequiredArgsConstructor
@@ -80,21 +78,25 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void login(LoginInfoRequestDTO loginInfoRequestDTO, HttpServletResponse response) {
         Member member = memberRepository.findByMemberLogin(loginInfoRequestDTO.getEmail())
-                .orElseThrow(() -> new MemberException(MemberExceptionInfo.FAIL_LOGIN, loginInfoRequestDTO.getEmail() + "에 맞는 유저를 찾지 못했습니다.(로그인 실패)"));
+                .orElseThrow(() -> new MemberException(MemberExceptionInfo.FAIL_LOGIN,
+                        loginInfoRequestDTO.getEmail() + "에 맞는 유저를 찾지 못했습니다.(로그인 실패)"));
 
         // 추방 여부 판단
         if (member.getBannedDate() != null) {
-            throw new MemberException(MemberExceptionInfo.BANNED_MEMBER, loginInfoRequestDTO.getEmail() + " 유저가 로그인 시도를 진행했습니다.(추방된 유저)");
+            throw new MemberException(MemberExceptionInfo.BANNED_MEMBER,
+                    loginInfoRequestDTO.getEmail() + " 유저가 로그인 시도를 진행했습니다.(추방된 유저)");
         }
 
         // 탈퇴 여부 판단
         if (member.getWithdrawalDate() != null) {
-            throw new MemberException(MemberExceptionInfo.WITHDRAWAL_MEMBER, loginInfoRequestDTO.getEmail() + " 유저가 로그인 시도를 진행했습니다.(탈퇴한 유저)");
+            throw new MemberException(MemberExceptionInfo.WITHDRAWAL_MEMBER,
+                    loginInfoRequestDTO.getEmail() + " 유저가 로그인 시도를 진행했습니다.(탈퇴한 유저)");
         }
 
         if (!member.getEmail().startsWith("test")) {
             if (!encoder.matches(loginInfoRequestDTO.getPassword(), member.getPassword())) {
-                throw new MemberException(MemberExceptionInfo.FAIL_LOGIN, loginInfoRequestDTO.getEmail() + " 유저의 비밀번호가 틀렸습니다.(로그인 실패)");
+                throw new MemberException(MemberExceptionInfo.FAIL_LOGIN,
+                        loginInfoRequestDTO.getEmail() + " 유저의 비밀번호가 틀렸습니다.(로그인 실패)");
             }
         }
 
@@ -153,11 +155,13 @@ public class MemberServiceImpl implements MemberService {
     public void deactivateGeneralMember(DeactivateRequestDTO requestDTO) {
         Member currentMember = getCurrentMember();
         if (!encoder.matches(requestDTO.getPassword(), currentMember.getPassword())) {
-            throw new MemberException(MemberExceptionInfo.NOT_MATCH_PASSWORD, currentMember.getEmail() + " 유저 비밀번호 불일치 발생(회원 탈퇴)");
+            throw new MemberException(MemberExceptionInfo.NOT_MATCH_PASSWORD,
+                    currentMember.getEmail() + " 유저 비밀번호 불일치 발생(회원 탈퇴)");
         }
 
         if (isAdmin(currentMember))
-            throw new MemberException(MemberExceptionInfo.NOT_WITHDRAWAL_ADMIN, currentMember.getEmail() + " 관리자 계정 탈퇴 시도.");
+            throw new MemberException(MemberExceptionInfo.NOT_WITHDRAWAL_ADMIN,
+                    currentMember.getEmail() + " 관리자 계정 탈퇴 시도.");
 
         currentMember.updateWithdrawalDate();
     }
@@ -169,7 +173,8 @@ public class MemberServiceImpl implements MemberService {
         Member currentMember = getCurrentMember();
 
         if (isAdmin(currentMember))
-            throw new MemberException(MemberExceptionInfo.NOT_WITHDRAWAL_ADMIN, currentMember.getEmail() + " 관리자 계정 탈퇴 시도.");
+            throw new MemberException(MemberExceptionInfo.NOT_WITHDRAWAL_ADMIN,
+                    currentMember.getEmail() + " 관리자 계정 탈퇴 시도.");
 
         currentMember.updateWithdrawalDate();
     }
@@ -179,7 +184,8 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void bannedMember(Long id) {
         Member currentMember = memberRepository.findById(id)
-                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, id + "를 가진 유저가 존재하지 않습니다.(추방)"));
+                .orElseThrow(
+                        () -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, id + "를 가진 유저가 존재하지 않습니다.(추방)"));
 
         // 추방 시간 추가
         currentMember.updateBannedDate();
@@ -245,7 +251,8 @@ public class MemberServiceImpl implements MemberService {
     private Member getCurrentMember() {
         Long currentUserId = jwtService.getCurrentUserId();
         return memberRepository.findById(currentUserId)
-                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
+                .orElseThrow(
+                        () -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 
     // 관리자 권한 확인

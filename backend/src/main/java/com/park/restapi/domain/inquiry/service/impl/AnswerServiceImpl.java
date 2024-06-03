@@ -37,10 +37,12 @@ public class AnswerServiceImpl implements AnswerService {
         Member currentMember = getCurrentMember();
 
         Inquiry inquiry = inquiryRepository.findById(requestDTO.getInquiryId())
-                .orElseThrow(() -> new InquiryException(InquiryExceptionInfo.NOT_FOUND_INQUIRY, requestDTO.getInquiryId() + "번 문의 내역을 찾을 수 없습니다."));
+                .orElseThrow(() -> new InquiryException(InquiryExceptionInfo.NOT_FOUND_INQUIRY,
+                        requestDTO.getInquiryId() + "번 문의 내역을 찾을 수 없습니다."));
 
         if (inquiry.isAnswered()) {
-            throw new AnswerException(AnswerExceptionInfo.EXISTS_ANSWERED, requestDTO.getInquiryId() + "번 문의에는 이미 답변이 존재합니다.");
+            throw new AnswerException(AnswerExceptionInfo.EXISTS_ANSWERED,
+                    requestDTO.getInquiryId() + "번 문의에는 이미 답변이 존재합니다.");
         }
 
         Answer answer = requestDTO.toEntity();
@@ -59,7 +61,8 @@ public class AnswerServiceImpl implements AnswerService {
         Member currentMember = getCurrentMember();
 
         Inquiry inquiry = inquiryRepository.findById(requestDTO.getInquiryId())
-                .orElseThrow(() -> new InquiryException(InquiryExceptionInfo.NOT_FOUND_INQUIRY, requestDTO.getInquiryId() + "번 문의 내역을 찾을 수 없습니다."));
+                .orElseThrow(() -> new InquiryException(InquiryExceptionInfo.NOT_FOUND_INQUIRY,
+                        requestDTO.getInquiryId() + "번 문의 내역을 찾을 수 없습니다."));
 
         Answer answer = inquiry.getAnswer();
         answer.updateAnswer(requestDTO.getContent());
@@ -70,6 +73,7 @@ public class AnswerServiceImpl implements AnswerService {
         Long currentUserId = jwtService.getCurrentUserId();
 
         return memberRepository.findById(currentUserId)
-                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
+                .orElseThrow(
+                        () -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 }

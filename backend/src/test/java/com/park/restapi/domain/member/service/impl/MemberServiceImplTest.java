@@ -45,7 +45,7 @@ class MemberServiceImplTest {
     private SignUpRequestDTO signUpRequestDTO;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         signUpRequestDTO = SignUpRequestDTO.builder()
                 .email("test@naver.com")
                 .password("1234")
@@ -56,7 +56,6 @@ class MemberServiceImplTest {
                 .nickname(signUpRequestDTO.getNickname())
                 .loginLastDate(LocalDateTime.now()).build();
     }
-
 
     @Test
     @DisplayName("회원가입에 성공한다.")
@@ -75,13 +74,12 @@ class MemberServiceImplTest {
         // then
         verify(memberRepository).existsByEmail(signUpRequestDTO.getEmail());
         verify(encoder).encode(signUpRequestDTO.getPassword());
-//        verify(memberRoleRepository).save(mockMemberRole);
+        //        verify(memberRoleRepository).save(mockMemberRole);
     }
-
 
     @Test
     @DisplayName("일반 유저가 회원 탈퇴에 성공한다.")
-    void deactivateGeneralMemberTest(){
+    void deactivateGeneralMemberTest() {
         // given
         DeactivateRequestDTO deactivateRequestDTO = new DeactivateRequestDTO(SocialType.GENERAL, "1234");
 
@@ -100,7 +98,7 @@ class MemberServiceImplTest {
 
     @Test
     @DisplayName("소셜 유저가 회원 탈퇴에 성공한다.")
-    void deactivateSocialMemberTest(){
+    void deactivateSocialMemberTest() {
         // given
         when(jwtService.getCurrentUserId()).thenReturn(1L);
         when(memberRepository.findById(anyLong())).thenReturn(Optional.of(mockMember));
@@ -116,7 +114,7 @@ class MemberServiceImplTest {
 
     @Test
     @DisplayName("유저 추방에 성공한다.")
-    void bannedMemberSuccessTest(){
+    void bannedMemberSuccessTest() {
         // given
         Long id = 1L;
 

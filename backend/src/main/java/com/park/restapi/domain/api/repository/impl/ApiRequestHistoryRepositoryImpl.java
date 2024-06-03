@@ -30,16 +30,10 @@ public class ApiRequestHistoryRepositoryImpl implements ApiRequestHistoryCustomR
     @Override
     public Page<ApiRequestHistoryResponseDTO> searchApiRequestHistory(Pageable pageable) {
 
-        Long startTime = System.currentTimeMillis();
-
-        List<ApiRequestHistoryResponseDTO> results = queryFactory
-                .select(Projections.constructor(ApiRequestHistoryResponseDTO.class,
-                        apiRequestHistory.member.id,
-                        apiRequestHistory.requestDate,
-                        member.email,
-                        apiRequestHistory.methodType,
-                        apiRequestHistory.requestContent,
-                        apiRequestHistory.responseContent))
+        List<ApiRequestHistoryResponseDTO> results = queryFactory.select(
+                        Projections.constructor(ApiRequestHistoryResponseDTO.class, apiRequestHistory.member.id,
+                                apiRequestHistory.requestDate, member.email, apiRequestHistory.methodType,
+                                apiRequestHistory.requestContent, apiRequestHistory.responseContent))
                 .from(apiRequestHistory)
                 .leftJoin(apiRequestHistory.member, member)
                 .orderBy(apiRequestHistory.requestDate.desc())
@@ -47,17 +41,7 @@ public class ApiRequestHistoryRepositoryImpl implements ApiRequestHistoryCustomR
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        Long endTime = System.currentTimeMillis();
-        log.info("api 요청 이력 검색 시간 : {}", endTime - startTime);
-
-        startTime = System.currentTimeMillis();
-
-        JPAQuery<Long> total = queryFactory
-                .select(apiRequestHistory.count())
-                .from(apiRequestHistory);
-
-        endTime = System.currentTimeMillis();
-        log.info("api 요청 이력 검색 시간 : {}", endTime - startTime);
+        JPAQuery<Long> total = queryFactory.select(apiRequestHistory.count()).from(apiRequestHistory);
 
         return PageableExecutionUtils.getPage(results, pageable, total::fetchOne);
     }
@@ -69,14 +53,10 @@ public class ApiRequestHistoryRepositoryImpl implements ApiRequestHistoryCustomR
 
         BooleanExpression searchCondition = searchCondition(searchType, keyword);
 
-        List<ApiRequestHistoryResponseDTO> results = queryFactory
-                .select(Projections.constructor(ApiRequestHistoryResponseDTO.class,
-                        apiRequestHistory.member.id,
-                        apiRequestHistory.requestDate,
-                        member.email,
-                        apiRequestHistory.methodType,
-                        apiRequestHistory.requestContent,
-                        apiRequestHistory.responseContent))
+        List<ApiRequestHistoryResponseDTO> results = queryFactory.select(
+                        Projections.constructor(ApiRequestHistoryResponseDTO.class, apiRequestHistory.member.id,
+                                apiRequestHistory.requestDate, member.email, apiRequestHistory.methodType,
+                                apiRequestHistory.requestContent, apiRequestHistory.responseContent))
                 .from(apiRequestHistory)
                 .leftJoin(apiRequestHistory.member, member)
                 .where(searchCondition)
@@ -85,8 +65,7 @@ public class ApiRequestHistoryRepositoryImpl implements ApiRequestHistoryCustomR
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = queryFactory
-                .select(apiRequestHistory.count())
+        long total = queryFactory.select(apiRequestHistory.count())
                 .from(apiRequestHistory)
                 .where(searchCondition)
                 .fetchOne();
@@ -97,11 +76,6 @@ public class ApiRequestHistoryRepositoryImpl implements ApiRequestHistoryCustomR
     // 이메일 검색
     private BooleanExpression emailContains(String keyword) {
         return apiRequestHistory.member.email.contains(keyword);
-    }
-
-    // ID 검색
-    private BooleanExpression idContains(Long memberId) {
-        return apiRequestHistory.member.id.eq(memberId);
     }
 
     // 검색 조건 쿼리 생성

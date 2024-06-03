@@ -77,7 +77,7 @@ class EmailServiceImplTest {
     }
 
     @Test
-    void 인증번호_불일치(){
+    void 인증번호_불일치() {
         // given
         String code = "654321";
         Mockito.when(emailConfirmRepository.checkCode(code)).thenReturn(Optional.empty());

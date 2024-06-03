@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-
 /*
  * 해당 서비스 안에 들어오면 유저 접근 권한을 얻은 상태.
  * 해당 유저 여부를 판단하고 없으면 유저 정보 생성
@@ -79,13 +78,15 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
 
             // 추방 여부 판단
             if (member.getBannedDate() != null) {
-                OAuth2Error error = new OAuth2Error("추방된 유저", member.getEmail() + " 유저가 로그인 시도를 진행했습니다.(추방된 유저, 카카오)", null);
+                OAuth2Error error = new OAuth2Error("추방된 유저", member.getEmail() + " 유저가 로그인 시도를 진행했습니다.(추방된 유저, 카카오)",
+                        null);
                 throw new OAuth2AuthenticationException(error);
             }
 
             // 탈퇴 여부 판단
             if (member.getWithdrawalDate() != null) {
-                OAuth2Error error = new OAuth2Error("탈퇴한 유저", member.getEmail() + " 유저가 로그인 시도를 진행했습니다.(탈퇴한 유저, 카카오)", null);
+                OAuth2Error error = new OAuth2Error("탈퇴한 유저", member.getEmail() + " 유저가 로그인 시도를 진행했습니다.(탈퇴한 유저, 카카오)",
+                        null);
                 throw new OAuth2AuthenticationException(error);
             }
         }

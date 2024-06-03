@@ -86,7 +86,8 @@ public class JwtService {
     public String createRefreshToken(Long userId, boolean check, String accessToken) {
         Claims claims = Jwts.claims();
         Optional<Member> userOptional = memberRepository.findById(userId);
-        if (userOptional.isEmpty() && check) return "유저 없음";
+        if (userOptional.isEmpty() && check)
+            return "유저 없음";
         else if (userOptional.isEmpty() && !check) {
             throw new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, "유저 데이터 없음");
         }
@@ -100,7 +101,8 @@ public class JwtService {
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
 
-        RefreshToken entity = RefreshToken.toEntity(accessToken, refreshToken, member, LocalDateTime.now().plusDays(14));
+        RefreshToken entity = RefreshToken.toEntity(accessToken, refreshToken, member,
+                LocalDateTime.now().plusDays(14));
         refreshTokenRepository.save(entity);
 
         return refreshToken;

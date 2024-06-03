@@ -51,7 +51,7 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     // ChatGPT API 호출
     @Override
     @Transactional
-    public ChatGPTResponseDTO chatGpt(ApiRequestDTO dto) {
+    public ChatGPTResponseDTO chatGpt(ApiRequestDTO apiRequestDTO) {
 
         Member member = null;
 
@@ -64,48 +64,34 @@ public class ApiRequestServiceImpl implements ApiRequestService {
                 throw new MemberException(MemberExceptionInfo.NO_REMAINING_USES, "토큰 부족");
             }
 
-            String model = dto.getModel();
-            String method = dto.getMethodType().toString();
-            String content = dto.getContent();
-            String resource = dto.getResource();
+            String model = apiRequestDTO.getModel();
+            String method = apiRequestDTO.getMethodType().toString();
+            String content = apiRequestDTO.getContent();
+            String resource = apiRequestDTO.getResource();
 
             // 프롬프트
             String prompt = String.format(
-                    "다음 정보를 바탕으로 최대한 RESTful한 API 경로를 3개 제안해주세요:\n\n" +
-                            "- HTTP 메서드: %s\n" +
-                            "- 주체가 되는 자원: %s\n" +
-                            "- 작업 설명: %s\n\n" +
-                            "제안할 API 경9로는 다음 RESTful 디자인 규칙을 따라야 합니다:\n" +
-                            "1. 자원을 명사로 나타내고, URI의 마지막에 슬래시(/)는 사용하지 않습니다.\n" +
-                            "2. 가독성을 위해 하이픈(-)을 사용하고, 언더스코어(_)는 사용하지 않습니다.\n" +
-                            "3. 모두 소문자를 사용합니다.\n" +
-                            "4. URI에 파일 확장자는 포함하지 않습니다.\n" +
-                            "5. CRUD 함수 이름을 URI에 포함하지 않고, 대신 적절한 HTTP 메서드를 사용합니다.\n" +
-                            "6. 자원의 필터링을 위해서는 쿼리 파라미터를 사용합니다.\n\n" +
-                            "제안된 API 경로는 쉼표(,)로 구분해서 나열해주세요. 예: [POST] /users, [POST] /users/{id}/posts, [POST] /posts/{id}/comments\n\n"
-                            +
-                            "답변에는 API의 경로만 있어야 합니다.",
-                    method, resource, content
-            );
+                    "다음 정보를 바탕으로 최대한 RESTFUL 규칙을 가진 API 경로를 3개 제안해주세요:\n\n" + "- HTTP 메서드: %s\n" + "- 주체가 되는 자원: %s\n"
+                            + "- 작업 설명: %s\n\n" + "제안할 API 경로는 다음 RESTFUL 디자인 규칙을 따라야 합니다:\n"
+                            + "1. 자원을 명사로 나타내고, URI 의 마지막에 슬래시(/)는 사용하지 않습니다.\n"
+                            + "2. 가독성을 위해 하이픈(-)을 사용하고, 언더스코어(_)는 사용하지 않습니다.\n" + "3. 모두 소문자를 사용합니다.\n"
+                            + "4. URI 에 파일 확장자는 포함하지 않습니다.\n" + "5. CRUD 함수 이름을 URI 에 포함하지 않고, 대신 적절한 HTTP 메서드를 사용합니다.\n"
+                            + "6. 자원의 필터링을 위해서는 쿼리 파라미터를 사용합니다.\n\n"
+                            + "제안된 API 경로는 쉼표(,)로 구분해서 나열해주세요. 예: [POST] /users, [POST] /users/{id}/posts, [POST] /posts/{id}/comments\n\n"
+                            + "답변에는 API의 경로만 있어야 합니다.", method, resource, content);
 
-            Message message = Message.builder()
-                    .role("user")
-                    .content(prompt).build();
+            Message message = Message.builder().role("user").content(prompt).build();
 
             List<Message> messages = new ArrayList<>();
             messages.add(message);
 
-            ChatGPTRequestDTO requestDTO = ChatGPTRequestDTO.builder()
-                    .model(model)
-                    .messages(messages).build();
+            ChatGPTRequestDTO requestDTO = ChatGPTRequestDTO.builder().model(model).messages(messages).build();
 
-            ChatGPTResponseDTO chatGPTResponseDTO = restTemplate.postForObject(
-                    URL
-                    , requestDTO
-                    , ChatGPTResponseDTO.class);
+            ChatGPTResponseDTO chatGPTResponseDTO = restTemplate.postForObject(URL, requestDTO,
+                    ChatGPTResponseDTO.class);
 
             // 응답이 왔다면
-            ApiRequestHistory apiRequestHistory = dto.toEntity(chatGPTResponseDTO, member, true);
+            ApiRequestHistory apiRequestHistory = apiRequestDTO.toEntity(chatGPTResponseDTO, member, true);
             apiRequestHistoryRepository.save(apiRequestHistory);
 
             member.useToken();
@@ -114,7 +100,7 @@ public class ApiRequestServiceImpl implements ApiRequestService {
         } catch (InterruptedException e) {
             throw new GPTException(GPTExceptionInfo.FAIL_INTERRUPTED, e.getMessage());
         } catch (HttpClientErrorException.TooManyRequests e) {
-            ApiRequestHistory entity = dto.toEntity(null, member, false);
+            ApiRequestHistory entity = apiRequestDTO.toEntity(null, member, false);
             apiRequestHistoryRepository.save(entity);
             throw new GPTException(GPTExceptionInfo.FAIL_REQUEST_GPT, e.getMessage());
         } finally {
@@ -146,7 +132,8 @@ public class ApiRequestServiceImpl implements ApiRequestService {
         return ApiRequestHistoryListResponseDTO.builder()
                 .apiRequestHistoryResponseDTOS(apiRequestHistories.getContent())
                 .currentPage(apiRequestHistories.getNumber())
-                .totalPages(apiRequestHistories.getTotalPages()).build();
+                .totalPages(apiRequestHistories.getTotalPages())
+                .build();
     }
 
     // 현재 로그인 유저 찾기
@@ -159,7 +146,6 @@ public class ApiRequestServiceImpl implements ApiRequestService {
 
     // 관리자 권한 확인
     private boolean isAdmin(Member member) {
-        return member.getMemberRoles().stream()
-                .anyMatch(role -> role.getRole().equals(Role.ADMIN));
+        return member.getMemberRoles().stream().anyMatch(role -> role.getRole().equals(Role.ADMIN));
     }
 }

@@ -39,7 +39,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         sessions.add(session);
-        log.info("클라이언트와 연결 성공 : " + session.getId() + ", 접속 IP : " + session.getRemoteAddress().getHostName() + ", 접속 URI : " + session.getUri() + ", 접속 ID : " + session.getAttributes().get("userId"));
+        log.info("클라이언트와 연결 성공 : " + session.getId() + ", 접속 IP : " + session.getRemoteAddress().getHostName()
+                + ", 접속 URI : " + session.getUri() + ", 접속 ID : " + session.getAttributes().get("userId"));
         // 모든 클라이언트에게 메시지 전송
         for (WebSocketSession webSocketSession : sessions) {
             if (session.isOpen()) {

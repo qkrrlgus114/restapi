@@ -29,7 +29,6 @@ class RefreshTokenServiceImplTest {
     private static final String ACCESS_TOKEN = "testAccess";
     private static final String REFRESH_TOKEN = "testRefresh";
 
-
     @Mock
     private JwtService jwtService;
     @Mock
@@ -38,7 +37,6 @@ class RefreshTokenServiceImplTest {
     private HttpServletResponse response;
     @InjectMocks
     private RefreshTokenServiceImpl refreshTokenService;
-
 
     Member savedMember;
     RefreshToken savedRefreshToken;
@@ -69,7 +67,8 @@ class RefreshTokenServiceImplTest {
     @DisplayName("토큰 재발급 성공")
     void reGenerateToken() {
         // when
-        Mockito.when(refreshTokenRepository.validatedRefreshToken(Mockito.eq(ACCESS_TOKEN), Mockito.eq(REFRESH_TOKEN), Mockito.any(LocalDateTime.class)))
+        Mockito.when(refreshTokenRepository.validatedRefreshToken(Mockito.eq(ACCESS_TOKEN), Mockito.eq(REFRESH_TOKEN),
+                        Mockito.any(LocalDateTime.class)))
                 .thenReturn(savedRefreshToken);
         Mockito.when(jwtService.createAccessToken(MEMBER_ID))
                 .thenReturn(ACCESS_TOKEN);

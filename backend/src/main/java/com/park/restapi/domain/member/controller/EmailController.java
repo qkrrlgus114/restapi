@@ -1,6 +1,5 @@
 package com.park.restapi.domain.member.controller;
 
-
 import com.park.restapi.domain.member.dto.request.CertificationCodeRequestDTO;
 import com.park.restapi.domain.member.dto.request.EmailRequestDTO;
 import com.park.restapi.domain.member.service.EmailService;
@@ -23,7 +22,8 @@ public class EmailController {
 
     // 인증번호 전송
     @PostMapping("authentications/send")
-    public ResponseEntity<ApiResponse<?>> createCretificationNumber(@Valid @RequestBody EmailRequestDTO dto) throws Exception {
+    public ResponseEntity<ApiResponse<?>> createCretificationNumber(@Valid @RequestBody EmailRequestDTO dto) throws
+            Exception {
         emailService.sendSimpleMessageRegist(dto.getEmail());
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("성공"));

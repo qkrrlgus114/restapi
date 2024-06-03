@@ -24,7 +24,7 @@ class EmailConfirmRepositoryTest {
     private EmailConfirm savedEmailConfirm;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         EmailConfirm emailConfirm = EmailConfirm.builder()
                 .certificationNumber("djid#sdfi0")
                 .certificationStatus(false).build();
@@ -34,7 +34,7 @@ class EmailConfirmRepositoryTest {
 
     @Test
     @DisplayName("사용하지 않고 일치하는 인증번호 검색")
-    void checkCode(){
+    void checkCode() {
         // given
         String code = "djid#sdfi0";
 

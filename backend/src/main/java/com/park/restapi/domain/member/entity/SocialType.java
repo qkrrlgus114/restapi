@@ -1,5 +1,5 @@
 package com.park.restapi.domain.member.entity;
 
 public enum SocialType {
-    KAKAO, NAVER, GENERAL;
+	KAKAO, NAVER, GENERAL;
 }

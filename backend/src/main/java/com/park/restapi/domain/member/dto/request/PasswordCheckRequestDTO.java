@@ -7,5 +7,5 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PasswordCheckRequestDTO {
-    private String password;
+	private String password;
 }

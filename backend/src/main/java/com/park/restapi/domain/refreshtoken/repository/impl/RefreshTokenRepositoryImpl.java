@@ -18,7 +18,8 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenCustomRepository 
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public RefreshToken validatedRefreshToken(String accessTokenValue, String refreshTokenValue, LocalDateTime currentDate) {
+    public RefreshToken validatedRefreshToken(String accessTokenValue, String refreshTokenValue,
+                                              LocalDateTime currentDate) {
 
         RefreshToken refreshToken = queryFactory.selectFrom(refreshToken1)
                 .leftJoin(refreshToken1.member, member).fetchJoin()

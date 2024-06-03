@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EmailRequestDTO {
 
-    @Email(message = "이메일 형식이 아닙니다.")
-    @NotBlank(message = "이메일을 입력해주세요.")
-    private String email;
+	@Email(message = "이메일 형식이 아닙니다.")
+	@NotBlank(message = "이메일을 입력해주세요.")
+	private String email;
 
 }

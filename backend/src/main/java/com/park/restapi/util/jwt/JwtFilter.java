@@ -36,13 +36,16 @@ public class JwtFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
 
-        return path.startsWith("/api/authentications/send") || path.startsWith("/api/email-check") || path.startsWith("/login") || path.startsWith("/api/auth/refresh-token")
-                || path.startsWith("/api/authentications/verify") || path.startsWith("/api/signup") || path.startsWith("/api/login") || path.startsWith("/oauth2/authorization/kakao")
+        return path.startsWith("/api/authentications/send") || path.startsWith("/api/email-check") || path.startsWith(
+                "/login") || path.startsWith("/api/auth/refresh-token")
+                || path.startsWith("/api/authentications/verify") || path.startsWith("/api/signup") || path.startsWith(
+                "/api/login") || path.startsWith("/oauth2/authorization/kakao")
                 || path.startsWith("/ws");
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
         log.info("jwt 필터 동작");
 
         Optional<String> accessTokenOptional = findAccessToken(request, "accessToken");
@@ -67,7 +70,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 return; // 여기서 처리 종료
             }
 
-            if (!authenticateUser(request, response, tokenInfo.getUserId())) return;
+            if (!authenticateUser(request, response, tokenInfo.getUserId()))
+                return;
 
             log.info("유저 인증 완료");
             filterChain.doFilter(request, response);
@@ -97,7 +101,8 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     // 유저 인증
-    private boolean authenticateUser(HttpServletRequest request, HttpServletResponse response, Long userId) throws IOException {
+    private boolean authenticateUser(HttpServletRequest request, HttpServletResponse response, Long userId) throws
+            IOException {
         Optional<Member> byIdLogin = memberRepository.findByIdLogin(userId);
         if (byIdLogin.isEmpty()) {
             log.info("유저 데이터 없음");

@@ -56,8 +56,6 @@ public class SecurityConfig {
                     // 즉 code -> accessToken 과정을 거친 후 동작.
                     oauth.userInfoEndpoint(userInfo -> userInfo.userService(principalOAuth2UserService));
                 });
-
         return http.build();
     }
-
 }

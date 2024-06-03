@@ -7,5 +7,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ApiResponseDTO {
 
-    private String responseContent;
+	private String responseContent;
 }
