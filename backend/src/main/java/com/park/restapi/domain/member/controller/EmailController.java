@@ -24,7 +24,7 @@ public class EmailController {
     @PostMapping("authentications/send")
     public ResponseEntity<ApiResponse<?>> createCretificationNumber(@Valid @RequestBody EmailRequestDTO dto) throws
             Exception {
-        emailService.sendSimpleMessageRegist(dto.getEmail());
+        emailService.sendSimpleMessageRegist(dto.email());
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("성공"));
     }
@@ -32,7 +32,7 @@ public class EmailController {
     // 인증번호 일치 확인
     @PostMapping("authentications/verify")
     public ResponseEntity<?> verifyCertificationNumber(@Valid @RequestBody CertificationCodeRequestDTO dto) {
-        emailService.checkCertificationCode(dto.getCertificationCode());
+        emailService.checkCertificationCode(dto.certificationCode());
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("이메일 인증이 완료되었습니다."));
     }

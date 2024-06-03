@@ -94,7 +94,7 @@ public class MemberController {
     // 유저 탈퇴
     @PatchMapping("members/deactivate")
     public ResponseEntity<ApiResponse<Void>> deactivateMember(@RequestBody @Valid DeactivateRequestDTO requestDTO) {
-        SocialType socialType = requestDTO.getSocialType();
+        SocialType socialType = requestDTO.socialType();
 
         switch (socialType) {
             case KAKAO -> memberService.deactivateSocialMember();

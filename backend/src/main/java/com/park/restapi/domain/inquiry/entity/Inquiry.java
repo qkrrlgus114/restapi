@@ -62,10 +62,10 @@ public class Inquiry {
     public static Inquiry toEntity(InquiryRequestDTO inquiryRequestDTO, Member member) {
         return Inquiry.builder()
                 .member(member)
-                .title(inquiryRequestDTO.getTitle())
-                .content(inquiryRequestDTO.getContent())
-                .emailSendCheck(inquiryRequestDTO.isEmailSendCheck())
-                .inquiryCategory(inquiryRequestDTO.getInquiryCategory()).build();
+                .title(inquiryRequestDTO.title())
+                .content(inquiryRequestDTO.content())
+                .emailSendCheck(inquiryRequestDTO.emailSendCheck())
+                .inquiryCategory(inquiryRequestDTO.inquiryCategory()).build();
     }
 
     public void registerAnswer(Answer answer) {

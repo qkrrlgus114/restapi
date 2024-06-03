@@ -5,11 +5,11 @@ package com.park.restapi.util.oauth;
  * 필요한 내용은 추가해서 공통으로 사용하면 됩니다.
  * */
 public interface OAuth2UserInfo {
-	String getProviderId();
+    String getProviderId();
 
-	String getProvider();
+    String getProvider();
 
-	String getEmail();
+    String getEmail();
 
-	String getNickname();
+    String getNickname();
 }

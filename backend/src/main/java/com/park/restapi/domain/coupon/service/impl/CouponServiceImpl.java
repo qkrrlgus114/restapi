@@ -90,7 +90,7 @@ public class CouponServiceImpl implements CouponService {
     public CouponSettingResponseDTO getCouponSetting() {
         CouponSetting couponSetting = couponSettingRepository.findTopByOrderByIdAsc();
 
-        return CouponSettingResponseDTO.fromEntity(couponSetting);
+        return CouponSettingResponseDTO.toDTO(couponSetting);
     }
 
     // 쿠폰 설정 업데이트
@@ -117,12 +117,12 @@ public class CouponServiceImpl implements CouponService {
         // 발급된 쿠폰이 없으면 새로 발급
         if (byCouponForWrite.isEmpty()) {
             coupon = Coupon.builder()
-                    .totalQuantity(requestDTO.getDailyCouponQuantity())
-                    .remainingQuantity(requestDTO.getDailyCouponQuantity()).build();
+                    .totalQuantity(requestDTO.dailyCouponQuantity())
+                    .remainingQuantity(requestDTO.dailyCouponQuantity()).build();
             couponRepository.save(coupon);
         } else {
             coupon = byCouponForWrite.get();
-            coupon.updateCouponQuantity(requestDTO.getDailyCouponQuantity());
+            coupon.updateCouponQuantity(requestDTO.dailyCouponQuantity());
         }
 
         return coupon.getRemainingQuantity();
@@ -132,7 +132,6 @@ public class CouponServiceImpl implements CouponService {
     private Member getCurrentMember() {
         Long currentUserId = jwtService.getCurrentUserId();
         return memberRepository.findById(currentUserId)
-                .orElseThrow(
-                        () -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
+                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 }

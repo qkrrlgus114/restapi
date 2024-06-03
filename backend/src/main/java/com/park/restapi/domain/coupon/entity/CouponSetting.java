@@ -26,7 +26,7 @@ public class CouponSetting {
     private Integer dailyCouponQuantity;
 
     public void updateCouponSetting(UpdateCouponSettingRequestDTO requestDTO) {
-        this.isDailyCouponGenerate = requestDTO.getIsDailyCouponGenerate();
-        this.dailyCouponQuantity = requestDTO.getDailyCouponQuantity();
+        this.isDailyCouponGenerate = requestDTO.isDailyCouponGenerate();
+        this.dailyCouponQuantity = requestDTO.dailyCouponQuantity();
     }
 }

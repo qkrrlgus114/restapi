@@ -64,10 +64,10 @@ public class ApiRequestServiceImpl implements ApiRequestService {
                 throw new MemberException(MemberExceptionInfo.NO_REMAINING_USES, "토큰 부족");
             }
 
-            String model = apiRequestDTO.getModel();
-            String method = apiRequestDTO.getMethodType().toString();
-            String content = apiRequestDTO.getContent();
-            String resource = apiRequestDTO.getResource();
+            String model = apiRequestDTO.model();
+            String method = apiRequestDTO.methodType().toString();
+            String content = apiRequestDTO.content();
+            String resource = apiRequestDTO.resource();
 
             // 프롬프트
             String prompt = String.format(
@@ -80,9 +80,8 @@ public class ApiRequestServiceImpl implements ApiRequestService {
                             + "제안된 API 경로는 쉼표(,)로 구분해서 나열해주세요. 예: [POST] /users, [POST] /users/{id}/posts, [POST] /posts/{id}/comments\n\n"
                             + "답변에는 API의 경로만 있어야 합니다.", method, resource, content);
 
-            Message message = Message.builder().role("user").content(prompt).build();
-
             List<Message> messages = new ArrayList<>();
+            Message message = Message.builder().role("user").content(prompt).build();
             messages.add(message);
 
             ChatGPTRequestDTO requestDTO = ChatGPTRequestDTO.builder().model(model).messages(messages).build();

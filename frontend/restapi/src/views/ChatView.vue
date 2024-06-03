@@ -55,11 +55,9 @@
 <script setup>
 import { useMainStore } from "@/store/store.js";
 import { ref } from "vue";
-import { useRouter } from "vue-router";
 import { apiPost } from "@/utils/api";
 
 const store = useMainStore();
-const router = useRouter();
 
 const formData = ref({ model: "", methodType: "", resource: "", content: "" });
 const isLoading = ref(false);
@@ -89,10 +87,17 @@ const submitForm = async () => {
     const data = await apiPost("/api/gpt/recommendations", formData.value);
     alert(data.message);
     const choices = data.data.choices;
-    const recommendations = choices[0].message.content.split(", ");
+
+    // '\n' 또는 ', '를 기준으로 나누기
+    const recommendations = choices[0].message.content
+      .split(/, |\n/)
+      .map((item) => item.trim());
+
     contentItems.value = recommendations;
+    console.log(contentItems.value);
     store.decrementToken();
   } catch (error) {
+    console.error("Error:", error);
   } finally {
     isLoading.value = false;
   }

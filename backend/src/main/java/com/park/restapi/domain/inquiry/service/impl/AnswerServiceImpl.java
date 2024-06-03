@@ -36,13 +36,13 @@ public class AnswerServiceImpl implements AnswerService {
     public Inquiry createAnswer(AnswerRequestDTO requestDTO) {
         Member currentMember = getCurrentMember();
 
-        Inquiry inquiry = inquiryRepository.findById(requestDTO.getInquiryId())
+        Inquiry inquiry = inquiryRepository.findById(requestDTO.inquiryId())
                 .orElseThrow(() -> new InquiryException(InquiryExceptionInfo.NOT_FOUND_INQUIRY,
-                        requestDTO.getInquiryId() + "번 문의 내역을 찾을 수 없습니다."));
+                        requestDTO.inquiryId() + "번 문의 내역을 찾을 수 없습니다."));
 
         if (inquiry.isAnswered()) {
             throw new AnswerException(AnswerExceptionInfo.EXISTS_ANSWERED,
-                    requestDTO.getInquiryId() + "번 문의에는 이미 답변이 존재합니다.");
+                    requestDTO.inquiryId() + "번 문의에는 이미 답변이 존재합니다.");
         }
 
         Answer answer = requestDTO.toEntity();
@@ -60,12 +60,12 @@ public class AnswerServiceImpl implements AnswerService {
     public void updateAnswer(AnswerRequestDTO requestDTO) {
         Member currentMember = getCurrentMember();
 
-        Inquiry inquiry = inquiryRepository.findById(requestDTO.getInquiryId())
+        Inquiry inquiry = inquiryRepository.findById(requestDTO.inquiryId())
                 .orElseThrow(() -> new InquiryException(InquiryExceptionInfo.NOT_FOUND_INQUIRY,
-                        requestDTO.getInquiryId() + "번 문의 내역을 찾을 수 없습니다."));
+                        requestDTO.inquiryId() + "번 문의 내역을 찾을 수 없습니다."));
 
         Answer answer = inquiry.getAnswer();
-        answer.updateAnswer(requestDTO.getContent());
+        answer.updateAnswer(requestDTO.content());
     }
 
     // 현재 로그인 유저 찾기

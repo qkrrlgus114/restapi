@@ -45,15 +45,15 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void signUp(SignUpRequestDTO signUpRequestDTO) throws IOException, InterruptedException {
         // 기존에 데이터가 있는지 확인
-        if (memberRepository.existsByEmail(signUpRequestDTO.getEmail())) {
+        if (memberRepository.existsByEmail(signUpRequestDTO.email())) {
             throw new MemberException(MemberExceptionInfo.EXIST_MEMBER_SIGNUP_DATA, "회원가입 중복 데이터 발생");
         }
 
         // 유저 생성
         Member member = Member.builder()
-                .nickname(signUpRequestDTO.getNickname())
-                .email(signUpRequestDTO.getEmail())
-                .password(encoder.encode(signUpRequestDTO.getPassword()))
+                .nickname(signUpRequestDTO.nickname())
+                .email(signUpRequestDTO.email())
+                .password(encoder.encode(signUpRequestDTO.password()))
                 .loginLastDate(LocalDateTime.now())
                 .socialType(SocialType.GENERAL).build();
         Member saveMember = memberRepository.save(member);
@@ -77,26 +77,26 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public void login(LoginInfoRequestDTO loginInfoRequestDTO, HttpServletResponse response) {
-        Member member = memberRepository.findByMemberLogin(loginInfoRequestDTO.getEmail())
+        Member member = memberRepository.findByMemberLogin(loginInfoRequestDTO.email())
                 .orElseThrow(() -> new MemberException(MemberExceptionInfo.FAIL_LOGIN,
-                        loginInfoRequestDTO.getEmail() + "에 맞는 유저를 찾지 못했습니다.(로그인 실패)"));
+                        loginInfoRequestDTO.email() + "에 맞는 유저를 찾지 못했습니다.(로그인 실패)"));
 
         // 추방 여부 판단
         if (member.getBannedDate() != null) {
             throw new MemberException(MemberExceptionInfo.BANNED_MEMBER,
-                    loginInfoRequestDTO.getEmail() + " 유저가 로그인 시도를 진행했습니다.(추방된 유저)");
+                    loginInfoRequestDTO.email() + " 유저가 로그인 시도를 진행했습니다.(추방된 유저)");
         }
 
         // 탈퇴 여부 판단
         if (member.getWithdrawalDate() != null) {
             throw new MemberException(MemberExceptionInfo.WITHDRAWAL_MEMBER,
-                    loginInfoRequestDTO.getEmail() + " 유저가 로그인 시도를 진행했습니다.(탈퇴한 유저)");
+                    loginInfoRequestDTO.email() + " 유저가 로그인 시도를 진행했습니다.(탈퇴한 유저)");
         }
 
         if (!member.getEmail().startsWith("test")) {
-            if (!encoder.matches(loginInfoRequestDTO.getPassword(), member.getPassword())) {
+            if (!encoder.matches(loginInfoRequestDTO.password(), member.getPassword())) {
                 throw new MemberException(MemberExceptionInfo.FAIL_LOGIN,
-                        loginInfoRequestDTO.getEmail() + " 유저의 비밀번호가 틀렸습니다.(로그인 실패)");
+                        loginInfoRequestDTO.email() + " 유저의 비밀번호가 틀렸습니다.(로그인 실패)");
             }
         }
 
@@ -154,7 +154,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void deactivateGeneralMember(DeactivateRequestDTO requestDTO) {
         Member currentMember = getCurrentMember();
-        if (!encoder.matches(requestDTO.getPassword(), currentMember.getPassword())) {
+        if (!encoder.matches(requestDTO.password(), currentMember.getPassword())) {
             throw new MemberException(MemberExceptionInfo.NOT_MATCH_PASSWORD,
                     currentMember.getEmail() + " 유저 비밀번호 불일치 발생(회원 탈퇴)");
         }

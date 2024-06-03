@@ -1,11 +1,9 @@
 package com.park.restapi.domain.member.dto.request;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PasswordCheckRequestDTO {
-	private String password;
+public record PasswordCheckRequestDTO(
+        @NotBlank(message = "비밀번호를 입력해주세요.")
+        String password
+) {
 }
