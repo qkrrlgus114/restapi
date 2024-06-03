@@ -69,7 +69,6 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional(readOnly = true)
     public boolean existEmailCheck(String email) {
-
         return memberRepository.existsByEmail(email);
     }
 

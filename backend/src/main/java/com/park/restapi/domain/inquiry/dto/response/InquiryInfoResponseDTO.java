@@ -19,6 +19,7 @@ public record InquiryInfoResponseDTO(
         LocalDateTime answeredCreateDate,
         boolean isAnswered
 ) {
+
     public static InquiryInfoResponseDTO toDTO(Answer answer, Inquiry inquiry) {
         if (answer == null) {
             return InquiryInfoResponseDTO.builder()

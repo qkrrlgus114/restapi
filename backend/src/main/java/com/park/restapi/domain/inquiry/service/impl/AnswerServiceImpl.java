@@ -46,9 +46,7 @@ public class AnswerServiceImpl implements AnswerService {
         }
 
         Answer answer = requestDTO.toEntity();
-
         answerRepository.save(answer);
-
         inquiry.registerAnswer(answer);
 
         return inquiry;

@@ -44,7 +44,7 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
          * 확장성을 위함.
          * kakao, naver, google 등등 다양한 타입에 맞게 수정만 해주면 됨.
          * */
-        if (registrationId.equals("kakao")) {
+        if ("kakao".equals(registrationId)) {
             oAuth2UserInfo = new KakaoUserInfo(oAuth2User.getAttributes());
         }
 
