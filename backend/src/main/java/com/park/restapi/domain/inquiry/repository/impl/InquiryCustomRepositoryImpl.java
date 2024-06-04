@@ -30,14 +30,14 @@ public class InquiryCustomRepositoryImpl implements InquiryCustomRepository {
                 .select(Projections.constructor(InquiryResponseDTO.class,
                         inquiry.id,
                         inquiry.title,
-                        inquiry.createDate,
+                        inquiry.createdDate,
                         inquiry.inquiryCategory,
                         inquiry.isAnswered))
                 .from(inquiry)
                 .where(allInquiresCondition(member, isAdmin))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(inquiry.createDate.desc())
+                .orderBy(inquiry.createdDate.desc())
                 .fetch();
 
         long total = queryFactory

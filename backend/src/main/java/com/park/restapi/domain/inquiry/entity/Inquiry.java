@@ -2,21 +2,19 @@ package com.park.restapi.domain.inquiry.entity;
 
 import com.park.restapi.domain.inquiry.dto.request.InquiryRequestDTO;
 import com.park.restapi.domain.member.entity.Member;
+import com.park.restapi.util.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Inquiry {
+public class Inquiry extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,10 +29,6 @@ public class Inquiry {
 
     @Column(nullable = false, length = 500)
     private String content;
-
-    @Column(nullable = false)
-    @CreatedDate
-    private LocalDateTime createDate;
 
     @Column(nullable = false)
     private boolean isAnswered = false;

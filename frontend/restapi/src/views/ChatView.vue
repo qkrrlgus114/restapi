@@ -47,6 +47,9 @@
             {{ index + 1 }}. {{ item }}
           </li>
         </ul>
+        <div class="share-btn">
+          <button class="btn" @click="sharedApiContent">공유하기</button>
+        </div>
       </div>
     </div>
   </div>
@@ -62,6 +65,7 @@ const store = useMainStore();
 const formData = ref({ model: "", methodType: "", resource: "", content: "" });
 const isLoading = ref(false);
 const contentItems = ref([]);
+const originContentItem = ref("");
 
 // form 데이터 검사
 const checkFormData = () => {
@@ -88,16 +92,33 @@ const submitForm = async () => {
     alert(data.message);
     const choices = data.data.choices;
 
+    originContentItem.value = choices[0].message.content;
+
     // '\n' 또는 ', '를 기준으로 나누기
     const recommendations = choices[0].message.content
       .split(/, |\n/)
       .map((item) => item.trim());
 
     contentItems.value = recommendations;
-    console.log(contentItems.value);
     store.decrementToken();
   } catch (error) {
-    console.error("Error:", error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// rest api 제출
+const sharedApiContent = async () => {
+  const requestBody = {
+    content: formData.value.content,
+    apiContents: originContentItem.value,
+  };
+
+  try {
+    const data = await apiPost("/api/post/shard-api", requestBody);
+
+    alert("공유하기 성공");
+  } catch (error) {
   } finally {
     isLoading.value = false;
   }
@@ -182,6 +203,11 @@ const submitForm = async () => {
   outline: none;
   border: none;
   transition: background-color 0.2s, border-color 0.2s;
+}
+
+.share-btn {
+  display: flex;
+  justify-content: center;
 }
 
 .btn:hover {

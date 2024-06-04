@@ -3,9 +3,9 @@ package com.park.restapi.domain.member.entity;
 import com.park.restapi.domain.api.entity.ApiRequestHistory;
 import com.park.restapi.domain.coupon.entity.CouponHistory;
 import com.park.restapi.domain.refreshtoken.entity.RefreshToken;
+import com.park.restapi.util.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -17,7 +17,7 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
-public class Member {
+public class Member extends BaseTimeEntity {
 
     private static final Integer DEFAULT_TOKEN = 10;
 
@@ -39,10 +39,6 @@ public class Member {
 
     @Column(nullable = true)
     private LocalDateTime loginLastDate;
-
-    @Column(nullable = false)
-    @CreatedDate
-    private LocalDateTime createDate;
 
     @Column(nullable = true)
     private LocalDateTime bannedDate;

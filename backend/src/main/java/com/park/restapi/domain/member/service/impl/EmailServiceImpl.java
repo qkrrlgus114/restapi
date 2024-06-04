@@ -152,7 +152,7 @@ public class EmailServiceImpl implements EmailService {
         EmailConfirm confirm = emailConfirmRepository.checkCode(code)
                 .orElseThrow(() -> new EmailException(EmailExceptionInfo.NO_MATCH_CERTIFICATION_CODE, "인증번호 일치하지 않음"));
 
-        LocalDateTime createDate = confirm.getCreateDate();
+        LocalDateTime createDate = confirm.getCreatedDate();
         LocalDateTime now = LocalDateTime.now();
 
         Duration duration = Duration.between(createDate, now);

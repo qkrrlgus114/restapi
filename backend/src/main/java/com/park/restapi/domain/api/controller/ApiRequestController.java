@@ -22,8 +22,8 @@ public class ApiRequestController {
 
     // 챗봇 API
     @PostMapping("gpt/recommendations")
-    public ResponseEntity<ApiResponse<?>> chatGpt(@Valid @RequestBody ApiRequestDTO dto) {
-        ChatGPTResponseDTO chatGPTResponseDTO = apiRequestService.chatGpt(dto);
+    public ResponseEntity<ApiResponse<?>> chatGpt(@Valid @RequestBody ApiRequestDTO apiRequestDTO) {
+        ChatGPTResponseDTO chatGPTResponseDTO = apiRequestService.chatGpt(apiRequestDTO);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponse.createSuccess(chatGPTResponseDTO, "REST API 추천 완료."));

@@ -20,7 +20,7 @@ public record InquiryResponseDTO(
                 .inquiryCategory(inquiry.getInquiryCategory())
                 .isAnswered(inquiry.isAnswered())
                 .title(inquiry.getTitle())
-                .createDate(inquiry.getCreateDate())
+                .createDate(inquiry.getCreatedDate())
                 .build();
     }
 }
