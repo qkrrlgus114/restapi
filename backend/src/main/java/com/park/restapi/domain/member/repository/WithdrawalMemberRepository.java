@@ -1,7 +1,6 @@
 package com.park.restapi.domain.member.repository;
 
 import com.park.restapi.domain.member.entity.WithdrawalMember;
-import lombok.With;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

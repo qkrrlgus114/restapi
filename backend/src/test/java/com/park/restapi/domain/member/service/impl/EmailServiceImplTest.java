@@ -4,7 +4,6 @@ import com.park.restapi.domain.exception.exception.EmailException;
 import com.park.restapi.domain.member.entity.EmailConfirm;
 import com.park.restapi.domain.member.repository.EmailConfirmRepository;
 import com.park.restapi.domain.member.repository.MemberRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -78,7 +77,7 @@ class EmailServiceImplTest {
     }
 
     @Test
-    void 인증번호_불일치(){
+    void 인증번호_불일치() {
         // given
         String code = "654321";
         Mockito.when(emailConfirmRepository.checkCode(code)).thenReturn(Optional.empty());

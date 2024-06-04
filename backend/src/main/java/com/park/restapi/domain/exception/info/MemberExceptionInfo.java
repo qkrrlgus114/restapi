@@ -17,7 +17,6 @@ public enum MemberExceptionInfo {
     NOT_WITHDRAWAL_ADMIN(HttpStatus.BAD_REQUEST, "1010", "관리자는 계정 탈퇴가 불가능합니다."),
     USER_NOT_ADMIN(HttpStatus.FORBIDDEN, "1011", "관리자가 아닙니다.");
 
-
     private HttpStatus status;
     private String code;
     private String message;

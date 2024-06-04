@@ -1,6 +1,5 @@
 package com.park.restapi.domain.member.repository;
 
-
 import com.park.restapi.domain.member.entity.EmailConfirm;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

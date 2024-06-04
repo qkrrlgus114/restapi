@@ -4,7 +4,7 @@ import com.park.restapi.domain.exception.info.GPTExceptionInfo;
 import lombok.Getter;
 
 @Getter
-public class GPTException extends RuntimeException{
+public class GPTException extends RuntimeException {
     private GPTExceptionInfo exception;
     // 개발자에게 보여지는 로그
     private String log;

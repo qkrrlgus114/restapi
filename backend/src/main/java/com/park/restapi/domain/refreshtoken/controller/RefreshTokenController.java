@@ -3,7 +3,6 @@ package com.park.restapi.domain.refreshtoken.controller;
 import com.park.restapi.domain.refreshtoken.service.impl.RefreshTokenServiceImpl;
 import com.park.restapi.util.response.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

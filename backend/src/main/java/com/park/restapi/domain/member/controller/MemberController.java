@@ -2,31 +2,24 @@ package com.park.restapi.domain.member.controller;
 
 import com.park.restapi.domain.member.dto.request.DeactivateRequestDTO;
 import com.park.restapi.domain.member.dto.request.LoginInfoRequestDTO;
-import com.park.restapi.domain.member.dto.request.PasswordCheckRequestDTO;
 import com.park.restapi.domain.member.dto.request.SignUpRequestDTO;
 import com.park.restapi.domain.member.dto.response.MemberInfoResponseDTO;
 import com.park.restapi.domain.member.dto.response.MyInfoResponseDTO;
 import com.park.restapi.domain.member.entity.SocialType;
 import com.park.restapi.domain.member.service.MemberService;
-import com.park.restapi.domain.member.service.impl.MemberServiceImpl;
 import com.park.restapi.util.response.ApiResponse;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.net.URI;
-
 
 @RestController
 @RequiredArgsConstructor
@@ -39,23 +32,28 @@ public class MemberController {
 
     // 회원가입
     @PostMapping("signup")
-    public ResponseEntity<ApiResponse<Void>> signUp(@Valid @RequestBody SignUpRequestDTO dto) throws IOException, InterruptedException {
+    public ResponseEntity<ApiResponse<Void>> signUp(@Valid @RequestBody SignUpRequestDTO dto) throws
+            IOException,
+            InterruptedException {
         memberService.signUp(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.createSuccessNoContent("회원가입이 완료되었습니다."));
     }
 
     // 이메일 중복확인
     @GetMapping("email-check")
-    public ResponseEntity<ApiResponse<?>> checkEmail(@NotBlank(message = "이메일을 입력해주세요.") @Email(message = "이메일 형식이 아닙니다.")
-                                                     @RequestParam(name = "email") String email) throws IOException {
+    public ResponseEntity<ApiResponse<?>> checkEmail(
+            @NotBlank(message = "이메일을 입력해주세요.") @Email(message = "이메일 형식이 아닙니다.")
+            @RequestParam(name = "email") String email) throws IOException {
         boolean result = memberService.existEmailCheck(email);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(result, "true = 사용불가, false = 사용가능"));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ApiResponse.createSuccess(result, "true = 사용불가, false = 사용가능"));
     }
 
     // 로그인
     @PostMapping("login")
-    public ResponseEntity<ApiResponse<?>> login(@Valid @RequestBody LoginInfoRequestDTO dto, HttpServletResponse response) {
+    public ResponseEntity<ApiResponse<?>> login(@Valid @RequestBody LoginInfoRequestDTO dto,
+                                                HttpServletResponse response) {
         memberService.login(dto, response);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("로그인 성공"));
@@ -96,7 +94,7 @@ public class MemberController {
     // 유저 탈퇴
     @PatchMapping("members/deactivate")
     public ResponseEntity<ApiResponse<Void>> deactivateMember(@RequestBody @Valid DeactivateRequestDTO requestDTO) {
-        SocialType socialType = requestDTO.getSocialType();
+        SocialType socialType = requestDTO.socialType();
 
         switch (socialType) {
             case KAKAO -> memberService.deactivateSocialMember();
@@ -117,7 +115,7 @@ public class MemberController {
 
     // 유저 개인 정보 제공
     @GetMapping("members/info")
-    public ResponseEntity<ApiResponse<?>> getMemberDeepInfo(){
+    public ResponseEntity<ApiResponse<?>> getMemberDeepInfo() {
         MyInfoResponseDTO memberInfo = memberService.getMemberInfo();
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(memberInfo, "회원 개인정보 조회 성공."));

@@ -2,26 +2,26 @@ package com.park.restapi.domain.inquiry.entity;
 
 import com.park.restapi.domain.inquiry.dto.request.InquiryRequestDTO;
 import com.park.restapi.domain.member.entity.Member;
+import com.park.restapi.util.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode
-public class Inquiry {
+public class Inquiry extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @Column(nullable = false, length = 30)
@@ -29,10 +29,6 @@ public class Inquiry {
 
     @Column(nullable = false, length = 500)
     private String content;
-
-    @Column(nullable = false)
-    @CreatedDate
-    private LocalDateTime createDate;
 
     @Column(nullable = false)
     private boolean isAnswered = false;
@@ -49,7 +45,8 @@ public class Inquiry {
     private Answer answer;
 
     @Builder
-    public Inquiry(Member member, String title, String content, InquiryCategory inquiryCategory, boolean emailSendCheck) {
+    public Inquiry(Member member, String title, String content, InquiryCategory inquiryCategory,
+                   boolean emailSendCheck) {
         this.member = member;
         this.title = title;
         this.content = content;
@@ -58,20 +55,18 @@ public class Inquiry {
         this.emailSendCheck = emailSendCheck;
     }
 
-    public static Inquiry toEntity(InquiryRequestDTO inquiryRequestDTO, Member member){
+    public static Inquiry toEntity(InquiryRequestDTO inquiryRequestDTO, Member member) {
         return Inquiry.builder()
                 .member(member)
-                .title(inquiryRequestDTO.getTitle())
-                .content(inquiryRequestDTO.getContent())
-                .emailSendCheck(inquiryRequestDTO.isEmailSendCheck())
-                .inquiryCategory(inquiryRequestDTO.getInquiryCategory()).build();
+                .title(inquiryRequestDTO.title())
+                .content(inquiryRequestDTO.content())
+                .emailSendCheck(inquiryRequestDTO.emailSendCheck())
+                .inquiryCategory(inquiryRequestDTO.inquiryCategory()).build();
     }
 
-    public void registerAnswer(Answer answer){
+    public void registerAnswer(Answer answer) {
         this.isAnswered = true;
         this.answer = answer;
     }
-
-
 
 }

@@ -31,7 +31,7 @@ class CouponHistoryRepositoryTest {
     Member savedMember;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         Member member = Member.builder()
                 .email("test@naver.com")
                 .nickname("test")
@@ -42,7 +42,7 @@ class CouponHistoryRepositoryTest {
 
     @Test
     @DisplayName("오늘 쿠폰 획득 기록 있음")
-    void findByCouponHistory(){
+    void findByCouponHistory() {
         // given
         CouponHistory couponHistory = CouponHistory.builder()
                 .member(savedMember).build();
@@ -51,7 +51,8 @@ class CouponHistoryRepositoryTest {
         LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
 
         // when
-        CouponHistory searchCouponHistory = couponHistoryRepository.findByCouponHistory(startOfDay, endOfDay, savedMember);
+        CouponHistory searchCouponHistory = couponHistoryRepository.findByCouponHistory(startOfDay, endOfDay,
+                savedMember);
 
         // then
         Assertions.assertNotNull(searchCouponHistory);
@@ -61,13 +62,14 @@ class CouponHistoryRepositoryTest {
 
     @Test
     @DisplayName("오늘 쿠폰 획득 기록 없음")
-    void findByCouponHistoryNo(){
+    void findByCouponHistoryNo() {
         // given
         LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
         LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
 
         // when
-        CouponHistory searchCouponHistory = couponHistoryRepository.findByCouponHistory(startOfDay, endOfDay, savedMember);
+        CouponHistory searchCouponHistory = couponHistoryRepository.findByCouponHistory(startOfDay, endOfDay,
+                savedMember);
 
         // then
         Assertions.assertNull(searchCouponHistory);

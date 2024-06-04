@@ -22,11 +22,11 @@ public class CouponSchedulerService {
     // 쿠폰 발급 스케줄러
     @Scheduled(cron = "01 0 0 * * *", zone = "Asia/Seoul")
     @Transactional(rollbackOn = Exception.class)
-    public void generatedCoupon(){
-        try{
+    public void generatedCoupon() {
+        try {
             // 쿠폰 설정이 true면 생성
             CouponSetting couponSetting = couponSettingRepository.findAll().get(0);
-            if(couponSetting.getIsDailyCouponGenerate()){
+            if (couponSetting.getIsDailyCouponGenerate()) {
                 log.info("선착순 쿠폰 발행 시작");
                 Coupon coupon = Coupon.builder()
                         .remainingQuantity(couponSetting.getDailyCouponQuantity())
@@ -35,7 +35,7 @@ public class CouponSchedulerService {
                 couponRepository.save(coupon);
                 log.info("선착순 쿠폰 발행 성공");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("선착순 쿠폰 발행 중 예외 발생", e);
         }
     }

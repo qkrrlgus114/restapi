@@ -21,7 +21,8 @@ public final class FailureHandler implements AuthenticationFailureHandler {
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
+                                        AuthenticationException exception) throws IOException, ServletException {
         log.error("oauth 실패 핸들러 : " + exception.getMessage());
 
         // url 생성

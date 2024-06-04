@@ -23,7 +23,8 @@ public class AnswerController {
 
     // 답변 등록
     @PostMapping("answers")
-    public ResponseEntity<ApiResponse<?>> createAnswer(@RequestBody @Valid AnswerRequestDTO answerRequestDTO) throws Exception {
+    public ResponseEntity<ApiResponse<?>> createAnswer(@RequestBody @Valid AnswerRequestDTO answerRequestDTO) throws
+            Exception {
         Inquiry inquiry = answerService.createAnswer(answerRequestDTO);
         if (inquiry.isEmailSendCheck()) {
             emailService.sendAnsweredMessage(inquiry.getMember().getEmail(), inquiry.getTitle());
