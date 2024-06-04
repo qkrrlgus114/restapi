@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum PostExceptionInfo {
 
-    NOT_FOUND_POST(HttpStatus.NOT_FOUND, "7000", "게시글을 찾을 수 없습니다.");
+    NOT_FOUND_POST(HttpStatus.NOT_FOUND, "P-001", "게시글을 찾을 수 없습니다.");
 
     private HttpStatus status;
     private String code;

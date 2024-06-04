@@ -1,17 +1,20 @@
 package com.park.restapi.domain.board.entity;
 
 import com.park.restapi.domain.member.entity.Member;
+import com.park.restapi.util.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
-@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostLike {
+@Table(uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"member_Id", "post_id"})
+})
+public class PostLike extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,4 +28,9 @@ public class PostLike {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @Builder
+    public PostLike(Member member, Post post) {
+        this.member = member;
+        this.post = post;
+    }
 }

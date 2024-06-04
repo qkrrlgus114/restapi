@@ -35,7 +35,6 @@ public class PostServiceImpl implements PostService {
         postRepository.save(post);
     }
 
-
     // 현재 로그인 유저 찾기
     private Member getCurrentMember() {
         Long currentUserId = jwtService.getCurrentUserId();
