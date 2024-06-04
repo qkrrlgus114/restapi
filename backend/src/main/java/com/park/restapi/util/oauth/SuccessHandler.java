@@ -31,6 +31,7 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     // oauth 성공 핸들러

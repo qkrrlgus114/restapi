@@ -120,6 +120,11 @@ const goMyInfo = () => {
   // alert("현재 준비중입니다.");
   router.push("/my/my-info");
 };
+
+// 홈으로 이동
+const goHome = () => router.push("/");
+// 어드민 페이지로 이동
+const goAdmin = () => router.push("/admin/settings");
 </script>
 
 <style scoped>

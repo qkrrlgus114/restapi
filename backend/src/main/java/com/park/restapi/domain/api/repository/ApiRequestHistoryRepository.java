@@ -23,4 +23,5 @@ public interface ApiRequestHistoryRepository
     // 유저가 여태 사용했던 모든 토큰의 개수
     @Query("select count(api.member) from ApiRequestHistory api where api.member = :member")
     int findByTotalUseToken(@Param("member") Member member);
+  
 }
