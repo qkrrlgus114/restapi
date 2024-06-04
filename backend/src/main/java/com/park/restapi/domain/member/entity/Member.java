@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class Member extends BaseTimeEntity {
 
     private static final Integer DEFAULT_TOKEN = 10;
