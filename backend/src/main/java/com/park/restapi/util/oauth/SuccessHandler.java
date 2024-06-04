@@ -2,7 +2,6 @@ package com.park.restapi.util.oauth;
 
 import com.park.restapi.domain.member.entity.Member;
 import com.park.restapi.domain.member.repository.MemberRepository;
-import com.park.restapi.domain.refreshtoken.repository.RefreshTokenRepository;
 import com.park.restapi.util.jwt.JwtService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.ServletException;
@@ -25,8 +24,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
 
-
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -40,7 +37,8 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
     // oauth 성공 핸들러
     @Override
     @Transactional
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+                                        Authentication authentication) throws IOException, ServletException {
         log.info("oauth 성공 핸들러 동작");
         OAuth2User principal = (OAuth2User) authentication.getPrincipal();
 

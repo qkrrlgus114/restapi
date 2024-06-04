@@ -1,9 +1,7 @@
 package com.park.restapi.domain.inquiry.service.impl;
 
-import com.park.restapi.domain.exception.exception.AnswerException;
 import com.park.restapi.domain.exception.exception.InquiryException;
 import com.park.restapi.domain.exception.exception.MemberException;
-import com.park.restapi.domain.exception.info.AnswerExceptionInfo;
 import com.park.restapi.domain.exception.info.InquiryExceptionInfo;
 import com.park.restapi.domain.exception.info.MemberExceptionInfo;
 import com.park.restapi.domain.inquiry.dto.request.InquiryRequestDTO;
@@ -12,7 +10,6 @@ import com.park.restapi.domain.inquiry.dto.response.InquiryListResponseDTO;
 import com.park.restapi.domain.inquiry.dto.response.InquiryResponseDTO;
 import com.park.restapi.domain.inquiry.entity.Answer;
 import com.park.restapi.domain.inquiry.entity.Inquiry;
-import com.park.restapi.domain.inquiry.repository.AnswerRepository;
 import com.park.restapi.domain.inquiry.repository.InquiryRepository;
 import com.park.restapi.domain.inquiry.service.InquiryService;
 import com.park.restapi.domain.member.entity.Member;
@@ -26,9 +23,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -58,16 +52,13 @@ public class InquiryServiceImpl implements InquiryService {
         Member currentMember = getCurrentMemberFetchJoinMemberRoles();
 
         PageRequest pageRequest = PageRequest.of(page, DEFAULT_DATA_COUNT, Sort.Direction.DESC, "createDate");
-        Page<Inquiry> inquiries = inquiryRepository.findByInquires(currentMember, pageRequest, isAdmin(currentMember));
-
-        List<InquiryResponseDTO> inquiryResponseDTOS = inquiries.getContent().stream()
-                .map(InquiryResponseDTO::toDTO)
-                .collect(Collectors.toList());
+        Page<InquiryResponseDTO> inquires = inquiryRepository.findByInquires(currentMember, pageRequest,
+                isAdmin(currentMember));
 
         return InquiryListResponseDTO.builder()
-                .inquiryResponseDTOS(inquiryResponseDTOS)
-                .currentPage(inquiries.getNumber())
-                .totalPages(inquiries.getTotalPages()).build();
+                .inquiryResponseDTOS(inquires.getContent())
+                .currentPage(inquires.getNumber())
+                .totalPages(inquires.getTotalPages()).build();
     }
 
     // 질문 상세내용 가져오기
@@ -77,11 +68,13 @@ public class InquiryServiceImpl implements InquiryService {
         Member currentMember = getCurrentMemberFetchJoinMemberRoles();
         Answer answer = null;
 
-        Inquiry inquiry = inquiryRepository.findById(inquiryId)
-                .orElseThrow(() -> new InquiryException(InquiryExceptionInfo.NOT_FOUND_INQUIRY, inquiryId + "번 문의 내역을 찾을 수 없습니다."));
+        Inquiry inquiry = inquiryRepository.findByInquiryFetchJoinMember(inquiryId)
+                .orElseThrow(
+                        () -> new InquiryException(InquiryExceptionInfo.NOT_FOUND_INQUIRY, inquiryId + "번 문의 내역을 찾을 수 없습니다."));
 
         if (!inquiry.getMember().equals(currentMember) && !isAdmin(currentMember)) {
-            throw new InquiryException(InquiryExceptionInfo.NOT_MATCH_MEMBER, currentMember.getEmail() + " 유저가 " + inquiryId + "질문에 접근했습니다.(접근 차단)");
+            throw new InquiryException(InquiryExceptionInfo.NOT_MATCH_MEMBER,
+                    currentMember.getEmail() + " 유저가 " + inquiryId + "질문에 접근했습니다.(접근 차단)");
         }
 
         if (inquiry.isAnswered()) {
@@ -96,7 +89,8 @@ public class InquiryServiceImpl implements InquiryService {
         Long currentUserId = jwtService.getCurrentUserId();
 
         return memberRepository.findById(currentUserId)
-                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
+                .orElseThrow(
+                        () -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 
     // 현재 로그인 유저 찾기(유저 권한 FetchJoin)
@@ -104,9 +98,9 @@ public class InquiryServiceImpl implements InquiryService {
         Long currentUserId = jwtService.getCurrentUserId();
 
         return memberRepository.findByIdFetchRole(currentUserId)
-                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
+                .orElseThrow(
+                        () -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
-
 
     // 관리자 권한 확인
     private boolean isAdmin(Member member) {

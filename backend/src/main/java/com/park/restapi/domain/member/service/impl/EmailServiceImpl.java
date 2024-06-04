@@ -37,7 +37,6 @@ public class EmailServiceImpl implements EmailService {
     private final MemberRepository memberRepository;
     private final WithdrawalMemberRepository withdrawalMemberRepository;
 
-
     private MimeMessage createAnswerMessage(String to, String inquiryTitle) throws Exception {
         MimeMessage message = emailSender.createMimeMessage();
 
@@ -64,7 +63,6 @@ public class EmailServiceImpl implements EmailService {
 
         return message;
     }
-
 
     private MimeMessage createMessageRegist(String to, String authCode) throws Exception {
         MimeMessage message = emailSender.createMimeMessage();
@@ -111,7 +109,7 @@ public class EmailServiceImpl implements EmailService {
     @Async("taskExecutor")
     public void sendAnsweredMessage(String to, String inquiryTitle) throws Exception {
         MimeMessage message = createAnswerMessage(to, inquiryTitle);
-        try { 
+        try {
             emailSender.send(message);
         } catch (MailException es) {
             log.error("답변 이메일 전송 중 오류 발생: 대상 이메일 - {}, 오류 메시지 - {}", to, es.getMessage(), es);
@@ -128,7 +126,8 @@ public class EmailServiceImpl implements EmailService {
         }
 
         Optional<Member> byEmail = memberRepository.findByEmail(email);
-        if (byEmail.isPresent()) throw new EmailException(EmailExceptionInfo.ALREADY_SIGN_UP_EMAIL, "이미 가입된 이메일입니다.");
+        if (byEmail.isPresent())
+            throw new EmailException(EmailExceptionInfo.ALREADY_SIGN_UP_EMAIL, "이미 가입된 이메일입니다.");
 
         String authCode = createKey(); // 인증코드 생성
         MimeMessage message = createMessageRegist(email, authCode); // 메시지 생성
@@ -148,12 +147,12 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-//    @Transactional
+    //    @Transactional
     public void checkCertificationCode(String code) {
         EmailConfirm confirm = emailConfirmRepository.checkCode(code)
                 .orElseThrow(() -> new EmailException(EmailExceptionInfo.NO_MATCH_CERTIFICATION_CODE, "인증번호 일치하지 않음"));
 
-        LocalDateTime createDate = confirm.getCreateDate();
+        LocalDateTime createDate = confirm.getCreatedDate();
         LocalDateTime now = LocalDateTime.now();
 
         Duration duration = Duration.between(createDate, now);

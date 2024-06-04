@@ -10,5 +10,4 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class CouponHistoryServiceImpl implements CouponHistoryService {
 
-
 }

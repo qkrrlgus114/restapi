@@ -15,11 +15,11 @@ import java.util.Optional;
 public interface CouponRepository extends JpaRepository<Coupon, Long> {
     // 당일 쿠폰 조회
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select c from Coupon c where c.createDate >= :startOfDay and c.createDate <= :endOfDay")
+    @Query("select c from Coupon c where c.createdDate >= :startOfDay and c.createdDate <= :endOfDay")
     Optional<Coupon> findByCouponForWrite(@Param("startOfDay") LocalDateTime startOfDay,
                                           @Param("endOfDay") LocalDateTime endOfDay);
 
-    @Query("select c from Coupon c where c.createDate >= :startOfDay and c.createDate <= :endOfDay")
+    @Query("select c from Coupon c where c.createdDate >= :startOfDay and c.createdDate <= :endOfDay")
     Optional<Coupon> findCouponForRead(@Param("startOfDay") LocalDateTime startOfDay,
                                        @Param("endOfDay") LocalDateTime endOfDay);
 }

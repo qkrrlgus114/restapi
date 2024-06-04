@@ -1,17 +1,14 @@
 package com.park.restapi.util.oauth;
 
-import com.park.restapi.domain.exception.exception.MemberException;
-import com.park.restapi.domain.exception.info.MemberExceptionInfo;
-import com.park.restapi.domain.member.entity.*;
-import com.park.restapi.domain.member.repository.WithdrawalMemberRepository;
-import com.park.restapi.domain.refreshtoken.entity.RefreshToken;
-import com.park.restapi.domain.refreshtoken.repository.RefreshTokenRepository;
+import com.park.restapi.domain.member.entity.Member;
+import com.park.restapi.domain.member.entity.MemberRole;
+import com.park.restapi.domain.member.entity.SocialType;
+import com.park.restapi.domain.member.entity.WithdrawalMember;
 import com.park.restapi.domain.member.repository.MemberRepository;
 import com.park.restapi.domain.member.repository.MemberRoleRepository;
+import com.park.restapi.domain.member.repository.WithdrawalMemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -20,7 +17,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
 
 /*
  * 해당 서비스 안에 들어오면 유저 접근 권한을 얻은 상태.
@@ -48,14 +44,14 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
          * 확장성을 위함.
          * kakao, naver, google 등등 다양한 타입에 맞게 수정만 해주면 됨.
          * */
-        if (registrationId.equals("kakao")) {
+        if ("kakao".equals(registrationId)) {
             oAuth2UserInfo = new KakaoUserInfo(oAuth2User.getAttributes());
         }
 
         String email = oAuth2UserInfo.getEmail();
         // 블랙리스트에 있는지 확인
         Optional<WithdrawalMember> byEmail = withdrawalMemberRepository.findByEmail(email);
-        if(byEmail.isPresent()){
+        if (byEmail.isPresent()) {
             OAuth2Error error = new OAuth2Error("탈퇴한", email + " 유저가 로그인 시도를 진행했습니다.(탈퇴한 유저, 카카오)", null);
             throw new OAuth2AuthenticationException(error);
         }
@@ -82,13 +78,15 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
 
             // 추방 여부 판단
             if (member.getBannedDate() != null) {
-                OAuth2Error error = new OAuth2Error("추방된 유저", member.getEmail() + " 유저가 로그인 시도를 진행했습니다.(추방된 유저, 카카오)", null);
+                OAuth2Error error = new OAuth2Error("추방된 유저", member.getEmail() + " 유저가 로그인 시도를 진행했습니다.(추방된 유저, 카카오)",
+                        null);
                 throw new OAuth2AuthenticationException(error);
             }
 
             // 탈퇴 여부 판단
             if (member.getWithdrawalDate() != null) {
-                OAuth2Error error = new OAuth2Error("탈퇴한 유저", member.getEmail() + " 유저가 로그인 시도를 진행했습니다.(탈퇴한 유저, 카카오)", null);
+                OAuth2Error error = new OAuth2Error("탈퇴한 유저", member.getEmail() + " 유저가 로그인 시도를 진행했습니다.(탈퇴한 유저, 카카오)",
+                        null);
                 throw new OAuth2AuthenticationException(error);
             }
         }

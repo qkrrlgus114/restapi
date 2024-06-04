@@ -7,11 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
-import static com.park.restapi.domain.refreshtoken.entity.QRefreshToken.refreshToken1;
 import static com.park.restapi.domain.member.entity.QMember.member;
+import static com.park.restapi.domain.refreshtoken.entity.QRefreshToken.refreshToken1;
 
 @Repository
 @RequiredArgsConstructor
@@ -20,7 +18,8 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenCustomRepository 
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public RefreshToken validatedRefreshToken(String accessTokenValue, String refreshTokenValue, LocalDateTime currentDate) {
+    public RefreshToken validatedRefreshToken(String accessTokenValue, String refreshTokenValue,
+                                              LocalDateTime currentDate) {
 
         RefreshToken refreshToken = queryFactory.selectFrom(refreshToken1)
                 .leftJoin(refreshToken1.member, member).fetchJoin()

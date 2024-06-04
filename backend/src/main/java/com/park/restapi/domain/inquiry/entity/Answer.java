@@ -1,8 +1,11 @@
 package com.park.restapi.domain.inquiry.entity;
 
+import com.park.restapi.util.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -11,8 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode
-public class Answer {
+public class Answer extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,10 +22,6 @@ public class Answer {
 
     @Column(nullable = false, length = 500)
     private String content;
-
-    @Column(nullable = false)
-    @CreatedDate
-    private LocalDateTime createDate;
 
     @Column(nullable = true)
     private LocalDateTime updateDate;
@@ -33,7 +31,7 @@ public class Answer {
         this.content = content;
     }
 
-    public void updateAnswer(String content){
+    public void updateAnswer(String content) {
         this.content = content;
         this.updateDate = LocalDateTime.now();
     }

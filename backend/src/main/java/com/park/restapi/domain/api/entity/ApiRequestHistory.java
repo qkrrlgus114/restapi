@@ -2,7 +2,10 @@ package com.park.restapi.domain.api.entity;
 
 import com.park.restapi.domain.member.entity.Member;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -13,7 +16,6 @@ import java.time.LocalDateTime;
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode
 public class ApiRequestHistory {
 
     @Id
@@ -21,7 +23,7 @@ public class ApiRequestHistory {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @CreatedDate
@@ -40,7 +42,8 @@ public class ApiRequestHistory {
     private String responseContent;
 
     @Builder
-    public ApiRequestHistory(Member member, boolean requestStatus, MethodType methodType, String requestContent, String responseContent) {
+    public ApiRequestHistory(Member member, boolean requestStatus, MethodType methodType, String requestContent,
+                             String responseContent) {
         this.member = member;
         this.requestStatus = requestStatus;
         this.methodType = methodType;

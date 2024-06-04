@@ -6,7 +6,9 @@ import com.park.restapi.domain.refreshtoken.repository.RefreshTokenRepository;
 import com.park.restapi.util.jwt.JwtService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -18,7 +20,7 @@ import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 class RefreshTokenServiceImplTest {
@@ -26,7 +28,6 @@ class RefreshTokenServiceImplTest {
     private static final Long REFRESH_TOKEN_ID = 1L;
     private static final String ACCESS_TOKEN = "testAccess";
     private static final String REFRESH_TOKEN = "testRefresh";
-
 
     @Mock
     private JwtService jwtService;
@@ -36,7 +37,6 @@ class RefreshTokenServiceImplTest {
     private HttpServletResponse response;
     @InjectMocks
     private RefreshTokenServiceImpl refreshTokenService;
-
 
     Member savedMember;
     RefreshToken savedRefreshToken;
@@ -67,7 +67,8 @@ class RefreshTokenServiceImplTest {
     @DisplayName("토큰 재발급 성공")
     void reGenerateToken() {
         // when
-        Mockito.when(refreshTokenRepository.validatedRefreshToken(Mockito.eq(ACCESS_TOKEN), Mockito.eq(REFRESH_TOKEN), Mockito.any(LocalDateTime.class)))
+        Mockito.when(refreshTokenRepository.validatedRefreshToken(Mockito.eq(ACCESS_TOKEN), Mockito.eq(REFRESH_TOKEN),
+                        Mockito.any(LocalDateTime.class)))
                 .thenReturn(savedRefreshToken);
         Mockito.when(jwtService.createAccessToken(MEMBER_ID))
                 .thenReturn(ACCESS_TOKEN);

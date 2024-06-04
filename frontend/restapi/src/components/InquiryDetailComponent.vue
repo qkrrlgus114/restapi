@@ -27,7 +27,7 @@
         </table>
       </div>
       <div class="answer">
-        <div v-if="inquiry.answered">
+        <div v-if="inquiry.isAnswered">
           <div class="answer-content">{{ inquiry.answeredContent }}</div>
           <div class="answer-create_date">
             <strong>답변일: </strong
@@ -72,9 +72,9 @@ const inquiry = ref({
   inquiryCategory: "",
   inquiryCreateDate: "",
   inquiryContent: "",
-  answered: false,
   answeredContent: "",
   answeredCreateDate: "",
+  isAnswered: false,
 });
 const isAdmin = ref(false);
 
@@ -100,9 +100,7 @@ const getInquiryInfo = async (inquiryId) => {
   try {
     const data = await apiGet(`api/inquiries/${inquiryId}`);
     inquiry.value = data.data;
-  } catch (error) {
-    console.error("Failed to fetch inquiry details:", error);
-  }
+  } catch (error) {}
 };
 
 // 날짜 형식 변환 함수
