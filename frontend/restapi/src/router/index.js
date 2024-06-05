@@ -38,7 +38,7 @@ const routes = [
     path: "/chat",
     name: "Chat",
     component: ChatView,
-    meta: { requiresAuth: true, showNavbar: true },
+    meta: { showNavbar: true },
   },
   {
     path: "/",
@@ -95,13 +95,13 @@ const routes = [
     path: "/board/:page",
     name: "Board",
     component: BoardComponent,
-    meta: { showNavbar: true, requiresAuth: true },
+    meta: { showNavbar: true },
   },
   {
     path: "/board/view/:id",
     name: "BoardDetail",
     component: BoardDetailComponent,
-    meta: { showNavbar: true, requiresAuth: true },
+    meta: { showNavbar: true },
   },
   {
     path: "/:catchAll(.*)",

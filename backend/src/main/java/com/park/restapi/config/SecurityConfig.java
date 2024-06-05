@@ -8,6 +8,7 @@ import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -42,6 +43,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/authentications/**", "/api/signup", "/api/email-check", "/api/login",
                                 "/oauth2/authorization/kakao", "/login/oauth2/code/kakao", "/ws", "/api/auth/**")
                         .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/post/**")
+                        .hasAnyAuthority("GUEST", "USER", "ADMIN")
                         .requestMatchers("/api/admin/**", "/api/gpt/admin/**", "/api/answers/**")
                         .hasAuthority("ADMIN")
                         .requestMatchers("/api/**")

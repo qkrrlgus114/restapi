@@ -24,7 +24,6 @@
         </div>
         <div class="form-group">
           <label for="resource">자원(ex user, hotel, room)</label>
-          <p2></p2>
           <input
             type="text"
             v-model="formData.resource"
@@ -68,7 +67,7 @@
 
 <script setup>
 import { useMainStore } from "@/store/store.js";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { apiPost } from "@/utils/api";
 import Modal from "@/components/InputModal.vue";
 
@@ -80,6 +79,7 @@ const contentItems = ref([]);
 const originContentItem = ref("");
 const showModal = ref(false);
 const inputValue = ref("");
+const loginState = computed(() => store.loginState);
 
 const handleConfirm = () => {
   sharedApiContent();
@@ -104,7 +104,10 @@ const checkFormData = () => {
 
 // rest api 제출
 const submitForm = async () => {
-  if (store.getToken <= 0) {
+  if (!loginState.value) {
+    alert("로그인이 필요합니다.");
+    return;
+  } else if (store.getToken <= 0) {
     alert("토큰이 부족합니다.");
     return;
   }
@@ -130,8 +133,12 @@ const submitForm = async () => {
   }
 };
 
-// rest api 제출
+// 게시글 공유하기
 const sharedApiContent = async () => {
+  if (!loginState.value) {
+    alert("로그인이 필요합니다.");
+    return;
+  }
   const requestBody = {
     methodType: formData.value.methodType,
     title: inputValue.value,
@@ -165,6 +172,10 @@ const sharedApiContent = async () => {
   box-shadow: 0px 1px 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   position: relative;
+}
+
+.api-container.disabled {
+  opacity: 0.5;
 }
 
 .overlay {

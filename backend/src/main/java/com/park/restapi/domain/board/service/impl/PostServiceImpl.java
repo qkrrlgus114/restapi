@@ -53,8 +53,6 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional(readOnly = true)
     public ApiRecommendPostsListResponseDTO getGptApiRecommendPosts(int page) {
-        Member currentMember = getCurrentMember();
-
         PageRequest pageRequest = PageRequest.of(page, DEFAULT_DATA_COUNT);
 
         Page<ApiRecommendPostsResponseDTO> apiRecommendPostsResponseDTOS = postRepository.findRecommendPostFirstPage(pageRequest);
@@ -71,6 +69,7 @@ public class PostServiceImpl implements PostService {
     public ApiRecommendPostResponseDTO getGptApiRecommendPost(Long postId) {
         Member currentMember = getCurrentMember();
 
+        System.out.println("들어옴3");
         Post post = postRepository.findByIdWriteLockFetchJoinMember(postId)
                 .orElseThrow(() -> new PostException(PostExceptionInfo.NOT_FOUND_POST, postId + "번 게시글이 존재하지 않습니다."));
 
@@ -78,8 +77,10 @@ public class PostServiceImpl implements PostService {
 
         // 좋아요 여부 찾기
         boolean isLiked = false;
-        Optional<PostLike> byMemberAndPost = postLikeRepository.findByMemberAndPost(currentMember, post);
-        if (byMemberAndPost.isPresent()) isLiked = true;
+        if (currentMember != null) {
+            Optional<PostLike> byMemberAndPost = postLikeRepository.findByMemberAndPost(currentMember, post);
+            if (byMemberAndPost.isPresent()) isLiked = true;
+        }
 
         return ApiRecommendPostResponseDTO.builder()
                 .postId(post.getId()).nickname(post.getMember().getNickname()).title(post.getTitle()).content(post.getContent())
@@ -89,8 +90,13 @@ public class PostServiceImpl implements PostService {
     // 현재 로그인 유저 찾기
     private Member getCurrentMember() {
         Long currentUserId = jwtService.getCurrentUserId();
+        System.out.println("들어옴1");
+
+        if (currentUserId == null) {
+            return null;
+        }
+
         return memberRepository.findById(currentUserId)
-                .orElseThrow(
-                        () -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
+                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 }

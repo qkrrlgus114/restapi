@@ -57,7 +57,7 @@ public class JwtService {
     public Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication != null) {
+        if (authentication != null && authentication.isAuthenticated() && !(authentication.getPrincipal() instanceof String)) {
             return (Long) authentication.getPrincipal();
         }
 
