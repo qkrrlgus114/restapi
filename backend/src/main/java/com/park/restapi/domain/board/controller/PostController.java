@@ -34,6 +34,8 @@ public class PostController {
     @GetMapping("post/shard-api")
     public ResponseEntity<ApiResponse<ApiRecommendPostsListResponseDTO>> getGptApiRecommendPost(@RequestParam(value = "page", defaultValue = "1") int page) {
 
+        System.out.println("들어옴");
+
         ApiRecommendPostsListResponseDTO gptApiRecommendPosts = postService.getGptApiRecommendPosts(page - 1);
 
         return ResponseEntity.status(HttpStatus.OK)
