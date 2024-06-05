@@ -22,21 +22,21 @@ public class CouponController {
 
     // 유저가 쿠폰을 획득하는 API
     @PostMapping("coupons")
-    public ResponseEntity<ApiResponse<?>> acquisitionCoupons() {
+    public ResponseEntity<ApiResponse<Void>> acquisitionCoupons() {
         couponService.acquisitionCoupon();
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("토큰을 획득하셨습니다."));
     }
 
     // 현재 남은 쿠폰을 제공하는 API
     @GetMapping("coupons")
-    public ResponseEntity<ApiResponse<?>> getCoupons() {
+    public ResponseEntity<ApiResponse<Integer>> getCoupons() {
         int coupons = couponService.getCoupons();
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(coupons, "남은 쿠폰의 개수 조회 성공"));
     }
 
     // 쿠폰 설정 상태 가져오기(관리자)
     @GetMapping("admin/coupons/setting")
-    public ResponseEntity<ApiResponse<?>> getCouponSetting() {
+    public ResponseEntity<ApiResponse<CouponSettingResponseDTO>> getCouponSetting() {
         CouponSettingResponseDTO couponSetting = couponService.getCouponSetting();
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(couponSetting, "쿠폰 설정 데이터 조회 성공"));
@@ -44,7 +44,7 @@ public class CouponController {
 
     // 쿠폰 설정 상태 변경하기(관리자)
     @PatchMapping("admin/coupons/setting")
-    public ResponseEntity<ApiResponse<?>> updateCouponSetting(
+    public ResponseEntity<ApiResponse<Void>> updateCouponSetting(
             @Valid @RequestBody UpdateCouponSettingRequestDTO requestDTO) {
         couponService.updateCouponSetting(requestDTO);
 
@@ -53,7 +53,7 @@ public class CouponController {
 
     // 쿠폰 즉시 발급하기(관리자)
     @PostMapping("admin/coupons")
-    public ResponseEntity<ApiResponse<?>> updateCouponQuantity(
+    public ResponseEntity<ApiResponse<Integer>> updateCouponQuantity(
             @Valid @RequestBody UpdateCouponQuantityRequestDTO requestDTO) {
         int result = couponService.updateCouponQuantity(requestDTO);
 

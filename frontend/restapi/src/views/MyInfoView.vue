@@ -29,27 +29,6 @@ const router = useRouter();
 const formData = ref({ model: "", methodType: "", resource: "", content: "" });
 const isLoading = ref(false);
 const contentItems = ref([]);
-
-// rest api 제출
-const submitForm = async () => {
-  if (store.getToken <= 0) {
-    alert("토큰이 부족합니다.");
-    return;
-  }
-  isLoading.value = true;
-
-  try {
-    const data = await apiPost("/api/gpt/recommendations", formData.value);
-    alert(data.message);
-    const choices = data.data.choices;
-    const recommendations = choices[0].message.content.split(", ");
-    contentItems.value = recommendations;
-    store.decrementToken();
-  } catch (error) {
-  } finally {
-    isLoading.value = false;
-  }
-};
 </script>
 
 <style scoped>

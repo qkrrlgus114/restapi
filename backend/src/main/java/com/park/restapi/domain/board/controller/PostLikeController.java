@@ -18,7 +18,7 @@ public class PostLikeController {
 
     // 게시글 좋아요 누르기
     @PostMapping("/post/{id}/like")
-    public ResponseEntity<ApiResponse<?>> likePost(@PathVariable("id") Long postId) {
+    public ResponseEntity<ApiResponse<Void>> likePost(@PathVariable("id") Long postId) {
 
         postLikeService.likePost(postId);
 
@@ -28,7 +28,7 @@ public class PostLikeController {
 
     // 게시글 좋아요 취소하기
     @DeleteMapping("/post/{id}/like")
-    public ResponseEntity<ApiResponse<?>> unlikePost(@PathVariable("id") Long postId) {
+    public ResponseEntity<ApiResponse<Void>> unlikePost(@PathVariable("id") Long postId) {
 
         postLikeService.unlikePost(postId);
 

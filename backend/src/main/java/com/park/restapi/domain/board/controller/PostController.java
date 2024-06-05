@@ -22,7 +22,7 @@ public class PostController {
 
     // 게시글 공유하기
     @PostMapping("post/shard-api")
-    public ResponseEntity<ApiResponse<?>> sharedGptApiRecommendPost(@Valid @RequestBody ApiRecommendPostRequestDTO apiRecommendPostRequestDTO) {
+    public ResponseEntity<ApiResponse<Void>> sharedGptApiRecommendPost(@Valid @RequestBody ApiRecommendPostRequestDTO apiRecommendPostRequestDTO) {
 
         postService.apiRecommendDataPost(apiRecommendPostRequestDTO);
 
@@ -32,7 +32,7 @@ public class PostController {
 
     // 게시글 가져오기
     @GetMapping("post/shard-api")
-    public ResponseEntity<ApiResponse<?>> getGptApiRecommendPost(@RequestParam(value = "page", defaultValue = "1") int page) {
+    public ResponseEntity<ApiResponse<ApiRecommendPostsListResponseDTO>> getGptApiRecommendPost(@RequestParam(value = "page", defaultValue = "1") int page) {
 
         ApiRecommendPostsListResponseDTO gptApiRecommendPosts = postService.getGptApiRecommendPosts(page - 1);
 
@@ -42,7 +42,7 @@ public class PostController {
 
     // 특정 게시글 가져오기
     @GetMapping("post/shard-api/{id}")
-    public ResponseEntity<ApiResponse<?>> getGptApiRecommendPostTarget(@PathVariable("id") Long postId) {
+    public ResponseEntity<ApiResponse<ApiRecommendPostResponseDTO>> getGptApiRecommendPostTarget(@PathVariable("id") Long postId) {
 
         ApiRecommendPostResponseDTO gptApiRecommendPost = postService.getGptApiRecommendPost(postId);
 

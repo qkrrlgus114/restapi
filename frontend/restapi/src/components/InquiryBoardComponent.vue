@@ -104,6 +104,7 @@ onMounted(() => {
 const getInquiries = async (page) => {
   try {
     const data = await apiGet(`api/inquiries?page=${page}`);
+    console.log(data);
     boardItems.value = data.data.inquiryResponseDTOS;
     totalPages.value = data.data.totalPages;
     currentPage.value = data.data.currentPage + 1;
