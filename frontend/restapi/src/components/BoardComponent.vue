@@ -82,7 +82,7 @@ onMounted(() => {
 // 문의 내역 가져오기
 const getSharePosts = async (page) => {
   try {
-    const data = await apiGet(`api/post/shard-api?page=${page}`);
+    const data = await apiGet(`api/post/share-api?page=${page}`);
 
     console.log(data);
     boardItems.value = data.data.apiRecommendPostsResponseDTOS;

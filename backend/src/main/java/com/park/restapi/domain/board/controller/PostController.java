@@ -21,7 +21,7 @@ public class PostController {
     private final PostService postService;
 
     // 게시글 공유하기
-    @PostMapping("post/shard-api")
+    @PostMapping("post/share-api")
     public ResponseEntity<ApiResponse<Void>> sharedGptApiRecommendPost(@Valid @RequestBody ApiRecommendPostRequestDTO apiRecommendPostRequestDTO) {
 
         postService.apiRecommendDataPost(apiRecommendPostRequestDTO);
@@ -31,10 +31,8 @@ public class PostController {
     }
 
     // 게시글 가져오기
-    @GetMapping("post/shard-api")
+    @GetMapping("post/share-api")
     public ResponseEntity<ApiResponse<ApiRecommendPostsListResponseDTO>> getGptApiRecommendPost(@RequestParam(value = "page", defaultValue = "1") int page) {
-
-        System.out.println("들어옴");
 
         ApiRecommendPostsListResponseDTO gptApiRecommendPosts = postService.getGptApiRecommendPosts(page - 1);
 
@@ -43,7 +41,7 @@ public class PostController {
     }
 
     // 특정 게시글 가져오기
-    @GetMapping("post/shard-api/{id}")
+    @GetMapping("post/share-api/{id}")
     public ResponseEntity<ApiResponse<ApiRecommendPostResponseDTO>> getGptApiRecommendPostTarget(@PathVariable("id") Long postId) {
 
         ApiRecommendPostResponseDTO gptApiRecommendPost = postService.getGptApiRecommendPost(postId);

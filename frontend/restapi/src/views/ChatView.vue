@@ -147,7 +147,7 @@ const sharedApiContent = async () => {
 
   try {
     console.log(requestBody.methodType);
-    await apiPost("/api/post/shard-api", requestBody);
+    await apiPost("/api/post/share-api", requestBody);
 
     alert("공유하기 성공");
   } catch (error) {
