@@ -76,9 +76,19 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
     }
 
-    // 게시글 답변 예외처리
+    // 게시글 예외처리
     @ExceptionHandler(PostException.class)
     public ResponseEntity<ApiResponse<Void>> handlePostException(PostException e, HttpServletRequest request) {
+        log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(),
+                e.getLog());
+
+        return ResponseEntity.status(e.getException().getStatus())
+                .body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
+    }
+
+    // 좋아요 예외처리
+    @ExceptionHandler(PostLikeException.class)
+    public ResponseEntity<ApiResponse<Void>> handlePostLikeException(PostLikeException e, HttpServletRequest request) {
         log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(),
                 e.getLog());
 
