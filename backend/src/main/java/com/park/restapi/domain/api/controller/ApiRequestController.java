@@ -22,7 +22,7 @@ public class ApiRequestController {
 
     // 챗봇 API
     @PostMapping("gpt/recommendations")
-    public ResponseEntity<ApiResponse<?>> chatGpt(@Valid @RequestBody ApiRequestDTO apiRequestDTO) {
+    public ResponseEntity<ApiResponse<ChatGPTResponseDTO>> chatGpt(@Valid @RequestBody ApiRequestDTO apiRequestDTO) {
         ChatGPTResponseDTO chatGPTResponseDTO = apiRequestService.chatGpt(apiRequestDTO);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -31,7 +31,7 @@ public class ApiRequestController {
 
     // API 요청 이력 조회
     @GetMapping("gpt/admin/requests")
-    public ResponseEntity<ApiResponse<?>> getApiRequestHistory(
+    public ResponseEntity<ApiResponse<ApiRequestHistoryListResponseDTO>> getApiRequestHistory(
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "searchType", required = false) String searchType,
             @RequestParam(value = "searchKey", required = false) String keyword) {

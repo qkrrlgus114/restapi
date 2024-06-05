@@ -41,7 +41,7 @@ public class MemberController {
 
     // 이메일 중복확인
     @GetMapping("email-check")
-    public ResponseEntity<ApiResponse<?>> checkEmail(
+    public ResponseEntity<ApiResponse<Boolean>> checkEmail(
             @NotBlank(message = "이메일을 입력해주세요.") @Email(message = "이메일 형식이 아닙니다.")
             @RequestParam(name = "email") String email) throws IOException {
         boolean result = memberService.existEmailCheck(email);
@@ -52,8 +52,8 @@ public class MemberController {
 
     // 로그인
     @PostMapping("login")
-    public ResponseEntity<ApiResponse<?>> login(@Valid @RequestBody LoginInfoRequestDTO dto,
-                                                HttpServletResponse response) {
+    public ResponseEntity<ApiResponse<Void>> login(@Valid @RequestBody LoginInfoRequestDTO dto,
+                                                   HttpServletResponse response) {
         memberService.login(dto, response);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("로그인 성공"));
@@ -61,7 +61,7 @@ public class MemberController {
 
     // 소셜로그인
     @PostMapping("social-login")
-    public ResponseEntity<ApiResponse<?>> socialLogin(HttpServletResponse response) {
+    public ResponseEntity<ApiResponse<Void>> socialLogin(HttpServletResponse response) {
         memberService.socialLogin(response);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("소셜 로그인 성공"));
@@ -69,7 +69,7 @@ public class MemberController {
 
     // 토큰 조회
     @GetMapping("tokens")
-    public ResponseEntity<ApiResponse<?>> getToken(HttpServletResponse response) {
+    public ResponseEntity<ApiResponse<Integer>> getToken(HttpServletResponse response) {
         int token = memberService.getToken();
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(token, "토큰 개수 조회 성공"));
@@ -77,7 +77,7 @@ public class MemberController {
 
     // 로그아웃
     @GetMapping("logout")
-    public ResponseEntity<ApiResponse<?>> logout(HttpServletResponse response) {
+    public ResponseEntity<ApiResponse<Void>> logout(HttpServletResponse response) {
         memberService.logout(response);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("로그아웃 성공"));
@@ -107,7 +107,7 @@ public class MemberController {
 
     // 유저 추방
     @PatchMapping("admin/members/{id}/ban")
-    public ResponseEntity<ApiResponse<?>> bannedMember(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<ApiResponse<Void>> bannedMember(@PathVariable(name = "id") Long id) {
         memberService.bannedMember(id);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("회원 추방에 성공했습니다."));
@@ -115,7 +115,7 @@ public class MemberController {
 
     // 유저 개인 정보 제공
     @GetMapping("members/info")
-    public ResponseEntity<ApiResponse<?>> getMemberDeepInfo() {
+    public ResponseEntity<ApiResponse<MyInfoResponseDTO>> getMemberDeepInfo() {
         MyInfoResponseDTO memberInfo = memberService.getMemberInfo();
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(memberInfo, "회원 개인정보 조회 성공."));

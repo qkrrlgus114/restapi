@@ -23,7 +23,7 @@ public class AnswerController {
 
     // 답변 등록
     @PostMapping("answers")
-    public ResponseEntity<ApiResponse<?>> createAnswer(@RequestBody @Valid AnswerRequestDTO answerRequestDTO) throws
+    public ResponseEntity<ApiResponse<Void>> createAnswer(@RequestBody @Valid AnswerRequestDTO answerRequestDTO) throws
             Exception {
         Inquiry inquiry = answerService.createAnswer(answerRequestDTO);
         if (inquiry.isEmailSendCheck()) {
@@ -35,7 +35,7 @@ public class AnswerController {
 
     // 답변 수정
     @PatchMapping("answers")
-    public ResponseEntity<ApiResponse<?>> updateAnswer(@RequestBody @Valid AnswerRequestDTO answerRequestDTO) {
+    public ResponseEntity<ApiResponse<Void>> updateAnswer(@RequestBody @Valid AnswerRequestDTO answerRequestDTO) {
         answerService.updateAnswer(answerRequestDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.createSuccessNoContent("문의 답변이 수정되었습니다."));

@@ -1,6 +1,6 @@
 package com.park.restapi.domain.refreshtoken.controller;
 
-import com.park.restapi.domain.refreshtoken.service.impl.RefreshTokenServiceImpl;
+import com.park.restapi.domain.refreshtoken.service.RefreshTokenService;
 import com.park.restapi.util.response.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/auth")
 @Validated
 public class RefreshTokenController {
-    private final RefreshTokenServiceImpl refreshTokenService;
+    private final RefreshTokenService refreshTokenService;
 
     @PostMapping("refresh-token")
-    public ResponseEntity<ApiResponse<?>> refreshToken(@CookieValue(value = "accessToken") String accessToken,
-                                                       @CookieValue(value = "refreshToken") String refreshToken,
-                                                       HttpServletResponse response) {
+    public ResponseEntity<ApiResponse<Void>> refreshToken(@CookieValue(value = "accessToken") String accessToken,
+                                                          @CookieValue(value = "refreshToken") String refreshToken,
+                                                          HttpServletResponse response) {
         refreshTokenService.reGenerateToken(response, accessToken, refreshToken);
         return ResponseEntity.ok(ApiResponse.createSuccessNoContent("토큰 재발급 완료"));
     }

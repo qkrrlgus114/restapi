@@ -46,8 +46,18 @@ const apiPatch = async (url, data = {}) => {
   }
 };
 
+const apiDelete = async (url) => {
+  try {
+    const response = await axios.delete(url);
+    return response.data;
+  } catch (error) {
+    handleApiError(error);
+    throw error;
+  }
+};
+
 const getBaseURL = () => {
   return axios.defaults.baseURL;
 };
 
-export { apiGet, apiPost, getBaseURL, apiPatch };
+export { apiGet, apiPost, getBaseURL, apiPatch, apiDelete };

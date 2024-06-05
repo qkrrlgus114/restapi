@@ -18,6 +18,8 @@ import InquiryBoardComponent from "@/components/InquiryBoardComponent.vue";
 import InquiryDetailComponent from "@/components/InquiryDetailComponent.vue";
 import InquiryFormComponent from "@/components/InquiryFormComponent.vue";
 import AnswerFormComponent from "@/components/AnswerFormComponent.vue";
+import BoardComponent from "@/components/BoardComponent.vue";
+import BoardDetailComponent from "@/components/BoardDetailComponent.vue";
 
 const routes = [
   {
@@ -88,6 +90,18 @@ const routes = [
     name: "Failure",
     component: Failure,
     meta: { showNavbar: false },
+  },
+  {
+    path: "/board/:page",
+    name: "Board",
+    component: BoardComponent,
+    meta: { showNavbar: true, requiresAuth: true },
+  },
+  {
+    path: "/board/view/:id",
+    name: "BoardDetail",
+    component: BoardDetailComponent,
+    meta: { showNavbar: true, requiresAuth: true },
   },
   {
     path: "/:catchAll(.*)",

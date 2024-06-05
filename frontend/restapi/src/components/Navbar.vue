@@ -2,15 +2,26 @@
   <div class="main">
     <nav class="navbar">
       <a @click="goHome" class="navbar-brand">RESTAPI</a>
+      <div class="menu">
+        <router-link class="btn menu-api" :to="{ name: 'Chat' }">
+          API 서비스
+        </router-link>
+        <router-link
+          class="btn menu-category"
+          :to="{ name: 'Board', params: { page: 1 } }"
+        >
+          공유 게시판
+        </router-link>
+      </div>
       <div class="user-info">
         <button class="custom-btn" v-if="isAdmin" @click="goAdmin">
           관리자 설정
         </button>
-        <button @click="renewToken" class="refresh-button custom-btn">
-          토큰 갱신
-        </button>
         <h2>{{ nickname }}</h2>
         <h2>남은 토큰 : {{ token }} 개</h2>
+        <div class="reset-img" @click="renewToken">
+          <img src="/reset.png" />
+        </div>
         <div class="btn-group">
           <button
             class="btn btn-secondary dropdown-toggle custom-btn"
@@ -112,19 +123,14 @@ const acquiredToken = async () => {
 
 // 홈으로 이동
 const goHome = () => router.push("/chat");
+// 공유게시판으로 이동
+const goBoard = (page) => router.push(`/board/${page}`);
 // 어드민 페이지로 이동
 const goAdmin = () => router.push("/admin/settings");
 // 내 정보 페이지로 이동
-// const goMyInfo = () => router.push("/my-info");
 const goMyInfo = () => {
-  // alert("현재 준비중입니다.");
   router.push("/my/my-info");
 };
-
-// 홈으로 이동
-const goHome = () => router.push("/");
-// 어드민 페이지로 이동
-const goAdmin = () => router.push("/admin/settings");
 </script>
 
 <style scoped>
@@ -142,11 +148,40 @@ const goAdmin = () => router.push("/admin/settings");
 }
 
 .navbar-brand {
+  flex: 1;
   display: flex;
   justify-content: flex-start;
 }
 
+.menu {
+  flex: 6;
+  display: flex;
+  justify-content: center;
+  margin-left: 300px;
+}
+
+.menu-api,
+.menu-board {
+  cursor: pointer;
+}
+
+.menu-api:hover,
+.menu-board:hover {
+  transition: transform 0.3s ease-in-out;
+  transform: scale(1.1);
+}
+
+.menu-api {
+  font-size: 1.5rem;
+  margin-right: 50px;
+}
+
+.menu-board {
+  font-size: 1.5rem;
+}
+
 .user-info {
+  flex: 3;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -189,7 +224,6 @@ const goAdmin = () => router.push("/admin/settings");
   color: #5a5a5a;
 }
 
-.refresh-button:hover,
 .receive-button:hover {
   border-color: #e0e0e0;
 }
@@ -234,6 +268,12 @@ a {
 
 a:hover {
   transform: scale(1.1);
+  cursor: pointer;
+}
+
+.reset-img > img {
+  width: 20px;
+  height: 20px;
   cursor: pointer;
 }
 </style>

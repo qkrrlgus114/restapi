@@ -1,33 +1,29 @@
 <template>
   <div class="content">
-    <div class="content-title">1:1 문의 게시판</div>
+    <div class="content-title">API 공유 게시판</div>
     <div class="content-board">
       <div class="board-header">
-        <div class="board-cell category">카테고리</div>
+        <div class="board-cell no">No</div>
+        <div class="board-cell method_type">메서드</div>
         <div class="board-cell title">제목</div>
-        <div class="board-cell date">문의 날짜</div>
-        <div class="board-cell answered">답변 등록 여부</div>
+        <div class="board-cell nickname">닉네임</div>
+        <div class="board-cell like_count">좋아요 수</div>
+        <div class="board-cell view_count">조회 수</div>
       </div>
       <router-link
         v-for="item in boardItems"
-        :key="item.id"
+        :key="item.postId"
         class="board-item"
-        :to="{ name: 'InquiryDetail', params: { id: item.id } }"
+        :to="{ name: 'BoardDetail', params: { id: item.postId } }"
       >
-        <div class="board-cell category">
-          {{ translateCategory(item.inquiryCategory) }}
+        <div class="board-cell no">
+          {{ item.postId }}
         </div>
+        <div class="board-cell method_type">{{ item.methodType }}</div>
         <div class="board-cell title">{{ item.title }}</div>
-        <div class="board-cell date">{{ formatDate(item.createDate) }}</div>
-        <div
-          class="board-cell answered"
-          :class="{
-            'answered-true': item.answered,
-            'answered-false': !item.answered,
-          }"
-        >
-          {{ item.answered ? "등록됨" : "등록안됨" }}
-        </div>
+        <div class="board-cell nickname">{{ item.nickname }}</div>
+        <div class="board-cell like_count">{{ item.likeCount }}</div>
+        <div class="board-cell view_count">{{ item.viewCount }}</div>
       </router-link>
     </div>
     <div class="pagination">
@@ -53,11 +49,6 @@
         다음
       </button>
     </div>
-    <div class="write-form">
-      <router-link class="custom-btn" :to="{ name: 'InquiryForm' }"
-        >작성하기</router-link
-      >
-    </div>
   </div>
 </template>
 
@@ -70,22 +61,10 @@ const route = useRoute();
 const router = useRouter();
 
 const boardItems = ref([]);
-const currentPage = ref(1); // 현재 페이지 번호
-const totalPages = ref(0); // 총 페이지 수
-const currentPageGroup = ref(1); // 현재 페이지 그룹
-const itemsPerPageGroup = 5; // 한 번에 표시할 페이지 번호 수
-
-const categoryMap = {
-  ACCOUNT: "계정 관련 문의",
-  TECHNICAL: "기술 관련 문의",
-  FEEDBACK: "피드백 및 제안",
-  OTHER: "기타 문의 사항",
-};
-
-// 카테고리 변환 함수
-const translateCategory = (category) => {
-  return categoryMap[category] || category;
-};
+const currentPage = ref(1);
+const totalPages = ref(0);
+const currentPageGroup = ref(1);
+const itemsPerPageGroup = 5;
 
 onMounted(() => {
   watch(
@@ -94,18 +73,19 @@ onMounted(() => {
       const page = parseInt(newPage) || 1;
       currentPage.value = page;
       currentPageGroup.value = Math.ceil(page / itemsPerPageGroup);
-      getInquiries(page);
+      getSharePosts(page);
     },
     { immediate: true }
   );
 });
 
 // 문의 내역 가져오기
-const getInquiries = async (page) => {
+const getSharePosts = async (page) => {
   try {
-    const data = await apiGet(`api/inquiries?page=${page}`);
+    const data = await apiGet(`api/post/shard-api?page=${page}`);
+
     console.log(data);
-    boardItems.value = data.data.inquiryResponseDTOS;
+    boardItems.value = data.data.apiRecommendPostsResponseDTOS;
     totalPages.value = data.data.totalPages;
     currentPage.value = data.data.currentPage + 1;
   } catch (error) {}
@@ -114,7 +94,7 @@ const getInquiries = async (page) => {
 // 페이지 변경
 const changePage = (page) => {
   if (page >= 1 && page <= totalPages.value) {
-    router.push({ name: "InquiryBoard", params: { page } });
+    router.push({ name: "Board", params: { page } });
   }
 };
 
@@ -145,22 +125,6 @@ const pageNumbers = computed(() => {
 const totalPageGroups = computed(() => {
   return Math.ceil(totalPages.value / itemsPerPageGroup);
 });
-
-// 날짜 형식 변환 함수
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-
-  // 날짜 부분
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-
-  // 시간 부분
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-
-  return `${year}-${month}-${day} ${hours}:${minutes}`;
-};
 </script>
 
 <style scoped>
@@ -205,6 +169,29 @@ const formatDate = (dateString) => {
 .board-cell {
   padding: 10px;
   text-align: center;
+}
+
+.board-cell.no {
+  flex: 0 0 5%;
+}
+
+.board-cell.method_type {
+  flex: 0 0 10%;
+}
+
+.board-cell.title {
+  flex: 1 0 50%;
+  text-align: left;
+  padding-left: 10px;
+}
+
+.board-cell.nickname {
+  flex: 0 0 15%;
+}
+
+.board-cell.like_count,
+.board-cell.view_count {
+  flex: 0 0 10%;
 }
 
 .board-item:hover {
@@ -260,29 +247,6 @@ const formatDate = (dateString) => {
   color: black;
   background-color: rgb(209, 209, 209);
 }
-
-.write-form {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-  margin-right: 20%;
-}
-
-.custom-btn {
-  padding: 0.5rem 1rem;
-  margin-left: 10px;
-  background-color: #ffffff;
-  color: rgb(0, 0, 0);
-  border: 1px solid rgb(109, 109, 109);
-  border-radius: 0.375rem;
-  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
-  text-decoration: none;
-}
-
-.custom-btn:hover {
-  background-color: #e7e7e7;
-}
-
 button:hover {
   background-color: #e7e7e7;
   color: black;
