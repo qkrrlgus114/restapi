@@ -51,9 +51,9 @@ class MemberServiceImplTest {
                 .password("1234")
                 .nickname("테스트").build();
         mockMember = Member.builder()
-                .email(signUpRequestDTO.getEmail())
+                .email(signUpRequestDTO.email())
                 .password("encoded_password")
-                .nickname(signUpRequestDTO.getNickname())
+                .nickname(signUpRequestDTO.nickname())
                 .loginLastDate(LocalDateTime.now()).build();
     }
 
@@ -66,14 +66,14 @@ class MemberServiceImplTest {
 
         when(memberRepository.existsByEmail(any())).thenReturn(false);
         when(memberRepository.save(any(Member.class))).thenReturn(mockMember);
-        when(encoder.encode(signUpRequestDTO.getPassword())).thenReturn("encoded_password");
+        when(encoder.encode(signUpRequestDTO.password())).thenReturn("encoded_password");
 
         // when
         memberService.signUp(signUpRequestDTO);
 
         // then
-        verify(memberRepository).existsByEmail(signUpRequestDTO.getEmail());
-        verify(encoder).encode(signUpRequestDTO.getPassword());
+        verify(memberRepository).existsByEmail(signUpRequestDTO.password());
+        verify(encoder).encode(signUpRequestDTO.password());
         //        verify(memberRoleRepository).save(mockMemberRole);
     }
 

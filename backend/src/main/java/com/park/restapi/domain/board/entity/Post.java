@@ -1,5 +1,6 @@
 package com.park.restapi.domain.board.entity;
 
+import com.park.restapi.domain.api.entity.MethodType;
 import com.park.restapi.domain.member.entity.Member;
 import com.park.restapi.util.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -32,6 +33,10 @@ public class Post extends BaseTimeEntity {
     private BoardType boardType;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private MethodType methodType;
+
+    @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)
@@ -43,19 +48,27 @@ public class Post extends BaseTimeEntity {
     @Column(nullable = false)
     private Integer likeCount = 0;
 
+    @Column(nullable = false)
+    private Integer viewCount = 0;
+
     @Builder
-    public Post(Member member, BoardType boardType, String title, String content) {
+    public Post(Member member, BoardType boardType, MethodType methodType, String title, String content) {
         this.member = member;
         this.boardType = boardType;
+        this.methodType = methodType;
         this.title = title;
         this.content = content;
     }
-
+    
     public void incrementLikeCount() {
         this.likeCount += 1;
     }
 
     public void decrementLikeCount() {
         this.likeCount -= 1;
+    }
+
+    public void incrementViewCount() {
+        this.viewCount += 1;
     }
 }

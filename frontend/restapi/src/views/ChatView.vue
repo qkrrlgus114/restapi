@@ -48,10 +48,21 @@
           </li>
         </ul>
         <div class="share-btn">
-          <button class="btn" @click="sharedApiContent">공유하기</button>
+          <button class="btn" @click="showModal = true">공유하기</button>
         </div>
       </div>
     </div>
+    <Modal
+      v-model:modelValue="inputValue"
+      :isVisible="showModal"
+      @confirm="handleConfirm"
+      @cancel="handleCancel"
+    >
+      <template #header> api 응답을 공유하시겠습니까? </template>
+      <template #body> 요청을 간략하게 요약해주세요. </template>
+      <template #cancel-btn> 취소하기 </template>
+      <template #confirm-btn> 공유하기 </template>
+    </Modal>
   </div>
 </template>
 
@@ -59,6 +70,7 @@
 import { useMainStore } from "@/store/store.js";
 import { ref } from "vue";
 import { apiPost } from "@/utils/api";
+import Modal from "@/components/InputModal.vue";
 
 const store = useMainStore();
 
@@ -66,6 +78,17 @@ const formData = ref({ model: "", methodType: "", resource: "", content: "" });
 const isLoading = ref(false);
 const contentItems = ref([]);
 const originContentItem = ref("");
+const showModal = ref(false);
+const inputValue = ref("");
+
+const handleConfirm = () => {
+  sharedApiContent();
+  showModal.value = false;
+};
+
+const handleCancel = () => {
+  showModal.value = false;
+};
 
 // form 데이터 검사
 const checkFormData = () => {
@@ -110,12 +133,14 @@ const submitForm = async () => {
 // rest api 제출
 const sharedApiContent = async () => {
   const requestBody = {
-    content: formData.value.content,
+    methodType: formData.value.methodType,
+    title: inputValue.value,
     apiContents: originContentItem.value,
   };
 
   try {
-    const data = await apiPost("/api/post/shard-api", requestBody);
+    console.log(requestBody.methodType);
+    await apiPost("/api/post/shard-api", requestBody);
 
     alert("공유하기 성공");
   } catch (error) {

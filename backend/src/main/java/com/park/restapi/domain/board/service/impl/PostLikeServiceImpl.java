@@ -38,7 +38,7 @@ public class PostLikeServiceImpl implements PostLikeService {
     public void likePost(Long postId) {
         Member currentMember = getCurrentMember();
 
-        Post post = postRepository.findByIdWriteLock(postId)
+        Post post = postRepository.findByIdWriteLockFetchJoinMember(postId)
                 .orElseThrow(() -> new PostException(PostExceptionInfo.NOT_FOUND_POST, postId + "번 게시글을 찾지 못했습니다."));
 
         if (post.getMember().equals(currentMember)) {

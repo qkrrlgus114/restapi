@@ -35,5 +35,4 @@ public class PostLikeController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponse.createSuccessNoContent("좋아요 취소하기 성공."));
     }
-
 }
