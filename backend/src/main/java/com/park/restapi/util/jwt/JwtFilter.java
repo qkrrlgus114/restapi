@@ -36,10 +36,10 @@ public class JwtFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
 
-        return path.startsWith("/api/authentications/send") || path.startsWith("/api/email-check") || path.startsWith(
-                "/login") || path.startsWith("/api/auth/refresh-token")
-                || path.startsWith("/api/authentications/verify") || path.startsWith("/api/signup") || path.startsWith(
-                "/api/login") || path.startsWith("/oauth2/authorization/kakao")
+        return path.startsWith("/api/authentications/send") || path.startsWith("/api/email-check")
+                || path.startsWith("/login") || path.startsWith("/api/auth/refresh-token")
+                || path.startsWith("/api/authentications/verify") || path.startsWith("/api/signup")
+                || path.startsWith("/api/login") || path.startsWith("/oauth2/authorization/kakao")
                 || path.startsWith("/ws");
     }
 
@@ -49,6 +49,18 @@ public class JwtFilter extends OncePerRequestFilter {
         log.info("jwt 필터 동작");
 
         Optional<String> accessTokenOptional = findAccessToken(request, "accessToken");
+
+        // 비로그인 사용자를 위해 /api/post 경로에 대해 GUEST 권한 부여
+        if (accessTokenOptional.isEmpty() && request.getRequestURI().startsWith("/api/post/share-api")) {
+            log.info("비로그인 사용자에게 GUEST 권한 부여");
+            List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("GUEST"));
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(null, null, authorities);
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // 쿠키 자체가 없으면 401 에러 발생
         if (accessTokenOptional.isEmpty()) {
             log.error("요청 경로 : " + request.getRequestURI() + "/ 쿠키 없음.");

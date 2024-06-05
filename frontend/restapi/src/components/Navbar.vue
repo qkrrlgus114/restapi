@@ -13,7 +13,7 @@
           공유 게시판
         </router-link>
       </div>
-      <div class="user-info">
+      <div class="user-info" v-if="loginStatus">
         <button class="custom-btn" v-if="isAdmin" @click="goAdmin">
           관리자 설정
         </button>
@@ -40,8 +40,16 @@
           </ul>
         </div>
       </div>
+      <div class="user-info" v-if="!loginStatus">
+        <button
+          class="btn btn-secondary custom-btn not-login-btn"
+          @click="goLogin"
+        >
+          로그인
+        </button>
+      </div>
     </nav>
-    <div class="coupon-info">
+    <div class="coupon-info" v-if="loginState">
       <h2>오늘의 선착순 쿠폰(토큰) : {{ coupon }} 개</h2>
       <button class="receive-button custom-btn" @click="acquiredToken">
         토큰 받기
@@ -63,12 +71,15 @@ const nickname = computed(() => store.nickname);
 const coupon = computed(() => store.coupon);
 const token = computed(() => store.token);
 const isAdmin = ref(false);
+const loginStatus = computed(() => store.loginState);
 
 onMounted(async () => {
-  await loadUserInfo();
-  await loadCouponInfo();
-  const admin = store.getAdminRole;
-  if (admin) isAdmin.value = true;
+  if (loginStatus.value) {
+    await loadUserInfo();
+    await loadCouponInfo();
+    const admin = store.getAdminRole;
+    if (admin) isAdmin.value = true;
+  }
 });
 
 // 유저 정보 호출
@@ -123,6 +134,8 @@ const acquiredToken = async () => {
 
 // 홈으로 이동
 const goHome = () => router.push("/chat");
+// 로그인으로 이동
+const goLogin = () => router.push("/login");
 // 공유게시판으로 이동
 const goBoard = (page) => router.push(`/board/${page}`);
 // 어드민 페이지로 이동
@@ -275,5 +288,9 @@ a:hover {
   width: 20px;
   height: 20px;
   cursor: pointer;
+}
+
+.not-login-btn {
+  width: 100px;
 }
 </style>

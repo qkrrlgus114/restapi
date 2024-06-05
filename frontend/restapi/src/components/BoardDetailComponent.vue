@@ -54,6 +54,7 @@ const post = ref({
   isLiked: false,
 });
 const isAdmin = ref(false);
+const loginStatus = computed(() => store.loginState);
 
 onMounted(() => {
   getSharePostDetail(route.params.id);
@@ -63,7 +64,7 @@ onMounted(() => {
 // 상세 문의 내역 가져오기
 const getSharePostDetail = async (postId) => {
   try {
-    const data = await apiGet(`api/post/shard-api/${postId}`);
+    const data = await apiGet(`api/post/share-api/${postId}`);
     console.log(data);
     post.value = data.data;
   } catch (error) {}
@@ -71,6 +72,10 @@ const getSharePostDetail = async (postId) => {
 
 // 좋아요 누르기
 const postLike = async () => {
+  if (!loginStatus.value) {
+    alert("로그인이 필요합니다.");
+    return;
+  }
   if (!post.value.isLiked) {
     try {
       await apiPost(`api/post/${post.value.postId}/like`, {});
