@@ -69,6 +69,7 @@ public class PostServiceImpl implements PostService {
     public ApiRecommendPostResponseDTO getGptApiRecommendPost(Long postId) {
         Member currentMember = getCurrentMember();
 
+        System.out.println("들어옴3");
         Post post = postRepository.findByIdWriteLockFetchJoinMember(postId)
                 .orElseThrow(() -> new PostException(PostExceptionInfo.NOT_FOUND_POST, postId + "번 게시글이 존재하지 않습니다."));
 
