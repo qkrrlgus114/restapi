@@ -52,10 +52,10 @@ public class PostServiceImpl implements PostService {
     // api 공유게시글 가져오기(페이지네이션)
     @Override
     @Transactional(readOnly = true)
-    public ApiRecommendPostsListResponseDTO getGptApiRecommendPosts(int page) {
+    public ApiRecommendPostsListResponseDTO getGptApiRecommendPosts(int page, String searchType, String searchKey, String sortBy) {
         PageRequest pageRequest = PageRequest.of(page, DEFAULT_DATA_COUNT);
 
-        Page<ApiRecommendPostsResponseDTO> apiRecommendPostsResponseDTOS = postRepository.findRecommendPostFirstPage(pageRequest);
+        Page<ApiRecommendPostsResponseDTO> apiRecommendPostsResponseDTOS = postRepository.findRecommendPosts(pageRequest, searchType, searchKey, sortBy);
 
         return ApiRecommendPostsListResponseDTO.builder()
                 .apiRecommendPostsResponseDTOS(apiRecommendPostsResponseDTOS.getContent())
@@ -68,7 +68,7 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public ApiRecommendPostResponseDTO getGptApiRecommendPost(Long postId) {
         Member currentMember = getCurrentMember();
-        
+
         Post post = postRepository.findByIdWriteLockFetchJoinMember(postId)
                 .orElseThrow(() -> new PostException(PostExceptionInfo.NOT_FOUND_POST, postId + "번 게시글이 존재하지 않습니다."));
 

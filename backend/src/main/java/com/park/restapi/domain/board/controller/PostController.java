@@ -32,9 +32,13 @@ public class PostController {
 
     // 게시글 가져오기
     @GetMapping("post/share-api")
-    public ResponseEntity<ApiResponse<ApiRecommendPostsListResponseDTO>> getGptApiRecommendPost(@RequestParam(value = "page", defaultValue = "1") int page) {
+    public ResponseEntity<ApiResponse<ApiRecommendPostsListResponseDTO>> getGptApiRecommendPost(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "searchType", required = false, defaultValue = "") String searchType,
+            @RequestParam(value = "searchKey", required = false, defaultValue = "") String searchKey,
+            @RequestParam(value = "sortBy", required = false, defaultValue = "") String sortBy) {
 
-        ApiRecommendPostsListResponseDTO gptApiRecommendPosts = postService.getGptApiRecommendPosts(page - 1);
+        ApiRecommendPostsListResponseDTO gptApiRecommendPosts = postService.getGptApiRecommendPosts(page - 1, searchType, searchKey, sortBy);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponse.createSuccess(gptApiRecommendPosts, "모든 공유 게시글 가져오기 성공"));
