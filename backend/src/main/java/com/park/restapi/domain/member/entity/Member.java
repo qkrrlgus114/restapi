@@ -3,7 +3,7 @@ package com.park.restapi.domain.member.entity;
 import com.park.restapi.domain.api.entity.ApiRequestHistory;
 import com.park.restapi.domain.coupon.entity.CouponHistory;
 import com.park.restapi.domain.refreshtoken.entity.RefreshToken;
-import com.park.restapi.util.BaseTimeEntity;
+import com.park.restapi.util.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;

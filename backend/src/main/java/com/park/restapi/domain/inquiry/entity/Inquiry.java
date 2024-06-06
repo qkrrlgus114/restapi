@@ -2,7 +2,7 @@ package com.park.restapi.domain.inquiry.entity;
 
 import com.park.restapi.domain.inquiry.dto.request.InquiryRequestDTO;
 import com.park.restapi.domain.member.entity.Member;
-import com.park.restapi.util.BaseTimeEntity;
+import com.park.restapi.util.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

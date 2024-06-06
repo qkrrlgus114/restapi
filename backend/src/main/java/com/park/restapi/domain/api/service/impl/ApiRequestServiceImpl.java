@@ -16,6 +16,7 @@ import com.park.restapi.domain.exception.info.MemberExceptionInfo;
 import com.park.restapi.domain.member.entity.Member;
 import com.park.restapi.domain.member.entity.Role;
 import com.park.restapi.domain.member.repository.MemberRepository;
+import com.park.restapi.util.entity.SearchType;
 import com.park.restapi.util.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -110,7 +111,7 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     // API 요청 기록 조회
     @Override
     @Transactional(readOnly = true)
-    public ApiRequestHistoryListResponseDTO getApiRequestHistory(int page, String searchType, String keyword) {
+    public ApiRequestHistoryListResponseDTO getApiRequestHistory(int page, SearchType searchType, String keyword) {
         Member currentMember = getCurrentMember();
 
         if (!isAdmin(currentMember)) {
@@ -121,9 +122,8 @@ public class ApiRequestServiceImpl implements ApiRequestService {
         Pageable pageRequest = PageRequest.of(page, DEFAULT_DATA_COUNT);
         Page<ApiRequestHistoryResponseDTO> apiRequestHistories = null;
 
-        if (searchType != null && keyword != null && !searchType.isEmpty() && !keyword.isEmpty()) {
-            apiRequestHistories = apiRequestHistoryRepository.searchApiRequestHistoryByCondition(pageRequest,
-                    searchType, keyword);
+        if (searchType != null && keyword != null && !keyword.isEmpty()) {
+            apiRequestHistories = apiRequestHistoryRepository.searchApiRequestHistoryByCondition(pageRequest, searchType, keyword);
         } else {
             apiRequestHistories = apiRequestHistoryRepository.searchApiRequestHistory(pageRequest);
         }

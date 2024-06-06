@@ -2,7 +2,7 @@ package com.park.restapi.domain.board.entity;
 
 import com.park.restapi.domain.api.entity.MethodType;
 import com.park.restapi.domain.member.entity.Member;
-import com.park.restapi.util.BaseTimeEntity;
+import com.park.restapi.util.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -59,7 +59,7 @@ public class Post extends BaseTimeEntity {
         this.title = title;
         this.content = content;
     }
-    
+
     public void incrementLikeCount() {
         this.likeCount += 1;
     }

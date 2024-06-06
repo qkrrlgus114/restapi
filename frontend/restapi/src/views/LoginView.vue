@@ -81,7 +81,7 @@ const login = async () => {
   }
 
   try {
-    await apiPost("/api/login", {
+    await apiPost("/api/members/login", {
       email: email.value,
       password: password.value,
     });

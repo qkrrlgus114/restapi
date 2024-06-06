@@ -1,4 +1,4 @@
-package com.park.restapi.util;
+package com.park.restapi.util.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

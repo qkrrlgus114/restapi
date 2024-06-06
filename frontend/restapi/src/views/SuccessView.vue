@@ -17,7 +17,7 @@ onMounted(() => {
 
 const socialLogin = async () => {
   try {
-    await apiPost("/api/social-login", {
+    await apiPost("/api/members/social-login", {
       social: true,
     });
     store.loginState = true;
