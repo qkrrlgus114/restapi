@@ -6,8 +6,8 @@ import com.park.restapi.domain.inquiry.entity.Inquiry;
 public interface AnswerService {
 
     // 답변 등록
-    Inquiry createAnswer(AnswerRequestDTO requestDTO);
+    Inquiry createAnswer(Long inquiryId, AnswerRequestDTO requestDTO);
 
     // 답변 수정
-    void updateAnswer(AnswerRequestDTO requestDTO);
+    void updateAnswer(Long inquiryId, AnswerRequestDTO requestDTO);
 }

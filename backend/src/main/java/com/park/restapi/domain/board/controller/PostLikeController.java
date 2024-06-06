@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/posts")
 @Slf4j
 public class PostLikeController {
 
     private final PostLikeService postLikeService;
 
     // 게시글 좋아요 누르기
-    @PostMapping("/post/{id}/like")
+    @PostMapping("/{id}/likes")
     public ResponseEntity<ApiResponse<Void>> likePost(@PathVariable("id") Long postId) {
 
         postLikeService.likePost(postId);
@@ -27,7 +27,7 @@ public class PostLikeController {
     }
 
     // 게시글 좋아요 취소하기
-    @DeleteMapping("/post/{id}/like")
+    @DeleteMapping("/{id}/likes")
     public ResponseEntity<ApiResponse<Void>> unlikePost(@PathVariable("id") Long postId) {
 
         postLikeService.unlikePost(postId);

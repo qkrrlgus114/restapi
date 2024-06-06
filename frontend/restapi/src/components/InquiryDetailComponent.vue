@@ -98,7 +98,7 @@ onMounted(() => {
 // 상세 문의 내역 가져오기
 const getInquiryInfo = async (inquiryId) => {
   try {
-    const data = await apiGet(`api/inquiries/${inquiryId}`);
+    const data = await apiGet(`/api/inquiries/${inquiryId}`);
     inquiry.value = data.data;
   } catch (error) {}
 };

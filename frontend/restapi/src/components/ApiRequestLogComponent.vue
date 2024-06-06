@@ -73,10 +73,10 @@ const itemsPerPageGroup = 5; // 한 번에 표시할 페이지 번호 수
 const searchField = ref(route.query.searchType || "email");
 const searchValue = ref(route.query.searchKey || "");
 
-// 데이터 가져오기 함수
+// 요청 이력 가져오기
 const getRequestHistory = async (page, searchField = "", searchValue = "") => {
   try {
-    let url = `/api/gpt/admin/requests?page=${page}`;
+    let url = `/api/gpt/admin/requests/history?page=${page}`;
     if (searchField && searchValue) {
       url += `&searchType=${searchField}&searchKey=${searchValue}`;
     }

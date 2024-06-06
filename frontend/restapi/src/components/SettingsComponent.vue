@@ -78,7 +78,7 @@ onMounted(() => {
 // 쿠폰 설정 가져오기
 const getCouponSetting = async () => {
   try {
-    const data = await apiGet("/api/admin/coupons/setting");
+    const data = await apiGet("/api/admin/coupons/settings");
     dailyCouponQuantity.value = data.data.dailyCouponQuantity;
     isDailyCouponGenerate.value = data.data.isDailyCouponGenerate;
     originDailyCouponQuantity.value = dailyCouponQuantity.value;
@@ -99,7 +99,7 @@ const applySettings = async () => {
   try {
     if (!checkCouponData()) return;
 
-    const data = await apiPatch("/api/admin/coupons/setting", {
+    const data = await apiPatch("/api/admin/coupons/settings", {
       isDailyCouponGenerate: isDailyCouponGenerate.value,
       dailyCouponQuantity: dailyCouponQuantity.value,
     });

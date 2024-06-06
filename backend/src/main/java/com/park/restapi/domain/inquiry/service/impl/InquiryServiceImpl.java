@@ -52,8 +52,7 @@ public class InquiryServiceImpl implements InquiryService {
         Member currentMember = getCurrentMemberFetchJoinMemberRoles();
 
         PageRequest pageRequest = PageRequest.of(page, DEFAULT_DATA_COUNT, Sort.Direction.DESC, "createDate");
-        Page<InquiryResponseDTO> inquires = inquiryRepository.findByInquires(currentMember, pageRequest,
-                isAdmin(currentMember));
+        Page<InquiryResponseDTO> inquires = inquiryRepository.findByInquires(currentMember, pageRequest, isAdmin(currentMember));
 
         return InquiryListResponseDTO.builder()
                 .inquiryResponseDTOS(inquires.getContent())
@@ -68,13 +67,11 @@ public class InquiryServiceImpl implements InquiryService {
         Member currentMember = getCurrentMemberFetchJoinMemberRoles();
         Answer answer = null;
 
-        Inquiry inquiry = inquiryRepository.findByInquiryFetchJoinMember(inquiryId)
-                .orElseThrow(
-                        () -> new InquiryException(InquiryExceptionInfo.NOT_FOUND_INQUIRY, inquiryId + "번 문의 내역을 찾을 수 없습니다."));
+        Inquiry inquiry = inquiryRepository.findByInquiryFetchJoinMember(inquiryId).
+                orElseThrow(() -> new InquiryException(InquiryExceptionInfo.NOT_FOUND_INQUIRY, inquiryId + "번 문의 내역을 찾을 수 없습니다."));
 
         if (!inquiry.getMember().equals(currentMember) && !isAdmin(currentMember)) {
-            throw new InquiryException(InquiryExceptionInfo.NOT_MATCH_MEMBER,
-                    currentMember.getEmail() + " 유저가 " + inquiryId + "질문에 접근했습니다.(접근 차단)");
+            throw new InquiryException(InquiryExceptionInfo.NOT_MATCH_MEMBER, currentMember.getEmail() + " 유저가 " + inquiryId + "질문에 접근했습니다.(접근 차단)");
         }
 
         if (inquiry.isAnswered()) {
@@ -88,18 +85,16 @@ public class InquiryServiceImpl implements InquiryService {
     private Member getCurrentMember() {
         Long currentUserId = jwtService.getCurrentUserId();
 
-        return memberRepository.findById(currentUserId)
-                .orElseThrow(
-                        () -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
+        return memberRepository.findById(currentUserId).
+                orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 
     // 현재 로그인 유저 찾기(유저 권한 FetchJoin)
     private Member getCurrentMemberFetchJoinMemberRoles() {
         Long currentUserId = jwtService.getCurrentUserId();
 
-        return memberRepository.findByIdFetchRole(currentUserId)
-                .orElseThrow(
-                        () -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
+        return memberRepository.findByIdFetchRole(currentUserId).
+                orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 
     // 관리자 권한 확인

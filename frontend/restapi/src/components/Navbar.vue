@@ -85,7 +85,7 @@ onMounted(async () => {
 // 유저 정보 호출
 const loadUserInfo = async () => {
   try {
-    const data = await apiGet("api/members");
+    const data = await apiGet("/api/members/main-info");
     store.updateUserInfo(data.data);
   } catch (error) {}
 };
@@ -101,7 +101,7 @@ const loadCouponInfo = async () => {
 // 로그아웃 함수
 const logout = async () => {
   try {
-    await apiGet("/api/logout");
+    await apiGet("/api/members/logout");
     store.logout();
     router.push("/");
   } catch (error) {}
@@ -110,7 +110,7 @@ const logout = async () => {
 // 토큰 갱신
 const renewToken = async () => {
   try {
-    const data = await apiGet("/api/tokens");
+    const data = await apiGet("/api/members/tokens");
     store.updateToken(data.data);
     alert(data.message);
   } catch (error) {}
