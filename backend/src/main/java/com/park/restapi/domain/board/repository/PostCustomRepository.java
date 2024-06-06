@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface PostCustomRepository {
 
-    Page<ApiRecommendPostsResponseDTO> findRecommendPostFirstPage(Pageable pageable);
+    Page<ApiRecommendPostsResponseDTO> findRecommendPosts(Pageable pageable, String searchType, String searchKey, String sortBy);
 }
