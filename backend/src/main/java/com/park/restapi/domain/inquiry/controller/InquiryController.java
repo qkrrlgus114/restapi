@@ -12,14 +12,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/inquiries")
 @RequiredArgsConstructor
 public class InquiryController {
 
     private final InquiryService inquiryService;
 
     // 문의 등록하기
-    @PostMapping("inquiries")
+    @PostMapping()
     public ResponseEntity<ApiResponse<Void>> createInquiry(@RequestBody @Valid InquiryRequestDTO inquiryRequestDTO) {
         inquiryService.inquiryRegister(inquiryRequestDTO);
 
@@ -27,7 +27,7 @@ public class InquiryController {
     }
 
     // 현재 유저의 문의 내역 가져오기
-    @GetMapping("inquiries")
+    @GetMapping()
     public ResponseEntity<ApiResponse<InquiryListResponseDTO>> getInquiries(@RequestParam(value = "page", defaultValue = "1") int page) {
         InquiryListResponseDTO myInquiries = inquiryService.getMyInquiries(page - 1);
 
@@ -35,7 +35,7 @@ public class InquiryController {
     }
 
     // 상세 문의내역 가져오기
-    @GetMapping("inquiries/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<InquiryInfoResponseDTO>> getTargetInquiry(@PathVariable(name = "id") Long inquiryId) {
         InquiryInfoResponseDTO responseDTO = inquiryService.getTargetInquiry(inquiryId);
 

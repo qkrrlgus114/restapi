@@ -33,16 +33,14 @@ public class AnswerServiceImpl implements AnswerService {
     // 문의내역 답변 등록하기
     @Override
     @Transactional
-    public Inquiry createAnswer(AnswerRequestDTO requestDTO) {
+    public Inquiry createAnswer(Long inquiryId, AnswerRequestDTO requestDTO) {
         Member currentMember = getCurrentMember();
 
-        Inquiry inquiry = inquiryRepository.findById(requestDTO.inquiryId())
-                .orElseThrow(() -> new InquiryException(InquiryExceptionInfo.NOT_FOUND_INQUIRY,
-                        requestDTO.inquiryId() + "번 문의 내역을 찾을 수 없습니다."));
+        Inquiry inquiry = inquiryRepository.findById(inquiryId)
+                .orElseThrow(() -> new InquiryException(InquiryExceptionInfo.NOT_FOUND_INQUIRY, inquiryId + "번 문의 내역을 찾을 수 없습니다."));
 
         if (inquiry.isAnswered()) {
-            throw new AnswerException(AnswerExceptionInfo.EXISTS_ANSWERED,
-                    requestDTO.inquiryId() + "번 문의에는 이미 답변이 존재합니다.");
+            throw new AnswerException(AnswerExceptionInfo.EXISTS_ANSWERED, inquiryId + "번 문의에는 이미 답변이 존재합니다.");
         }
 
         Answer answer = requestDTO.toEntity();
@@ -55,12 +53,11 @@ public class AnswerServiceImpl implements AnswerService {
     // 문의내역 답변 수정하기
     @Override
     @Transactional
-    public void updateAnswer(AnswerRequestDTO requestDTO) {
+    public void updateAnswer(Long inquiryId, AnswerRequestDTO requestDTO) {
         Member currentMember = getCurrentMember();
 
-        Inquiry inquiry = inquiryRepository.findById(requestDTO.inquiryId())
-                .orElseThrow(() -> new InquiryException(InquiryExceptionInfo.NOT_FOUND_INQUIRY,
-                        requestDTO.inquiryId() + "번 문의 내역을 찾을 수 없습니다."));
+        Inquiry inquiry = inquiryRepository.findById(inquiryId)
+                .orElseThrow(() -> new InquiryException(InquiryExceptionInfo.NOT_FOUND_INQUIRY, inquiryId + "번 문의 내역을 찾을 수 없습니다."));
 
         Answer answer = inquiry.getAnswer();
         answer.updateAnswer(requestDTO.content());
@@ -71,7 +68,6 @@ public class AnswerServiceImpl implements AnswerService {
         Long currentUserId = jwtService.getCurrentUserId();
 
         return memberRepository.findById(currentUserId)
-                .orElseThrow(
-                        () -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
+                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 }

@@ -64,15 +64,13 @@ const submitForm = async () => {
   if (checkContent()) {
     try {
       if (isAnswered.value) {
-        await apiPatch(`api/answers`, {
+        await apiPatch(`/api/admin/answers/${inquiryId.value}`, {
           content: answerContent.value,
-          inquiryId: inquiryId.value,
         });
         alert("답변이 수정되었습니다.");
       } else {
-        await apiPost(`api/answers`, {
+        await apiPost(`/api/admin/answers/${inquiryId.value}`, {
           content: answerContent.value,
-          inquiryId: inquiryId.value,
         });
         alert("답변이 등록되었습니다.");
       }

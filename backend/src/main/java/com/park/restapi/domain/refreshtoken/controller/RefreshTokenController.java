@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("api/auth")
+@RequestMapping("/api")
 @Validated
 public class RefreshTokenController {
     private final RefreshTokenService refreshTokenService;
 
-    @PostMapping("refresh-token")
+    @PostMapping("/refresh-token")
     public ResponseEntity<ApiResponse<Void>> refreshToken(@CookieValue(value = "accessToken") String accessToken,
                                                           @CookieValue(value = "refreshToken") String refreshToken,
                                                           HttpServletResponse response) {
