@@ -11,30 +11,30 @@
         :disabled="isDisabled"
         required
       />
-      <button @click="sendCertificationCode" :disabled="isDisabled">
+      <button @click="sendAuthenticationNumber" :disabled="isDisabled">
         인증번호 전송
       </button>
     </div>
-    <div v-if="showCertificationInput">
+    <div v-if="showAuthenticationNumberInput">
       <div>
-        <label for="certificationCode">인증번호</label>
+        <label for="authenticationNumber">인증번호</label>
         <input
           type="text"
-          id="certificationCode"
-          v-model="certificationCode"
+          id="authenticationNumber"
+          v-model="authenticationNumber"
           :disabled="isDisabled"
           required
         />
         <button
           class="auth-btn"
-          @click="checkCertificationCode"
+          @click="checkAuthenticationNumber"
           :disabled="isDisabled"
         >
           인증
         </button>
         <button
           class="auth-btn"
-          @click="sendCertificationCode"
+          @click="sendAuthenticationNumber"
           :disabled="isDisabled"
         >
           재전송
@@ -70,16 +70,16 @@ import { apiPost } from "@/utils/api";
 const router = useRouter();
 
 const email = ref("");
-const certificationCode = ref("");
+const authenticationNumber = ref("");
 const password = ref("");
 const passwordConfirm = ref("");
 const nickname = ref("");
-const showCertificationInput = ref(false);
+const showAuthenticationNumberInput = ref(false);
 const isLoading = ref(false);
 // 이메일 인증 끝나면 버튼 비활성화 목적
 const isDisabled = ref(false);
 // 이메일 인증이 되었는지 확인
-const isCheckCertification = ref(false);
+const isCheckAuthentication = ref(false);
 
 // 입력값 체크
 const checkInputValue = () => {
@@ -105,7 +105,7 @@ const checkInputValue = () => {
   } else if (!/^[가-힣a-zA-Z0-9]{1,10}$/.test(nickname.value)) {
     alert("닉네임은 1~10자리의 한글, 영문, 숫자만 포함해야 합니다.");
     return false;
-  } else if (isCheckCertification.value === false) {
+  } else if (isCheckAuthentication.value === false) {
     alert("이메일 인증이 필요합니다.");
     return false;
   }
@@ -114,15 +114,15 @@ const checkInputValue = () => {
 };
 
 // 인증번호 전송
-const sendCertificationCode = async () => {
+const sendAuthenticationNumber = async () => {
   if (!/\S+@\S+\.\S+/.test(email.value)) {
     alert("유효한 이메일 주소를 입력해주세요.");
     return;
   }
   isLoading.value = true;
   try {
-    await apiPost("/api/authentications/send", { email: email.value });
-    showCertificationInput.value = true;
+    await apiPost("/api/email/authentication/send", { email: email.value });
+    showAuthenticationNumberInput.value = true;
     alert("인증번호가 전송되었습니다.");
   } catch (error) {
   } finally {
@@ -131,14 +131,14 @@ const sendCertificationCode = async () => {
 };
 
 // 인증번호 확인
-const checkCertificationCode = async () => {
+const checkAuthenticationNumber = async () => {
   try {
-    const data = await apiPost("/api/authentications/verify", {
-      certificationCode: certificationCode.value,
+    const data = await apiPost("/api/email/authentications/verify", {
+      authenticationNumber: authenticationNumber.value,
     });
     alert(data.message);
     isDisabled.value = true;
-    isCheckCertification.value = true;
+    isCheckAuthentication.value = true;
   } catch (error) {}
 };
 
@@ -147,7 +147,7 @@ const register = async () => {
   if (!checkInputValue()) return;
 
   try {
-    const data = await apiPost("/api/signup", {
+    const data = await apiPost("/api/members", {
       email: email.value,
       password: password.value,
       nickname: nickname.value,

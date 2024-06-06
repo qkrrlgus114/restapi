@@ -66,7 +66,7 @@ const checkContent = () => {
 const submitForm = async () => {
   if (checkContent()) {
     try {
-      const data = await apiPost(`api/inquiries`, {
+      const data = await apiPost(`/api/inquiries`, {
         title: title.value,
         content: content.value,
         inquiryCategory: inquiryCategory.value,

@@ -42,7 +42,7 @@ onMounted(() => {
 // 유저 개인정보 호출
 const loadUserInfo = async () => {
   try {
-    const data = await apiGet("api/members/info");
+    const data = await apiGet("/api/members/details");
 
     social.value = data.data.socialMember;
     nickname.value = data.data.nickname;

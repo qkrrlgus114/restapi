@@ -22,11 +22,11 @@
         <div
           class="board-cell answered"
           :class="{
-            'answered-true': item.answered,
-            'answered-false': !item.answered,
+            'answered-true': item.isAnswered,
+            'answered-false': !item.isAnswered,
           }"
         >
-          {{ item.answered ? "등록됨" : "등록안됨" }}
+          {{ item.isAnswered ? "등록됨" : "등록안됨" }}
         </div>
       </router-link>
     </div>
@@ -103,7 +103,7 @@ onMounted(() => {
 // 문의 내역 가져오기
 const getInquiries = async (page) => {
   try {
-    const data = await apiGet(`api/inquiries?page=${page}`);
+    const data = await apiGet(`/api/inquiries?page=${page}`);
     console.log(data);
     boardItems.value = data.data.inquiryResponseDTOS;
     totalPages.value = data.data.totalPages;

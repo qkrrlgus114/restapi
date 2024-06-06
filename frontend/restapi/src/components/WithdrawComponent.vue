@@ -81,7 +81,7 @@ const withdrawAPI = async () => {
   const socialType = social.value ? "KAKAO" : "GENERAL";
 
   try {
-    const data = await apiPatch("api/members/deactivate", {
+    const data = await apiPatch("/api/members/deactivate", {
       socialType: socialType,
       password: password.value,
     });

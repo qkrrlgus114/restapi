@@ -118,7 +118,7 @@ const getSharePosts = async (
   sortBy = ""
 ) => {
   try {
-    let url = `/api/post/share-api?page=${page}`;
+    let url = `/api/posts?page=${page}`;
     if (searchType && searchKey) {
       url += `&searchType=${searchType}&searchKey=${searchKey}`;
     } else if (sortBy) {
@@ -126,7 +126,6 @@ const getSharePosts = async (
     }
     const data = await apiGet(url);
 
-    console.log(data);
     boardItems.value = data.data.apiRecommendPostsResponseDTOS;
     totalPages.value = data.data.totalPages;
     currentPage.value = data.data.currentPage + 1;
