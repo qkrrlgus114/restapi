@@ -78,10 +78,17 @@ public class ApiRequestHistoryRepositoryImpl implements ApiRequestHistoryCustomR
         return apiRequestHistory.member.email.contains(keyword);
     }
 
+    // 아이디 검색
+    private BooleanExpression idEquals(String keyword) {
+        return apiRequestHistory.member.id.eq(Long.parseLong(keyword));
+    }
+
     // 검색 조건 쿼리 생성
     private BooleanExpression searchCondition(String searchType, String keyword) {
         if ("email".equals(searchType)) {
             return emailContains(keyword);
+        } else if ("id".equals(searchType)) {
+            return idEquals(keyword);
         }
 
         return null;
