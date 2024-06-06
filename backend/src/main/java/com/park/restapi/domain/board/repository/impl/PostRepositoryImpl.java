@@ -30,13 +30,13 @@ public class PostRepositoryImpl implements PostCustomRepository {
     @Override
     public Page<ApiRecommendPostsResponseDTO> findRecommendPosts(Pageable pageable, String searchType, String searchKey, String sortBy) {
 
-        OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sortBy);
+        OrderSpecifier<?>[] orderSpecifier = getOrderSpecifier(sortBy);
 
         List<Long> postIds = queryFactory
                 .select(post.id)
                 .from(post)
                 .where(searchCondition(searchType, searchKey))
-                .orderBy(orderSpecifier, post.id.desc())
+                .orderBy(orderSpecifier)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -47,6 +47,7 @@ public class PostRepositoryImpl implements PostCustomRepository {
                 .from(post)
                 .leftJoin(post.member, member)
                 .where(post.id.in(postIds))
+                .orderBy(orderSpecifier)
                 .fetch();
 
         long total = queryFactory
@@ -71,11 +72,11 @@ public class PostRepositoryImpl implements PostCustomRepository {
     }
 
     // 정렬 쿼리 생성
-    private OrderSpecifier<?> getOrderSpecifier(String orderBy) {
-        if ("like".equals(orderBy)) {
-            return post.likeCount.desc();
+    private OrderSpecifier<?>[] getOrderSpecifier(String sortBy) {
+        if ("like".equals(sortBy)) {
+            return new OrderSpecifier[]{post.likeCount.desc(), post.id.desc()};
         } else {
-            return post.id.desc();
+            return new OrderSpecifier[]{post.id.desc()};
         }
     }
 
