@@ -64,7 +64,7 @@ onMounted(() => {
 // 상세 문의 내역 가져오기
 const getSharePostDetail = async (postId) => {
   try {
-    const data = await apiGet(`api/post/shard-api/${postId}`);
+    const data = await apiGet(`api/post/share-api/${postId}`);
     console.log(data);
     post.value = data.data;
   } catch (error) {}

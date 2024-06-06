@@ -52,10 +52,10 @@ public class PostServiceImpl implements PostService {
     // api 공유게시글 가져오기(페이지네이션)
     @Override
     @Transactional(readOnly = true)
-    public ApiRecommendPostsListResponseDTO getGptApiRecommendPosts(int page) {
+    public ApiRecommendPostsListResponseDTO getGptApiRecommendPosts(int page, String searchType, String searchKey, String sortBy) {
         PageRequest pageRequest = PageRequest.of(page, DEFAULT_DATA_COUNT);
 
-        Page<ApiRecommendPostsResponseDTO> apiRecommendPostsResponseDTOS = postRepository.findRecommendPostFirstPage(pageRequest);
+        Page<ApiRecommendPostsResponseDTO> apiRecommendPostsResponseDTOS = postRepository.findRecommendPosts(pageRequest, searchType, searchKey, sortBy);
 
         return ApiRecommendPostsListResponseDTO.builder()
                 .apiRecommendPostsResponseDTOS(apiRecommendPostsResponseDTOS.getContent())
@@ -90,8 +90,6 @@ public class PostServiceImpl implements PostService {
     // 현재 로그인 유저 찾기
     private Member getCurrentMember() {
         Long currentUserId = jwtService.getCurrentUserId();
-        System.out.println("들어옴1");
-
         if (currentUserId == null) {
             return null;
         }

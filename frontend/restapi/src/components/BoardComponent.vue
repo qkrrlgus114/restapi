@@ -1,6 +1,9 @@
 <template>
   <div class="content">
-    <div class="content-title">API 공유 게시판</div>
+    <div class="content-header">
+      <div class="content-title">API 공유 게시판</div>
+      <button class="sort-by-likes" @click="likeSort(1)">좋아요 순</button>
+    </div>
     <div class="content-board">
       <div class="board-header">
         <div class="board-cell no">No</div>
@@ -49,6 +52,23 @@
         다음
       </button>
     </div>
+    <div class="search-bar">
+      <select v-model="searchType">
+        <option value="none" disabled>검색타입</option>
+        <option value="nickname">닉네임</option>
+        <option value="title">제목</option>
+        <option value="methodType">메서드</option>
+      </select>
+      <input
+        v-model="searchKey"
+        type="text"
+        placeholder="검색어를 입력해주세요"
+        @keyup.enter="searchSharedPost(1, searchType, searchKey, sortBy)"
+      />
+      <button @click="searchSharedPost(1, searchType, searchKey, sortBy)">
+        검색
+      </button>
+    </div>
   </div>
 </template>
 
@@ -65,24 +85,46 @@ const currentPage = ref(1);
 const totalPages = ref(0);
 const currentPageGroup = ref(1);
 const itemsPerPageGroup = 5;
+const searchType = ref(route.query.searchType || "none");
+const searchKey = ref(route.query.searchKey || "");
+const sortBy = ref(route.query.sortBy || "");
 
 onMounted(() => {
   watch(
-    () => route.params.page,
-    (newPage) => {
+    [
+      () => route.params.page,
+      () => route.query.searchType,
+      () => route.query.searchKey,
+      () => route.query.sortBy,
+    ],
+    ([newPage, newSearchType, newSearchKey, newSortBy]) => {
       const page = parseInt(newPage) || 1;
       currentPage.value = page;
       currentPageGroup.value = Math.ceil(page / itemsPerPageGroup);
-      getSharePosts(page);
+      searchType.value = newSearchType || "none";
+      searchKey.value = newSearchKey || "";
+      sortBy.value = newSortBy || "";
+      getSharePosts(page, searchType.value, searchKey.value, sortBy.value);
     },
     { immediate: true }
   );
 });
 
-// 문의 내역 가져오기
-const getSharePosts = async (page) => {
+// 공유게시판 게시글 가져오기
+const getSharePosts = async (
+  page,
+  searchType = "",
+  searchKey = "",
+  sortBy = ""
+) => {
   try {
-    const data = await apiGet(`api/post/shard-api?page=${page}`);
+    let url = `/api/post/share-api?page=${page}`;
+    if (searchType && searchKey) {
+      url += `&searchType=${searchType}&searchKey=${searchKey}`;
+    } else if (sortBy) {
+      url += `&sortBy=${sortBy}`;
+    }
+    const data = await apiGet(url);
 
     console.log(data);
     boardItems.value = data.data.apiRecommendPostsResponseDTOS;
@@ -94,7 +136,15 @@ const getSharePosts = async (page) => {
 // 페이지 변경
 const changePage = (page) => {
   if (page >= 1 && page <= totalPages.value) {
-    router.push({ name: "Board", params: { page } });
+    router.push({
+      name: "Board",
+      params: { page },
+      query: {
+        searchType: route.query.searchType,
+        searchKey: route.query.searchKey,
+        sortBy: route.query.sortBy,
+      },
+    });
   }
 };
 
@@ -110,6 +160,31 @@ const changePageGroup = (direction) => {
     currentPageGroup.value++;
     changePage((currentPageGroup.value - 1) * itemsPerPageGroup + 1);
   }
+};
+
+// 검색 요청 처리
+const searchSharedPost = (page, searchType, searchKey) => {
+  if (searchType == "none") {
+    alert("검색 타입을 선택해주세요.");
+    return;
+  } else if (searchKey == "") {
+    alert("검색어를 입력해주세요.");
+    return;
+  }
+  router.push({
+    name: "Board",
+    params: { page: 1 },
+    query: { searchType: searchType, searchKey: searchKey, sortBy: sortBy },
+  });
+};
+
+// 좋아요 순 검색
+const likeSort = (page) => {
+  router.push({
+    name: "Board",
+    params: { page: 1 },
+    query: { sortBy: "like" },
+  });
 };
 
 const pageNumbers = computed(() => {
@@ -133,14 +208,36 @@ const totalPageGroups = computed(() => {
   background-color: rgb(255, 255, 255);
   padding: 10px;
   margin: 20px;
+  margin-bottom: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
+.content-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  position: relative;
+}
+
 .content-title {
   font-size: 2rem;
   padding: 3rem 0;
+  margin: 0 auto;
+}
+
+.sort-by-likes {
+  position: absolute;
+  right: 0;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f4f4f4;
+  cursor: pointer;
 }
 
 .content-board {
@@ -172,7 +269,7 @@ const totalPageGroups = computed(() => {
 }
 
 .board-cell.no {
-  flex: 0 0 5%;
+  flex: 0 0 10%;
 }
 
 .board-cell.method_type {
@@ -180,7 +277,7 @@ const totalPageGroups = computed(() => {
 }
 
 .board-cell.title {
-  flex: 1 0 50%;
+  flex: 1 0 45%;
   text-align: left;
   padding-left: 10px;
 }
@@ -189,7 +286,13 @@ const totalPageGroups = computed(() => {
   flex: 0 0 15%;
 }
 
-.board-cell.like_count,
+.board-cell.like_count {
+  flex: 0 0 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .board-cell.view_count {
   flex: 0 0 10%;
 }
@@ -250,5 +353,26 @@ const totalPageGroups = computed(() => {
 button:hover {
   background-color: #e7e7e7;
   color: black;
+}
+
+.search-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.search-bar select,
+.search-bar input,
+.search-bar button {
+  margin: 0 5px;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.search-bar input {
+  flex: 1;
 }
 </style>

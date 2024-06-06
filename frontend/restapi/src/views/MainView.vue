@@ -6,7 +6,7 @@
     </div>
 
     <div class="footer">
-      <button @click="goToLogin" class="btn btn-primary btn-lg custom-button">
+      <button @click="goToChat" class="btn btn-primary btn-lg custom-button">
         시작하기
       </button>
     </div>
@@ -18,8 +18,8 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
-const goToLogin = () => {
-  router.push("/login");
+const goToChat = () => {
+  router.push("/chat");
 };
 </script>
 

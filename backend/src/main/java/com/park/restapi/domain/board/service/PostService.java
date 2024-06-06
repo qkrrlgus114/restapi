@@ -10,7 +10,7 @@ public interface PostService {
     void apiRecommendDataPost(ApiRecommendPostRequestDTO apiRecommendPostRequestDTO);
 
     // 모든 공유 게시글 가져오기
-    ApiRecommendPostsListResponseDTO getGptApiRecommendPosts(int page);
+    ApiRecommendPostsListResponseDTO getGptApiRecommendPosts(int page, String searchType, String searchKey, String sortBy);
 
     // 특정 공유 게시글 가져오기
     ApiRecommendPostResponseDTO getGptApiRecommendPost(Long postId);

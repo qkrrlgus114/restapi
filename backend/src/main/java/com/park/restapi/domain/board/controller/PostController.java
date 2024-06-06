@@ -21,7 +21,7 @@ public class PostController {
     private final PostService postService;
 
     // 게시글 공유하기
-    @PostMapping("post/shard-api")
+    @PostMapping("post/share-api")
     public ResponseEntity<ApiResponse<Void>> sharedGptApiRecommendPost(@Valid @RequestBody ApiRecommendPostRequestDTO apiRecommendPostRequestDTO) {
 
         postService.apiRecommendDataPost(apiRecommendPostRequestDTO);
@@ -31,19 +31,21 @@ public class PostController {
     }
 
     // 게시글 가져오기
-    @GetMapping("post/shard-api")
-    public ResponseEntity<ApiResponse<ApiRecommendPostsListResponseDTO>> getGptApiRecommendPost(@RequestParam(value = "page", defaultValue = "1") int page) {
+    @GetMapping("post/share-api")
+    public ResponseEntity<ApiResponse<ApiRecommendPostsListResponseDTO>> getGptApiRecommendPost(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "searchType", required = false, defaultValue = "") String searchType,
+            @RequestParam(value = "searchKey", required = false, defaultValue = "") String searchKey,
+            @RequestParam(value = "sortBy", required = false, defaultValue = "") String sortBy) {
 
-        System.out.println("들어옴");
-
-        ApiRecommendPostsListResponseDTO gptApiRecommendPosts = postService.getGptApiRecommendPosts(page - 1);
+        ApiRecommendPostsListResponseDTO gptApiRecommendPosts = postService.getGptApiRecommendPosts(page - 1, searchType, searchKey, sortBy);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponse.createSuccess(gptApiRecommendPosts, "모든 공유 게시글 가져오기 성공"));
     }
 
     // 특정 게시글 가져오기
-    @GetMapping("post/shard-api/{id}")
+    @GetMapping("post/share-api/{id}")
     public ResponseEntity<ApiResponse<ApiRecommendPostResponseDTO>> getGptApiRecommendPostTarget(@PathVariable("id") Long postId) {
 
         ApiRecommendPostResponseDTO gptApiRecommendPost = postService.getGptApiRecommendPost(postId);

@@ -51,7 +51,7 @@ public class JwtFilter extends OncePerRequestFilter {
         Optional<String> accessTokenOptional = findAccessToken(request, "accessToken");
 
         // 비로그인 사용자를 위해 /api/post 경로에 대해 GUEST 권한 부여
-        if (accessTokenOptional.isEmpty() && request.getRequestURI().startsWith("/api/post/shard-api")) {
+        if (accessTokenOptional.isEmpty() && request.getRequestURI().startsWith("/api/post/share-api")) {
             log.info("비로그인 사용자에게 GUEST 권한 부여");
             List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("GUEST"));
             UsernamePasswordAuthenticationToken authenticationToken =

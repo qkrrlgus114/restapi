@@ -13,7 +13,7 @@
           공유 게시판
         </router-link>
       </div>
-      <div class="user-info" v-if="loginStatus">
+      <div class="user-info" v-if="loginState">
         <button class="custom-btn" v-if="isAdmin" @click="goAdmin">
           관리자 설정
         </button>
@@ -40,7 +40,7 @@
           </ul>
         </div>
       </div>
-      <div class="user-info" v-if="!loginStatus">
+      <div class="user-info" v-if="!loginState">
         <button
           class="btn btn-secondary custom-btn not-login-btn"
           @click="goLogin"
@@ -71,10 +71,10 @@ const nickname = computed(() => store.nickname);
 const coupon = computed(() => store.coupon);
 const token = computed(() => store.token);
 const isAdmin = ref(false);
-const loginStatus = computed(() => store.loginState);
+const loginState = computed(() => store.loginState);
 
 onMounted(async () => {
-  if (loginStatus.value) {
+  if (loginState.value) {
     await loadUserInfo();
     await loadCouponInfo();
     const admin = store.getAdminRole;
