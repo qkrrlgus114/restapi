@@ -54,7 +54,7 @@
 - **1:1 문의하기**: 관리자에게 1:1 문의 메시지 작성. 이메일로 답변이 달리면 안내 메일을 받음.
 
 ### 5. API 공유 게시판
-- **게시판**: 유저들이 응답으로 만든 RESTFUL API를 확인할 수 있습니다.(추후 검색, 정렬 기능 추가 예정)
+- **게시판**: 유저들이 응답으로 만든 RESTFUL API를 확인할 수 있습니다.
 
 <hr>
 
@@ -74,7 +74,7 @@
  
 - ## 스레드 동시성 제어(세마포어)
   - 멀티 스레드 환경에서 GPT의 과도한 동시 요청을 제어
-  - 최대 5개의 세마포어 설정을 통해, 동시에 처리할 수 있는 요청의 수를 제한하여 시스템을 안정적으로 운용.
+  - 최대 5개의 세마포어 설정을 통해, 동시에 처리할 수 있는 요청의 수를 제한하여 시스템을 안정적으로 운영.
 
 - ## DB 락
   - 선착순 쿠폰 데이터, 좋아요, 조회수의 데이터 정합성을 보장하기 위해 DB 락 도입.
@@ -82,11 +82,6 @@
  
 - ## 비동기 스레드 풀
   - 1:1 관리자 답변 시 이메일 전송 로직을 비동기로 처리하여 빠른 응답 제공.
-  - 3.4초의 응답을 0.013초로 단축
- 
-- ## 프롬프트
-  - RESTFUL API의 필수 원칙을 정의하여 프롬프트로 제작.
-  ![image](https://github.com/qkrrlgus114/restapi/assets/121294224/1845f065-9811-4a46-b6ea-5d198cccf460)
 
 <hr>
 
@@ -137,34 +132,40 @@
 
 <hr>
 
-# 5️⃣ **사진 및 사용 영상**
+# 5️⃣ **사진**
 ## 메인 화면
 ![image](https://github.com/qkrrlgus114/restapi/assets/121294224/2702b632-13ca-4c02-981f-4d86eb2ffca1)
+
 ## 로그인 화면
 ![image](https://github.com/qkrrlgus114/restapi/assets/121294224/c8522933-3450-41f2-b2e8-390739ca8260)
-## 메인 서비스 화면
-![image](https://github.com/qkrrlgus114/restapi/assets/121294224/a80ac608-ec77-4343-bbd4-901f8ff225fb)
+
+## 메인 서비스 화면(게스트 모드)
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/520958eb-ec01-4493-935a-639cf190b427)
+
 ## RESTAPI 추천 결과
-![image](https://github.com/qkrrlgus114/restapi/assets/121294224/36a00312-395c-4b3e-9b0e-3de796732ee9)
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/736f903a-7bc3-4689-81e5-a4130900ac11)
+
 ## 관리자 화면(데일리 쿠폰 설정)
 - 데일리 쿠폰 발급 조건 설정 가능.
 - 쿠폰 즉시 발급 가능.
 
-![image](https://github.com/qkrrlgus114/restapi/assets/121294224/c923663e-27e4-4d04-8689-ddd29d567a56)
-![image](https://github.com/qkrrlgus114/restapi/assets/121294224/50a2410d-cf75-4262-812b-9ac946d62e6a)
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/922fe263-9644-4e1a-9530-236b19983a2e)
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/2696eaf6-0e52-4870-a7cc-a9c42c3680f8)
 
 ## 개인정보 화면
-![image](https://github.com/qkrrlgus114/restapi/assets/121294224/45096152-592d-4252-905a-752908845243)
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/cb519745-e7ad-43fe-9481-7f5c23aa31e8)
 
 ## 회원탈퇴 화면
-![image](https://github.com/qkrrlgus114/restapi/assets/121294224/79725138-e10c-42cc-9b63-9ae443f747be)
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/e25ac4ff-643f-4015-9eca-61c19b1a4549)
 
 ## 1:1 문의하기 서비스
-![image](https://github.com/qkrrlgus114/restapi/assets/121294224/a458d007-918c-43ec-9919-f8613896284d)
-![image](https://github.com/qkrrlgus114/restapi/assets/121294224/f1797c4f-55a4-4f72-baef-220ae41712fe)
-![image](https://github.com/qkrrlgus114/restapi/assets/121294224/0e92770d-77f4-4f87-a1a3-20840025d429)
-![image](https://github.com/qkrrlgus114/restapi/assets/121294224/91033f42-77b8-42ef-b81e-e073759a2afd)
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/e73b8e39-5ef1-46fb-a4ec-d8c61eaa23bc)
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/d0705b97-dd88-4dd0-b902-9616557e55f9)
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/ebca21e0-5f22-4629-94e6-3b64d4a7cd50)
 
+## API 공유 게시판
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/8f6f1bf2-444c-44de-b86f-e746b70ff3b4)
+![image](https://github.com/qkrrlgus114/restapi/assets/121294224/30df4b8d-aaa1-44c8-83ca-2a815d1d39f8)
 
 
 
