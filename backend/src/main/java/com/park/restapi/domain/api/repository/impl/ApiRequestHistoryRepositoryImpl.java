@@ -51,7 +51,6 @@ public class ApiRequestHistoryRepositoryImpl implements ApiRequestHistoryCustomR
     @Override
     public Page<ApiRequestHistoryResponseDTO> searchApiRequestHistoryByCondition(Pageable pageable, SearchType searchType,
                                                                                  String keyword) {
-
         BooleanExpression searchCondition = searchCondition(searchType, keyword);
 
         List<ApiRequestHistoryResponseDTO> results = queryFactory.select(
