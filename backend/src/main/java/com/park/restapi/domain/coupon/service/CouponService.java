@@ -3,10 +3,11 @@ package com.park.restapi.domain.coupon.service;
 import com.park.restapi.domain.coupon.dto.request.UpdateCouponQuantityRequestDTO;
 import com.park.restapi.domain.coupon.dto.request.UpdateCouponSettingRequestDTO;
 import com.park.restapi.domain.coupon.dto.response.CouponSettingResponseDTO;
+import com.park.restapi.domain.member.entity.Member;
 
 public interface CouponService {
     // 쿠폰 획득
-    void acquisitionCoupon();
+    void acquisitionCoupon(Member member);
 
     // 쿠폰 조회
     int getCoupons();

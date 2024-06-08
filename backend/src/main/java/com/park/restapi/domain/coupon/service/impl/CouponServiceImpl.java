@@ -41,9 +41,7 @@ public class CouponServiceImpl implements CouponService {
     // 쿠폰 획득
     @Override
     @Transactional
-    public void acquisitionCoupon() {
-        Member member = getCurrentMember();
-
+    public void acquisitionCoupon(Member member) {
         // 오늘 획득한 이력이 있으면 중복 불가.
         LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
         LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);

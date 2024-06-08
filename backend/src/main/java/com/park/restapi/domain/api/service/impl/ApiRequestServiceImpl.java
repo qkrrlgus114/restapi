@@ -44,20 +44,16 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     private final ApiRequestHistoryRepository apiRequestHistoryRepository;
     private final JwtService jwtService;
 
-    private static Semaphore semaphore = new Semaphore(5);
+    private static final Semaphore semaphore = new Semaphore(5);
 
     private static final int DEFAULT_DATA_COUNT = 10;
 
     // ChatGPT API 호출
     @Override
     @Transactional
-    public ChatGPTResponseDTO chatGpt(ApiRequestDTO apiRequestDTO) {
-        Member member = null;
-
+    public ChatGPTResponseDTO chatGpt(ApiRequestDTO apiRequestDTO, Member member) {
         try {
             semaphore.acquire();
-
-            member = getCurrentMemberLock();
 
             if (member.getToken() <= 0) {
                 throw new MemberException(MemberExceptionInfo.NO_REMAINING_USES, "토큰 부족");
@@ -112,12 +108,9 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     // API 요청 기록 조회
     @Override
     @Transactional(readOnly = true)
-    public ApiRequestHistoryListResponseDTO getApiRequestHistory(int page, SearchType searchType, String keyword) {
-        Member currentMember = getCurrentMember();
-
-        if (!isAdmin(currentMember)) {
-            throw new MemberException(MemberExceptionInfo.USER_NOT_ADMIN,
-                    currentMember.getEmail() + " 유저가 api 요청 이력 조회를 시도했습니다.(관리자 아님)");
+    public ApiRequestHistoryListResponseDTO getApiRequestHistory(int page, SearchType searchType, String keyword, Member member) {
+        if (!isAdmin(member)) {
+            throw new MemberException(MemberExceptionInfo.USER_NOT_ADMIN, member.getEmail() + " 유저가 api 요청 이력 조회를 시도했습니다.(관리자 아님)");
         }
 
         Pageable pageRequest = PageRequest.of(page, DEFAULT_DATA_COUNT);
@@ -134,20 +127,6 @@ public class ApiRequestServiceImpl implements ApiRequestService {
                 .currentPage(apiRequestHistories.getNumber())
                 .totalPages(apiRequestHistories.getTotalPages())
                 .build();
-    }
-
-    // 현재 로그인 유저 찾기
-    private Member getCurrentMember() {
-        Long currentUserId = jwtService.getCurrentUserId();
-        return memberRepository.findById(currentUserId).
-                orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
-    }
-
-    // 현재 로그인 유저 비관적 쓰기락 적용
-    private Member getCurrentMemberLock() {
-        Long currentUserId = jwtService.getCurrentUserId();
-        return memberRepository.findByIdLock(currentUserId).
-                orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 
     // 관리자 권한 확인

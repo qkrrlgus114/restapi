@@ -3,6 +3,8 @@ package com.park.restapi.domain.api.controller;
 import com.park.restapi.domain.api.dto.request.ApiRequestDTO;
 import com.park.restapi.domain.api.dto.response.ChatGPTResponseDTO;
 import com.park.restapi.domain.api.service.ApiRequestService;
+import com.park.restapi.domain.member.entity.Member;
+import com.park.restapi.util.resolver.CurrentMemberWriteLock;
 import com.park.restapi.util.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +26,10 @@ public class ApiRequestController {
 
     // 챗봇 API
     @PostMapping("/recommendations")
-    public ResponseEntity<ApiResponse<ChatGPTResponseDTO>> chatGpt(@Valid @RequestBody ApiRequestDTO apiRequestDTO) {
-        ChatGPTResponseDTO chatGPTResponseDTO = apiRequestService.chatGpt(apiRequestDTO);
+    public ResponseEntity<ApiResponse<ChatGPTResponseDTO>> chatGpt(@Valid @RequestBody ApiRequestDTO apiRequestDTO, @CurrentMemberWriteLock Member member) {
+        ChatGPTResponseDTO chatGPTResponseDTO = apiRequestService.chatGpt(apiRequestDTO, member);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.createSuccess(chatGPTResponseDTO, "REST API 추천 완료."));
     }
-    
+
 }

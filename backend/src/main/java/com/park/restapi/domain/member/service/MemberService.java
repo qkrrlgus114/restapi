@@ -5,6 +5,7 @@ import com.park.restapi.domain.member.dto.request.LoginInfoRequestDTO;
 import com.park.restapi.domain.member.dto.request.SignUpRequestDTO;
 import com.park.restapi.domain.member.dto.response.MemberInfoResponseDTO;
 import com.park.restapi.domain.member.dto.response.MyInfoResponseDTO;
+import com.park.restapi.domain.member.entity.Member;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
@@ -20,28 +21,28 @@ public interface MemberService {
     void login(LoginInfoRequestDTO dto, HttpServletResponse response);
 
     // 토큰 조회
-    int getToken();
+    int getToken(Member member);
 
     // 로그아웃
     void logout(HttpServletResponse response);
 
     // 소셜로그인
-    void socialLogin(HttpServletResponse response);
+    void socialLogin(HttpServletResponse response, Member member);
 
     // 유저 정보 호출
-    MemberInfoResponseDTO getUserInfo();
+    MemberInfoResponseDTO getUserInfo(Member member);
 
     // 일반 유저 탈퇴
-    void deactivateGeneralMember(DeactivateRequestDTO requestDTO);
+    void deactivateGeneralMember(DeactivateRequestDTO requestDTO, Member member);
 
     // 소셜 탈퇴
-    void deactivateSocialMember();
+    void deactivateSocialMember(Member member);
     // 유저 추방
 
-    void bannedMember(Long id);
+    void bannedMember(Long id, Member member);
 
     // 유저 개인 정보 제공
-    MyInfoResponseDTO getMemberInfo();
+    MyInfoResponseDTO getMemberInfo(Member member);
 
     // 유저 데일리 토큰 초기화(스케줄러)
     void resetAllTokens();

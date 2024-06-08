@@ -38,21 +38,17 @@ public class InquiryServiceImpl implements InquiryService {
     // 문의 등록하기
     @Override
     @Transactional
-    public void inquiryRegister(InquiryRequestDTO inquiryRequestDTO) {
-        Member currentMember = getCurrentMember();
-
-        Inquiry inquiry = Inquiry.toEntity(inquiryRequestDTO, currentMember);
+    public void inquiryRegister(InquiryRequestDTO inquiryRequestDTO, Member member) {
+        Inquiry inquiry = Inquiry.toEntity(inquiryRequestDTO, member);
         inquiryRepository.save(inquiry);
     }
 
     // 모든 문의 가져오기
     @Override
     @Transactional(readOnly = true)
-    public InquiryListResponseDTO getMyInquiries(int page) {
-        Member currentMember = getCurrentMemberFetchJoinMemberRoles();
-
+    public InquiryListResponseDTO getMyInquiries(int page, Member member) {
         PageRequest pageRequest = PageRequest.of(page, DEFAULT_DATA_COUNT, Sort.Direction.DESC, "createDate");
-        Page<InquiryResponseDTO> inquires = inquiryRepository.findByInquires(currentMember, pageRequest, isAdmin(currentMember));
+        Page<InquiryResponseDTO> inquires = inquiryRepository.findByInquires(member, pageRequest, isAdmin(member));
 
         return InquiryListResponseDTO.builder()
                 .inquiryResponseDTOS(inquires.getContent())
@@ -63,7 +59,7 @@ public class InquiryServiceImpl implements InquiryService {
     // 질문 상세내용 가져오기
     @Override
     @Transactional(readOnly = true)
-    public InquiryInfoResponseDTO getTargetInquiry(Long inquiryId) {
+    public InquiryInfoResponseDTO getTargetInquiry(Long inquiryId, Member member) {
         Member currentMember = getCurrentMemberFetchJoinMemberRoles();
         Answer answer = null;
 
@@ -81,14 +77,6 @@ public class InquiryServiceImpl implements InquiryService {
         return InquiryInfoResponseDTO.toDTO(answer, inquiry);
     }
 
-    // 현재 로그인 유저 찾기
-    private Member getCurrentMember() {
-        Long currentUserId = jwtService.getCurrentUserId();
-
-        return memberRepository.findById(currentUserId).
-                orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
-    }
-
     // 현재 로그인 유저 찾기(유저 권한 FetchJoin)
     private Member getCurrentMemberFetchJoinMemberRoles() {
         Long currentUserId = jwtService.getCurrentUserId();
@@ -99,7 +87,6 @@ public class InquiryServiceImpl implements InquiryService {
 
     // 관리자 권한 확인
     private boolean isAdmin(Member member) {
-        return member.getMemberRoles().stream()
-                .anyMatch(role -> role.getRole().equals(Role.ADMIN));
+        return member.getMemberRoles().stream().anyMatch(role -> role.getRole().equals(Role.ADMIN));
     }
 }
