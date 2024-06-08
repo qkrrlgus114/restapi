@@ -19,13 +19,13 @@ public class Coupon extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private Integer remainingQuantity;
+    private int remainingQuantity;
 
     @Column(nullable = false)
-    private Integer totalQuantity;
+    private int totalQuantity;
 
     @Builder
-    public Coupon(Integer remainingQuantity, Integer totalQuantity) {
+    public Coupon(int remainingQuantity, int totalQuantity) {
         this.remainingQuantity = remainingQuantity;
         this.totalQuantity = totalQuantity;
     }

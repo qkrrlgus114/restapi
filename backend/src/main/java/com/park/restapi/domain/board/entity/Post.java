@@ -46,10 +46,10 @@ public class Post extends BaseTimeEntity {
     private LocalDateTime deleteDate;
 
     @Column(nullable = false)
-    private Integer likeCount = 0;
+    private int likeCount = 0;
 
     @Column(nullable = false)
-    private Integer viewCount = 0;
+    private int viewCount = 0;
 
     @Builder
     public Post(Member member, BoardType boardType, MethodType methodType, String title, String content) {

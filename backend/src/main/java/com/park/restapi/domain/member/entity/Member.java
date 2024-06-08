@@ -47,7 +47,7 @@ public class Member extends BaseTimeEntity {
     private LocalDateTime withdrawalDate;
 
     @Column(nullable = false)
-    private Integer token = DEFAULT_TOKEN;
+    private int token = DEFAULT_TOKEN;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberRole> memberRoles = new ArrayList<>();
