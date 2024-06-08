@@ -27,7 +27,7 @@ public class PostController {
     public ResponseEntity<ApiResponse<Void>> sharedGptApiRecommendPost(@Valid @RequestBody ApiRecommendPostRequestDTO apiRecommendPostRequestDTO) {
         postService.apiRecommendDataPost(apiRecommendPostRequestDTO);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.createSuccessNoContent("api 추천 서비스 게시글 공유하기 완료."));
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     // 모든 게시글 가져오기

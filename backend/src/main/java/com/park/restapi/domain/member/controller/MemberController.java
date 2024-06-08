@@ -10,8 +10,6 @@ import com.park.restapi.domain.member.service.MemberService;
 import com.park.restapi.util.response.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -34,17 +32,7 @@ public class MemberController {
     @PostMapping()
     public ResponseEntity<ApiResponse<Void>> signUp(@Valid @RequestBody SignUpRequestDTO signUpRequestDTO) throws IOException, InterruptedException {
         memberService.signUp(signUpRequestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.createSuccessNoContent("회원가입이 완료되었습니다."));
-    }
-
-    // 이메일 중복확인
-    @GetMapping("/email-check")
-    public ResponseEntity<ApiResponse<Boolean>> checkEmail(@NotBlank(message = "이메일을 입력해주세요.")
-                                                           @Email(message = "이메일 형식이 아닙니다.")
-                                                           @RequestParam(name = "email") String email) throws IOException {
-        boolean result = memberService.existEmailCheck(email);
-
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(result, "true = 사용불가, false = 사용가능"));
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     // 로그인
@@ -53,7 +41,7 @@ public class MemberController {
                                                    HttpServletResponse response) {
         memberService.login(loginInfoRequestDTO, response);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("로그인 성공"));
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     // 소셜로그인
@@ -61,7 +49,7 @@ public class MemberController {
     public ResponseEntity<ApiResponse<Void>> socialLogin(HttpServletResponse response) {
         memberService.socialLogin(response);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("소셜 로그인 성공"));
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     // 토큰 조회
@@ -77,7 +65,7 @@ public class MemberController {
     public ResponseEntity<ApiResponse<Void>> logout(HttpServletResponse response) {
         memberService.logout(response);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("로그아웃 성공"));
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     // 메인화면 유저 정보 제공
@@ -99,7 +87,7 @@ public class MemberController {
             default -> throw new IllegalArgumentException("9000 타입 에러 발생. 관리자에게 문의가 필요합니다.");
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("회원 탈퇴에 성공했습니다."));
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 

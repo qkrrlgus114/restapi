@@ -23,7 +23,7 @@ public class InquiryAdminController {
     public ResponseEntity<ApiResponse<InquiryListResponseDTO>> getInquiries(@RequestParam(value = "page", defaultValue = "1") int page) {
         InquiryListResponseDTO myInquiries = inquiryService.getMyInquiries(page - 1);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.createSuccess(myInquiries, "내 문의내역 가져오기 성공"));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(myInquiries, "내 문의내역 가져오기 성공"));
     }
 
 }
