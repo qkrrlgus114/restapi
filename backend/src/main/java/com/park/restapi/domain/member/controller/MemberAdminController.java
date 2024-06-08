@@ -26,6 +26,6 @@ public class MemberAdminController {
     public ResponseEntity<ApiResponse<Void>> bannedMember(@PathVariable(name = "id") Long id) {
         memberService.bannedMember(id);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("회원 추방에 성공했습니다."));
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

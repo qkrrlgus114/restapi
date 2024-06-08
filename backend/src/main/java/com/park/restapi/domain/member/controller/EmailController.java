@@ -25,7 +25,7 @@ public class EmailController {
     public ResponseEntity<ApiResponse<Void>> createAuthenticationNumber(@Valid @RequestBody EmailRequestDTO emailRequestDTO) throws Exception {
         emailService.sendSimpleMessageRegist(emailRequestDTO.email());
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("성공"));
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     // 인증번호 일치 확인
@@ -33,6 +33,6 @@ public class EmailController {
     public ResponseEntity<ApiResponse<Void>> verifyAuthenticationNumber(@Valid @RequestBody AuthenticationNumberRequestDTO authenticationNumberRequestDTO) {
         emailService.checkCertificationCode(authenticationNumberRequestDTO.authenticationNumber());
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("이메일 인증이 완료되었습니다."));
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

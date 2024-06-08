@@ -3,7 +3,7 @@ package com.park.restapi.domain.member.entity;
 import com.park.restapi.domain.api.entity.ApiRequestHistory;
 import com.park.restapi.domain.coupon.entity.CouponHistory;
 import com.park.restapi.domain.refreshtoken.entity.RefreshToken;
-import com.park.restapi.util.BaseTimeEntity;
+import com.park.restapi.util.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -47,7 +47,7 @@ public class Member extends BaseTimeEntity {
     private LocalDateTime withdrawalDate;
 
     @Column(nullable = false)
-    private Integer token = DEFAULT_TOKEN;
+    private int token = DEFAULT_TOKEN;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberRole> memberRoles = new ArrayList<>();

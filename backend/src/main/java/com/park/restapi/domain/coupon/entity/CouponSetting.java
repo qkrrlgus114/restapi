@@ -21,7 +21,7 @@ public class CouponSetting {
     private Boolean isDailyCouponGenerate;
 
     @Column(nullable = false)
-    private Integer dailyCouponQuantity;
+    private int dailyCouponQuantity;
 
     public void updateCouponSetting(UpdateCouponSettingRequestDTO requestDTO) {
         this.isDailyCouponGenerate = requestDTO.isDailyCouponGenerate();

@@ -9,7 +9,7 @@ public record ApiRecommendPostsResponseDTO(
         MethodType methodType,
         String title,
         String nickname,
-        Integer likeCount,
-        Integer viewCount
+        int likeCount,
+        int viewCount
 ) {
 }

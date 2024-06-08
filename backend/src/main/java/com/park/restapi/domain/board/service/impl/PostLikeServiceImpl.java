@@ -37,7 +37,6 @@ public class PostLikeServiceImpl implements PostLikeService {
     @Transactional
     public void likePost(Long postId) {
         Member currentMember = getCurrentMember();
-
         Post post = postRepository.findByIdWriteLockFetchJoinMember(postId)
                 .orElseThrow(() -> new PostException(PostExceptionInfo.NOT_FOUND_POST, postId + "번 게시글을 찾지 못했습니다."));
 
@@ -86,7 +85,7 @@ public class PostLikeServiceImpl implements PostLikeService {
     private Member getCurrentMember() {
         Long currentUserId = jwtService.getCurrentUserId();
         return memberRepository.findById(currentUserId)
-                .orElseThrow(
-                        () -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
+                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
+
 }

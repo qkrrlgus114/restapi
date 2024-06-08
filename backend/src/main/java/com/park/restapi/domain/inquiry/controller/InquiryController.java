@@ -23,7 +23,7 @@ public class InquiryController {
     public ResponseEntity<ApiResponse<Void>> createInquiry(@RequestBody @Valid InquiryRequestDTO inquiryRequestDTO) {
         inquiryService.inquiryRegister(inquiryRequestDTO);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.createSuccessNoContent("문의 등록이 완료되었습니다."));
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     // 현재 유저의 문의 내역 가져오기
@@ -31,7 +31,7 @@ public class InquiryController {
     public ResponseEntity<ApiResponse<InquiryListResponseDTO>> getInquiries(@RequestParam(value = "page", defaultValue = "1") int page) {
         InquiryListResponseDTO myInquiries = inquiryService.getMyInquiries(page - 1);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.createSuccess(myInquiries, "내 문의내역 가져오기 성공"));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(myInquiries, "내 문의내역 가져오기 성공"));
     }
 
     // 상세 문의내역 가져오기
@@ -39,8 +39,7 @@ public class InquiryController {
     public ResponseEntity<ApiResponse<InquiryInfoResponseDTO>> getTargetInquiry(@PathVariable(name = "id") Long inquiryId) {
         InquiryInfoResponseDTO responseDTO = inquiryService.getTargetInquiry(inquiryId);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.createSuccess(responseDTO, inquiryId + "번 문의내역 가져오기 성공"));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(responseDTO, inquiryId + "번 문의내역 가져오기 성공"));
     }
 
 }

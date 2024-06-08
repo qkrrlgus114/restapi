@@ -33,7 +33,7 @@ public class CouponAdminController {
     public ResponseEntity<ApiResponse<Void>> updateCouponSetting(@Valid @RequestBody UpdateCouponSettingRequestDTO updateCouponSettingRequestDTO) {
         couponService.updateCouponSetting(updateCouponSettingRequestDTO);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("쿠폰 설정이 변경되었습니다."));
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     // 쿠폰 즉시 발급하기(관리자)

@@ -23,8 +23,8 @@ public class CouponController {
     @PostMapping()
     public ResponseEntity<ApiResponse<Void>> acquisitionCoupons() {
         couponService.acquisitionCoupon();
-        
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("토큰을 획득하셨습니다."));
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     // 현재 남은 쿠폰을 제공하는 API

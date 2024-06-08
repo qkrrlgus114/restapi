@@ -54,10 +54,10 @@
     </div>
     <div class="search-bar">
       <select v-model="searchType">
-        <option value="none" disabled>검색타입</option>
-        <option value="nickname">닉네임</option>
-        <option value="title">제목</option>
-        <option value="methodType">메서드</option>
+        <option value="NONE" disabled>검색타입</option>
+        <option value="NICKNAME">닉네임</option>
+        <option value="TITLE">제목</option>
+        <option value="METHOD_TYPE">메서드</option>
       </select>
       <input
         v-model="searchKey"
@@ -85,7 +85,7 @@ const currentPage = ref(1);
 const totalPages = ref(0);
 const currentPageGroup = ref(1);
 const itemsPerPageGroup = 5;
-const searchType = ref(route.query.searchType || "none");
+const searchType = ref(route.query.searchType || "NONE");
 const searchKey = ref(route.query.searchKey || "");
 const sortBy = ref(route.query.sortBy || "");
 
@@ -101,7 +101,7 @@ onMounted(() => {
       const page = parseInt(newPage) || 1;
       currentPage.value = page;
       currentPageGroup.value = Math.ceil(page / itemsPerPageGroup);
-      searchType.value = newSearchType || "none";
+      searchType.value = newSearchType || "NONE";
       searchKey.value = newSearchKey || "";
       sortBy.value = newSortBy || "";
       getSharePosts(page, searchType.value, searchKey.value, sortBy.value);
@@ -163,7 +163,7 @@ const changePageGroup = (direction) => {
 
 // 검색 요청 처리
 const searchSharedPost = (page, searchType, searchKey) => {
-  if (searchType == "none") {
+  if (searchType == "NONE") {
     alert("검색 타입을 선택해주세요.");
     return;
   } else if (searchKey == "") {
@@ -182,7 +182,7 @@ const likeSort = (page) => {
   router.push({
     name: "Board",
     params: { page: 1 },
-    query: { sortBy: "like" },
+    query: { sortBy: "LIKE" },
   });
 };
 

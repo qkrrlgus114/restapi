@@ -3,6 +3,8 @@ package com.park.restapi.domain.board.repository.impl;
 import com.park.restapi.domain.api.entity.MethodType;
 import com.park.restapi.domain.board.dto.response.ApiRecommendPostsResponseDTO;
 import com.park.restapi.domain.board.repository.PostCustomRepository;
+import com.park.restapi.util.entity.SearchType;
+import com.park.restapi.util.entity.SortBy;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -28,10 +30,11 @@ public class PostRepositoryImpl implements PostCustomRepository {
 
     // 첫 페이지부터 데이터 가져오기
     @Override
-    public Page<ApiRecommendPostsResponseDTO> findRecommendPosts(Pageable pageable, String searchType, String searchKey, String sortBy) {
+    public Page<ApiRecommendPostsResponseDTO> findRecommendPosts(Pageable pageable, SearchType searchType, String searchKey, SortBy sortBy) {
 
         OrderSpecifier<?>[] orderSpecifier = getOrderSpecifier(sortBy);
 
+        Long startTime = System.currentTimeMillis();
         List<Long> postIds = queryFactory
                 .select(post.id)
                 .from(post)
@@ -49,6 +52,8 @@ public class PostRepositoryImpl implements PostCustomRepository {
                 .where(post.id.in(postIds))
                 .orderBy(orderSpecifier)
                 .fetch();
+        Long endTime = System.currentTimeMillis();
+        log.info("소요 시간 : {}", endTime - startTime);
 
         long total = queryFactory
                 .select(post.count())
@@ -60,24 +65,21 @@ public class PostRepositoryImpl implements PostCustomRepository {
     }
 
     // 동적 검색 쿼리 생성
-    private BooleanExpression searchCondition(String searchType, String searchKey) {
-        if ("title".equals(searchType)) {
-            return titleContains(searchKey);
-        } else if ("nickname".equals(searchType)) {
-            return nicknameContains(searchKey);
-        } else if ("methodType".equals(searchType)) {
-            return methodTypeContains(searchKey);
-        }
-        return null;
+    private BooleanExpression searchCondition(SearchType searchType, String searchKey) {
+        return switch (searchType) {
+            case TITLE -> titleContains(searchKey);
+            case NICKNAME -> nicknameContains(searchKey);
+            case METHOD_TYPE -> methodTypeContains(searchKey);
+            default -> null;
+        };
     }
 
     // 정렬 쿼리 생성
-    private OrderSpecifier<?>[] getOrderSpecifier(String sortBy) {
-        if ("like".equals(sortBy)) {
-            return new OrderSpecifier[]{post.likeCount.desc(), post.id.desc()};
-        } else {
-            return new OrderSpecifier[]{post.id.desc()};
-        }
+    private OrderSpecifier<?>[] getOrderSpecifier(SortBy sortBy) {
+        return switch (sortBy) {
+            case LIKE -> new OrderSpecifier[]{post.likeCount.desc(), post.id.desc()};
+            case NONE -> new OrderSpecifier[]{post.id.desc()};
+        };
     }
 
     // 제목 검색

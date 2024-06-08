@@ -6,7 +6,7 @@ import lombok.Builder;
 @Builder
 public record CouponSettingResponseDTO(
         Boolean isDailyCouponGenerate,
-        Integer dailyCouponQuantity
+        int dailyCouponQuantity
 ) {
     public static CouponSettingResponseDTO toDTO(CouponSetting couponSetting) {
         return CouponSettingResponseDTO.builder()

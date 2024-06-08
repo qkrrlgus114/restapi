@@ -11,8 +11,8 @@ public record ApiRecommendPostResponseDTO(
         String nickname,
         String content,
         LocalDateTime createdDate,
-        Integer likeCount,
-        Integer viewCount,
+        int likeCount,
+        int viewCount,
         boolean isLiked
 ) {
 }

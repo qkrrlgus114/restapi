@@ -81,14 +81,6 @@ public class InquiryServiceImpl implements InquiryService {
         return InquiryInfoResponseDTO.toDTO(answer, inquiry);
     }
 
-    // 현재 로그인 유저 찾기
-    private Member getCurrentMember() {
-        Long currentUserId = jwtService.getCurrentUserId();
-
-        return memberRepository.findById(currentUserId).
-                orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
-    }
-
     // 현재 로그인 유저 찾기(유저 권한 FetchJoin)
     private Member getCurrentMemberFetchJoinMemberRoles() {
         Long currentUserId = jwtService.getCurrentUserId();
@@ -97,9 +89,17 @@ public class InquiryServiceImpl implements InquiryService {
                 orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 
+    // 현재 로그인 유저 찾기
+    private Member getCurrentMember() {
+        Long currentUserId = jwtService.getCurrentUserId();
+        return memberRepository.findById(currentUserId)
+                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
+    }
+
     // 관리자 권한 확인
     private boolean isAdmin(Member member) {
-        return member.getMemberRoles().stream()
-                .anyMatch(role -> role.getRole().equals(Role.ADMIN));
+        return member.getMemberRoles().stream().anyMatch(role -> role.getRole() == (Role.ADMIN));
     }
+
+
 }
