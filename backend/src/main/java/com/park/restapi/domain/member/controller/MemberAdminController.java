@@ -1,8 +1,6 @@
 package com.park.restapi.domain.member.controller;
 
-import com.park.restapi.domain.member.entity.Member;
 import com.park.restapi.domain.member.service.MemberService;
-import com.park.restapi.util.resolver.CurrentMember;
 import com.park.restapi.util.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +23,8 @@ public class MemberAdminController {
 
     // 유저 추방
     @PatchMapping("/{id}/ban")
-    public ResponseEntity<ApiResponse<Void>> bannedMember(@PathVariable(name = "id") Long id, @CurrentMember Member member) {
-        memberService.bannedMember(id, member);
+    public ResponseEntity<ApiResponse<Void>> bannedMember(@PathVariable(name = "id") Long id) {
+        memberService.bannedMember(id);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("회원 추방에 성공했습니다."));
     }

@@ -1,8 +1,6 @@
 package com.park.restapi.domain.coupon.controller;
 
 import com.park.restapi.domain.coupon.service.CouponService;
-import com.park.restapi.domain.member.entity.Member;
-import com.park.restapi.util.resolver.CurrentMember;
 import com.park.restapi.util.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +21,8 @@ public class CouponController {
 
     // 유저가 쿠폰을 획득하는 API
     @PostMapping()
-    public ResponseEntity<ApiResponse<Void>> acquisitionCoupons(@CurrentMember Member member) {
-        couponService.acquisitionCoupon(member);
+    public ResponseEntity<ApiResponse<Void>> acquisitionCoupons() {
+        couponService.acquisitionCoupon();
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("토큰을 획득하셨습니다."));
     }

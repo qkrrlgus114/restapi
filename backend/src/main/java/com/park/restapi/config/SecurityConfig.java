@@ -40,8 +40,8 @@ public class SecurityConfig {
                 // 모든 요청 허용
                 .authorizeHttpRequests(authorize -> authorize.dispatcherTypeMatchers(DispatcherType.ERROR)
                         .permitAll()
-                        .requestMatchers("/api/authentications/**", "/api/signup", "/api/email-check", "/api/login",
-                                "/oauth2/authorization/kakao", "/login/oauth2/code/kakao", "/ws", "/api/auth/**")
+                        .requestMatchers("/api/authentications/**", "/api/email/**", "/api/members/login",
+                                "/oauth2/authorization/kakao", "/login/oauth2/code/kakao", "/ws")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/post/**")
                         .hasAnyAuthority("GUEST", "USER", "ADMIN")

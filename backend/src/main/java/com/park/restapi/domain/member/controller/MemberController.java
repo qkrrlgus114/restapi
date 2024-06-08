@@ -5,10 +5,8 @@ import com.park.restapi.domain.member.dto.request.LoginInfoRequestDTO;
 import com.park.restapi.domain.member.dto.request.SignUpRequestDTO;
 import com.park.restapi.domain.member.dto.response.MemberInfoResponseDTO;
 import com.park.restapi.domain.member.dto.response.MyInfoResponseDTO;
-import com.park.restapi.domain.member.entity.Member;
 import com.park.restapi.domain.member.entity.SocialType;
 import com.park.restapi.domain.member.service.MemberService;
-import com.park.restapi.util.resolver.CurrentMember;
 import com.park.restapi.util.response.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -60,16 +58,16 @@ public class MemberController {
 
     // 소셜로그인
     @PostMapping("/social-login")
-    public ResponseEntity<ApiResponse<Void>> socialLogin(HttpServletResponse response, @CurrentMember Member member) {
-        memberService.socialLogin(response, member);
+    public ResponseEntity<ApiResponse<Void>> socialLogin(HttpServletResponse response) {
+        memberService.socialLogin(response);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccessNoContent("소셜 로그인 성공"));
     }
 
     // 토큰 조회
     @GetMapping("/tokens")
-    public ResponseEntity<ApiResponse<Integer>> getToken(@CurrentMember Member member) {
-        int token = memberService.getToken(member);
+    public ResponseEntity<ApiResponse<Integer>> getToken() {
+        int token = memberService.getToken();
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(token, "토큰 개수 조회 성공"));
     }
@@ -84,20 +82,20 @@ public class MemberController {
 
     // 메인화면 유저 정보 제공
     @GetMapping("/main-info")
-    public ResponseEntity<ApiResponse<MemberInfoResponseDTO>> getMemberInfo(@CurrentMember Member member) {
-        MemberInfoResponseDTO userInfo = memberService.getUserInfo(member);
+    public ResponseEntity<ApiResponse<MemberInfoResponseDTO>> getMemberInfo() {
+        MemberInfoResponseDTO userInfo = memberService.getUserInfo();
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(userInfo, "현재 로그인 유저의 정보"));
     }
 
     // 유저 탈퇴
     @PatchMapping("/deactivate")
-    public ResponseEntity<ApiResponse<Void>> deactivateMember(@RequestBody @Valid DeactivateRequestDTO deactivateRequestDTO, @CurrentMember Member member) {
+    public ResponseEntity<ApiResponse<Void>> deactivateMember(@RequestBody @Valid DeactivateRequestDTO deactivateRequestDTO) {
         SocialType socialType = deactivateRequestDTO.socialType();
 
         switch (socialType) {
-            case KAKAO -> memberService.deactivateSocialMember(member);
-            case GENERAL -> memberService.deactivateGeneralMember(deactivateRequestDTO, member);
+            case KAKAO -> memberService.deactivateSocialMember();
+            case GENERAL -> memberService.deactivateGeneralMember(deactivateRequestDTO);
             default -> throw new IllegalArgumentException("9000 타입 에러 발생. 관리자에게 문의가 필요합니다.");
         }
 
@@ -107,8 +105,8 @@ public class MemberController {
 
     // 유저 개인 정보 제공
     @GetMapping("/details")
-    public ResponseEntity<ApiResponse<MyInfoResponseDTO>> getMemberDeepInfo(@CurrentMember Member member) {
-        MyInfoResponseDTO memberInfo = memberService.getMemberInfo(member);
+    public ResponseEntity<ApiResponse<MyInfoResponseDTO>> getMemberDeepInfo() {
+        MyInfoResponseDTO memberInfo = memberService.getMemberInfo();
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(memberInfo, "회원 개인정보 조회 성공."));
     }

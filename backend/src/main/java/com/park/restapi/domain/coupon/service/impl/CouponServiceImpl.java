@@ -41,11 +41,13 @@ public class CouponServiceImpl implements CouponService {
     // 쿠폰 획득
     @Override
     @Transactional
-    public void acquisitionCoupon(Member member) {
+    public void acquisitionCoupon() {
+        Member currentMember = getCurrentMember();
+
         // 오늘 획득한 이력이 있으면 중복 불가.
         LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
         LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
-        CouponHistory byCouponHistory = couponHistoryRepository.findByCouponHistory(startOfDay, endOfDay, member);
+        CouponHistory byCouponHistory = couponHistoryRepository.findByCouponHistory(startOfDay, endOfDay, currentMember);
 
         if (byCouponHistory != null) {
             throw new MemberException(MemberExceptionInfo.ALREADY_GET_COUPON, "이미 쿠폰 획득 완료.");
@@ -62,12 +64,11 @@ public class CouponServiceImpl implements CouponService {
         coupon.decreasedCoupon();
 
         // 유저 토큰 + 1
-        member.increasedToken();
+        currentMember.increasedToken();
 
         CouponHistory couponHistory = CouponHistory.builder()
-                .member(member).build();
+                .member(currentMember).build();
         couponHistoryRepository.save(couponHistory);
-        log.info("쿠폰 획득 성공");
     }
 
     // 남은 선착순 쿠폰 조회

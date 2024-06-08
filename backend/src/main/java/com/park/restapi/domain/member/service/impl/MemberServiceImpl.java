@@ -109,11 +109,13 @@ public class MemberServiceImpl implements MemberService {
     // 소셜로그인
     @Override
     @Transactional
-    public void socialLogin(HttpServletResponse response, Member member) {
-        member.updateLoginDate();
+    public void socialLogin(HttpServletResponse response) {
+        Member currentMember = getCurrentMember();
 
-        String accessToken = jwtService.createAccessToken(member.getId());
-        String refreshToken = jwtService.createRefreshToken(member.getId(), false, accessToken);
+        currentMember.updateLoginDate();
+
+        String accessToken = jwtService.createAccessToken(currentMember.getId());
+        String refreshToken = jwtService.createRefreshToken(currentMember.getId(), false, accessToken);
         saveCookie(response, "accessToken", accessToken);
         saveCookie(response, "refreshToken", refreshToken);
     }
@@ -121,15 +123,19 @@ public class MemberServiceImpl implements MemberService {
     // 유저 정보 조회
     @Override
     @Transactional(readOnly = true)
-    public MemberInfoResponseDTO getUserInfo(Member member) {
-        return MemberInfoResponseDTO.toDTO(member);
+    public MemberInfoResponseDTO getUserInfo() {
+        Member currentMember = getCurrentMember();
+
+        return MemberInfoResponseDTO.toDTO(currentMember);
     }
 
     // 토큰 조회
     @Override
     @Transactional(readOnly = true)
-    public int getToken(Member member) {
-        return member.getToken();
+    public int getToken() {
+        Member currentMember = getCurrentMember();
+
+        return currentMember.getToken();
     }
 
     // 로그아웃
@@ -142,30 +148,34 @@ public class MemberServiceImpl implements MemberService {
     // 일반 유저 탈퇴
     @Override
     @Transactional
-    public void deactivateGeneralMember(DeactivateRequestDTO requestDTO, Member member) {
-        if (!encoder.matches(requestDTO.password(), member.getPassword())) {
-            throw new MemberException(MemberExceptionInfo.NOT_MATCH_PASSWORD, member.getEmail() + " 유저 비밀번호 불일치 발생(회원 탈퇴)");
+    public void deactivateGeneralMember(DeactivateRequestDTO deactivateRequestDTO) {
+        Member currentMember = getCurrentMember();
+
+        if (!encoder.matches(deactivateRequestDTO.password(), currentMember.getPassword())) {
+            throw new MemberException(MemberExceptionInfo.NOT_MATCH_PASSWORD, currentMember.getEmail() + " 유저 비밀번호 불일치 발생(회원 탈퇴)");
         }
 
-        if (isAdmin(member))
-            throw new MemberException(MemberExceptionInfo.NOT_WITHDRAWAL_ADMIN, member.getEmail() + " 관리자 계정 탈퇴 시도.");
-        member.updateWithdrawalDate();
+        if (isAdmin(currentMember))
+            throw new MemberException(MemberExceptionInfo.NOT_WITHDRAWAL_ADMIN, currentMember.getEmail() + " 관리자 계정 탈퇴 시도.");
+        currentMember.updateWithdrawalDate();
     }
 
     // 소셜 유저 탈퇴
     @Override
     @Transactional
-    public void deactivateSocialMember(Member member) {
-        if (isAdmin(member))
-            throw new MemberException(MemberExceptionInfo.NOT_WITHDRAWAL_ADMIN, member.getEmail() + " 관리자 계정 탈퇴 시도.");
+    public void deactivateSocialMember() {
+        Member currentMember = getCurrentMember();
 
-        member.updateWithdrawalDate();
+        if (isAdmin(currentMember))
+            throw new MemberException(MemberExceptionInfo.NOT_WITHDRAWAL_ADMIN, currentMember.getEmail() + " 관리자 계정 탈퇴 시도.");
+
+        currentMember.updateWithdrawalDate();
     }
 
     // 유저 추방
     @Override
     @Transactional
-    public void bannedMember(Long id, Member member) {
+    public void bannedMember(Long id) {
         Member currentMember = memberRepository.findById(id)
                 .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, id + "를 가진 유저가 존재하지 않습니다.(추방)"));
 
@@ -176,12 +186,14 @@ public class MemberServiceImpl implements MemberService {
     // 유저 개인 정보 제공
     @Override
     @Transactional(readOnly = true)
-    public MyInfoResponseDTO getMemberInfo(Member member) {
+    public MyInfoResponseDTO getMemberInfo() {
+        Member currentMember = getCurrentMember();
+
         // 유저가 여태 사용했던 토큰 개수
-        int totalUseToken = apiRequestHistoryRepository.findByTotalUseToken(member);
+        int totalUseToken = apiRequestHistoryRepository.findByTotalUseToken(currentMember);
 
         // 유저가 여태 획득했던 토큰 개수
-        int totalAcquisitionToken = couponHistoryRepository.findByMemberTotalAcquisitionToken(member);
+        int totalAcquisitionToken = couponHistoryRepository.findByMemberTotalAcquisitionToken(currentMember);
 
         return MyInfoResponseDTO.toDTO(totalUseToken, totalAcquisitionToken);
     }
@@ -225,6 +237,13 @@ public class MemberServiceImpl implements MemberService {
         cookie.setMaxAge(0);
         cookie.setPath("/");
         response.addCookie(cookie);
+    }
+
+    // 현재 로그인 유저 찾기
+    private Member getCurrentMember() {
+        Long currentUserId = jwtService.getCurrentUserId();
+        return memberRepository.findById(currentUserId)
+                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 
     // 관리자 권한 확인

@@ -38,17 +38,21 @@ public class InquiryServiceImpl implements InquiryService {
     // 문의 등록하기
     @Override
     @Transactional
-    public void inquiryRegister(InquiryRequestDTO inquiryRequestDTO, Member member) {
-        Inquiry inquiry = Inquiry.toEntity(inquiryRequestDTO, member);
+    public void inquiryRegister(InquiryRequestDTO inquiryRequestDTO) {
+        Member currentMember = getCurrentMember();
+
+        Inquiry inquiry = Inquiry.toEntity(inquiryRequestDTO, currentMember);
         inquiryRepository.save(inquiry);
     }
 
     // 모든 문의 가져오기
     @Override
     @Transactional(readOnly = true)
-    public InquiryListResponseDTO getMyInquiries(int page, Member member) {
+    public InquiryListResponseDTO getMyInquiries(int page) {
+        Member currentMember = getCurrentMemberFetchJoinMemberRoles();
+        
         PageRequest pageRequest = PageRequest.of(page, DEFAULT_DATA_COUNT, Sort.Direction.DESC, "createDate");
-        Page<InquiryResponseDTO> inquires = inquiryRepository.findByInquires(member, pageRequest, isAdmin(member));
+        Page<InquiryResponseDTO> inquires = inquiryRepository.findByInquires(currentMember, pageRequest, isAdmin(currentMember));
 
         return InquiryListResponseDTO.builder()
                 .inquiryResponseDTOS(inquires.getContent())
@@ -59,7 +63,7 @@ public class InquiryServiceImpl implements InquiryService {
     // 질문 상세내용 가져오기
     @Override
     @Transactional(readOnly = true)
-    public InquiryInfoResponseDTO getTargetInquiry(Long inquiryId, Member member) {
+    public InquiryInfoResponseDTO getTargetInquiry(Long inquiryId) {
         Member currentMember = getCurrentMemberFetchJoinMemberRoles();
         Answer answer = null;
 
@@ -85,8 +89,17 @@ public class InquiryServiceImpl implements InquiryService {
                 orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 
+    // 현재 로그인 유저 찾기
+    private Member getCurrentMember() {
+        Long currentUserId = jwtService.getCurrentUserId();
+        return memberRepository.findById(currentUserId)
+                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
+    }
+
     // 관리자 권한 확인
     private boolean isAdmin(Member member) {
         return member.getMemberRoles().stream().anyMatch(role -> role.getRole().equals(Role.ADMIN));
     }
+
+
 }

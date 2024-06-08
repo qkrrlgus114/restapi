@@ -98,4 +98,6 @@ public class PostServiceImpl implements PostService {
         return memberRepository.findById(currentUserId)
                 .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
+
+
 }
