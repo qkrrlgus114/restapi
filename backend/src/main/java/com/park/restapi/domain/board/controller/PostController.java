@@ -4,6 +4,8 @@ import com.park.restapi.domain.board.dto.request.ApiRecommendPostRequestDTO;
 import com.park.restapi.domain.board.dto.response.ApiRecommendPostResponseDTO;
 import com.park.restapi.domain.board.dto.response.ApiRecommendPostsListResponseDTO;
 import com.park.restapi.domain.board.service.PostService;
+import com.park.restapi.util.entity.SearchType;
+import com.park.restapi.util.entity.SortBy;
 import com.park.restapi.util.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,16 +27,16 @@ public class PostController {
     public ResponseEntity<ApiResponse<Void>> sharedGptApiRecommendPost(@Valid @RequestBody ApiRecommendPostRequestDTO apiRecommendPostRequestDTO) {
         postService.apiRecommendDataPost(apiRecommendPostRequestDTO);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.createSuccessNoContent("api 추천 서비스 게시글 공유하기 완료."));
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     // 모든 게시글 가져오기
     @GetMapping()
     public ResponseEntity<ApiResponse<ApiRecommendPostsListResponseDTO>> getGptApiRecommendPost(
             @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "searchType", required = false, defaultValue = "") String searchType,
+            @RequestParam(value = "searchType", required = false, defaultValue = "NONE") SearchType searchType,
             @RequestParam(value = "searchKey", required = false, defaultValue = "") String searchKey,
-            @RequestParam(value = "sortBy", required = false, defaultValue = "") String sortBy) {
+            @RequestParam(value = "sortBy", required = false, defaultValue = "NONE") SortBy sortBy) {
         ApiRecommendPostsListResponseDTO apiRecommendPostsListResponseDTO = postService.getGptApiRecommendPosts(page - 1, searchType, searchKey, sortBy);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(apiRecommendPostsListResponseDTO, "모든 공유 게시글 가져오기 성공"));

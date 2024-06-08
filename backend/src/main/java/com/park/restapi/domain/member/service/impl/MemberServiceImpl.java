@@ -77,13 +77,11 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void login(LoginInfoRequestDTO loginInfoRequestDTO, HttpServletResponse response) {
         Member member = memberRepository.findByMemberLogin(loginInfoRequestDTO.email())
-                .orElseThrow(() -> new MemberException(MemberExceptionInfo.FAIL_LOGIN,
-                        loginInfoRequestDTO.email() + "에 맞는 유저를 찾지 못했습니다.(로그인 실패)"));
+                .orElseThrow(() -> new MemberException(MemberExceptionInfo.FAIL_LOGIN, loginInfoRequestDTO.email() + "에 맞는 유저를 찾지 못했습니다.(로그인 실패)"));
 
         // 추방 여부 판단
         if (member.getBannedDate() != null) {
-            throw new MemberException(MemberExceptionInfo.BANNED_MEMBER,
-                    loginInfoRequestDTO.email() + " 유저가 로그인 시도를 진행했습니다.(추방된 유저)");
+            throw new MemberException(MemberExceptionInfo.BANNED_MEMBER, loginInfoRequestDTO.email() + " 유저가 로그인 시도를 진행했습니다.(추방된 유저)");
         }
 
         // 탈퇴 여부 판단
@@ -150,17 +148,15 @@ public class MemberServiceImpl implements MemberService {
     // 일반 유저 탈퇴
     @Override
     @Transactional
-    public void deactivateGeneralMember(DeactivateRequestDTO requestDTO) {
+    public void deactivateGeneralMember(DeactivateRequestDTO deactivateRequestDTO) {
         Member currentMember = getCurrentMember();
-        if (!encoder.matches(requestDTO.password(), currentMember.getPassword())) {
-            throw new MemberException(MemberExceptionInfo.NOT_MATCH_PASSWORD,
-                    currentMember.getEmail() + " 유저 비밀번호 불일치 발생(회원 탈퇴)");
+
+        if (!encoder.matches(deactivateRequestDTO.password(), currentMember.getPassword())) {
+            throw new MemberException(MemberExceptionInfo.NOT_MATCH_PASSWORD, currentMember.getEmail() + " 유저 비밀번호 불일치 발생(회원 탈퇴)");
         }
 
         if (isAdmin(currentMember))
-            throw new MemberException(MemberExceptionInfo.NOT_WITHDRAWAL_ADMIN,
-                    currentMember.getEmail() + " 관리자 계정 탈퇴 시도.");
-
+            throw new MemberException(MemberExceptionInfo.NOT_WITHDRAWAL_ADMIN, currentMember.getEmail() + " 관리자 계정 탈퇴 시도.");
         currentMember.updateWithdrawalDate();
     }
 
@@ -171,8 +167,7 @@ public class MemberServiceImpl implements MemberService {
         Member currentMember = getCurrentMember();
 
         if (isAdmin(currentMember))
-            throw new MemberException(MemberExceptionInfo.NOT_WITHDRAWAL_ADMIN,
-                    currentMember.getEmail() + " 관리자 계정 탈퇴 시도.");
+            throw new MemberException(MemberExceptionInfo.NOT_WITHDRAWAL_ADMIN, currentMember.getEmail() + " 관리자 계정 탈퇴 시도.");
 
         currentMember.updateWithdrawalDate();
     }
@@ -182,8 +177,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void bannedMember(Long id) {
         Member currentMember = memberRepository.findById(id)
-                .orElseThrow(
-                        () -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, id + "를 가진 유저가 존재하지 않습니다.(추방)"));
+                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, id + "를 가진 유저가 존재하지 않습니다.(추방)"));
 
         // 추방 시간 추가
         currentMember.updateBannedDate();
@@ -249,14 +243,13 @@ public class MemberServiceImpl implements MemberService {
     private Member getCurrentMember() {
         Long currentUserId = jwtService.getCurrentUserId();
         return memberRepository.findById(currentUserId)
-                .orElseThrow(
-                        () -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
+                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 
     // 관리자 권한 확인
     private boolean isAdmin(Member member) {
         return member.getMemberRoles().stream()
-                .anyMatch(role -> role.getRole().equals(Role.ADMIN));
+                .anyMatch(role -> role.getRole() == (Role.ADMIN));
     }
 
 }

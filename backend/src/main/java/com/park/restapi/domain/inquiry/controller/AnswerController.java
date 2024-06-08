@@ -30,7 +30,7 @@ public class AnswerController {
             emailService.sendAnsweredMessage(inquiry.getMember().getEmail(), inquiry.getTitle());
         }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.createSuccessNoContent("문의 답변 등록이 완료되었습니다."));
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     // 답변 수정
@@ -39,6 +39,6 @@ public class AnswerController {
                                                           @RequestBody @Valid AnswerRequestDTO answerRequestDTO) {
         answerService.updateAnswer(inquiryId, answerRequestDTO);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.createSuccessNoContent("문의 답변이 수정되었습니다."));
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

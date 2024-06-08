@@ -16,6 +16,8 @@ import com.park.restapi.domain.exception.info.MemberExceptionInfo;
 import com.park.restapi.domain.exception.info.PostExceptionInfo;
 import com.park.restapi.domain.member.entity.Member;
 import com.park.restapi.domain.member.repository.MemberRepository;
+import com.park.restapi.util.entity.SearchType;
+import com.park.restapi.util.entity.SortBy;
 import com.park.restapi.util.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +54,7 @@ public class PostServiceImpl implements PostService {
     // api 공유게시글 가져오기(페이지네이션)
     @Override
     @Transactional(readOnly = true)
-    public ApiRecommendPostsListResponseDTO getGptApiRecommendPosts(int page, String searchType, String searchKey, String sortBy) {
+    public ApiRecommendPostsListResponseDTO getGptApiRecommendPosts(int page, SearchType searchType, String searchKey, SortBy sortBy) {
         PageRequest pageRequest = PageRequest.of(page, DEFAULT_DATA_COUNT);
 
         Page<ApiRecommendPostsResponseDTO> apiRecommendPostsResponseDTOS = postRepository.findRecommendPosts(pageRequest, searchType, searchKey, sortBy);
@@ -97,4 +99,6 @@ public class PostServiceImpl implements PostService {
         return memberRepository.findById(currentUserId)
                 .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
+
+
 }

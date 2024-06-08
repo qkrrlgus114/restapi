@@ -2,7 +2,7 @@ package com.park.restapi.domain.board.entity;
 
 import com.park.restapi.domain.api.entity.MethodType;
 import com.park.restapi.domain.member.entity.Member;
-import com.park.restapi.util.BaseTimeEntity;
+import com.park.restapi.util.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -46,10 +46,10 @@ public class Post extends BaseTimeEntity {
     private LocalDateTime deleteDate;
 
     @Column(nullable = false)
-    private Integer likeCount = 0;
+    private int likeCount = 0;
 
     @Column(nullable = false)
-    private Integer viewCount = 0;
+    private int viewCount = 0;
 
     @Builder
     public Post(Member member, BoardType boardType, MethodType methodType, String title, String content) {
@@ -59,7 +59,7 @@ public class Post extends BaseTimeEntity {
         this.title = title;
         this.content = content;
     }
-    
+
     public void incrementLikeCount() {
         this.likeCount += 1;
     }

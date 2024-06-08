@@ -42,7 +42,8 @@
     </div>
     <div class="search-bar">
       <select v-model="searchField">
-        <option value="email">이메일</option>
+        <option value="ID">유저번호</option>
+        <option value="EMAIL">이메일</option>
       </select>
       <input
         v-model="searchValue"
@@ -70,7 +71,7 @@ const currentPage = ref(1); // 현재 페이지 번호
 const totalPages = ref(0); // 총 페이지 수
 const currentPageGroup = ref(1); // 현재 페이지 그룹
 const itemsPerPageGroup = 5; // 한 번에 표시할 페이지 번호 수
-const searchField = ref(route.query.searchType || "email");
+const searchField = ref(route.query.searchType || "ID");
 const searchValue = ref(route.query.searchKey || "");
 
 // 요청 이력 가져오기

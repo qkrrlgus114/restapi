@@ -30,5 +30,4 @@ public class ApiRequestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.createSuccess(chatGPTResponseDTO, "REST API 추천 완료."));
     }
 
-
 }

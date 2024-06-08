@@ -2,6 +2,7 @@ package com.park.restapi.domain.api.repository.impl;
 
 import com.park.restapi.domain.api.dto.response.ApiRequestHistoryResponseDTO;
 import com.park.restapi.domain.api.repository.ApiRequestHistoryCustomRepository;
+import com.park.restapi.util.entity.SearchType;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -48,9 +49,8 @@ public class ApiRequestHistoryRepositoryImpl implements ApiRequestHistoryCustomR
 
     // 검색 조건에 따른 요청 이력 조회
     @Override
-    public Page<ApiRequestHistoryResponseDTO> searchApiRequestHistoryByCondition(Pageable pageable, String searchType,
+    public Page<ApiRequestHistoryResponseDTO> searchApiRequestHistoryByCondition(Pageable pageable, SearchType searchType,
                                                                                  String keyword) {
-
         BooleanExpression searchCondition = searchCondition(searchType, keyword);
 
         List<ApiRequestHistoryResponseDTO> results = queryFactory.select(
@@ -78,13 +78,18 @@ public class ApiRequestHistoryRepositoryImpl implements ApiRequestHistoryCustomR
         return apiRequestHistory.member.email.contains(keyword);
     }
 
-    // 검색 조건 쿼리 생성
-    private BooleanExpression searchCondition(String searchType, String keyword) {
-        if ("email".equals(searchType)) {
-            return emailContains(keyword);
-        }
+    // 아이디 검색
+    private BooleanExpression idEquals(String keyword) {
+        return apiRequestHistory.member.id.eq(Long.parseLong(keyword));
+    }
 
-        return null;
+    // 검색 조건 쿼리 생성
+    private BooleanExpression searchCondition(SearchType searchType, String keyword) {
+        return switch (searchType) {
+            case ID -> idEquals(keyword);
+            case EMAIL -> emailContains(keyword);
+            default -> null;
+        };
     }
 
 }

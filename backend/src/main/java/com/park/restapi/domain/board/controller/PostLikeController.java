@@ -22,8 +22,7 @@ public class PostLikeController {
 
         postLikeService.likePost(postId);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.createSuccessNoContent("좋아요 누르기 성공."));
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     // 게시글 좋아요 취소하기
@@ -32,7 +31,6 @@ public class PostLikeController {
 
         postLikeService.unlikePost(postId);
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(ApiResponse.createSuccessNoContent("좋아요 취소하기 성공."));
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

@@ -1,7 +1,9 @@
 package com.park.restapi.domain.member.repository;
 
 import com.park.restapi.domain.member.entity.Member;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -31,4 +33,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     // 탈퇴한지 30일 지난 유저 탐색
     @Query("select m from Member m where m.withdrawalDate is not null and  m.withdrawalDate <= :thirtyDaysAgo")
     List<Member> findByWithdrawalMember(@Param("thirtyDaysAgo") LocalDateTime thirtyDaysAgo);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select m from Member m where m.id = :id")
+    Optional<Member> findByIdLock(@Param("id") Long id);
 }
