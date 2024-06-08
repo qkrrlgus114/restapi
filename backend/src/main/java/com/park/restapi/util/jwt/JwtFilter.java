@@ -36,7 +36,7 @@ public class JwtFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
 
-        return path.startsWith("/api/authentications/send") || path.startsWith("/api/email/")
+        return path.startsWith("/api/authentications/send") || path.startsWith("/api/email")
                 || path.startsWith("/login") || path.startsWith("/api/auth/refresh-token")
                 || path.startsWith("/api/members/login") || path.startsWith("/oauth2/authorization/kakao")
                 || path.startsWith("/ws");
@@ -50,7 +50,7 @@ public class JwtFilter extends OncePerRequestFilter {
         Optional<String> accessTokenOptional = findAccessToken(request, "accessToken");
 
         // 비로그인 사용자를 위해 /api/post 경로에 대해 GUEST 권한 부여
-        if (accessTokenOptional.isEmpty() && request.getRequestURI().startsWith("/api/post/share-api")) {
+        if (accessTokenOptional.isEmpty() && request.getRequestURI().startsWith("/api/posts")) {
             log.info("비로그인 사용자에게 GUEST 권한 부여");
             List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("GUEST"));
             UsernamePasswordAuthenticationToken authenticationToken =
