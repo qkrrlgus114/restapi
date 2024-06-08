@@ -50,7 +50,7 @@ public class InquiryServiceImpl implements InquiryService {
     @Transactional(readOnly = true)
     public InquiryListResponseDTO getMyInquiries(int page) {
         Member currentMember = getCurrentMemberFetchJoinMemberRoles();
-        
+
         PageRequest pageRequest = PageRequest.of(page, DEFAULT_DATA_COUNT, Sort.Direction.DESC, "createDate");
         Page<InquiryResponseDTO> inquires = inquiryRepository.findByInquires(currentMember, pageRequest, isAdmin(currentMember));
 
@@ -98,7 +98,7 @@ public class InquiryServiceImpl implements InquiryService {
 
     // 관리자 권한 확인
     private boolean isAdmin(Member member) {
-        return member.getMemberRoles().stream().anyMatch(role -> role.getRole().equals(Role.ADMIN));
+        return member.getMemberRoles().stream().anyMatch(role -> role.getRole() == (Role.ADMIN));
     }
 
 

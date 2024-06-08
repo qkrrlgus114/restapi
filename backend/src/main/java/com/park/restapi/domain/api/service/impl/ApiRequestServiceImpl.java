@@ -142,6 +142,6 @@ public class ApiRequestServiceImpl implements ApiRequestService {
 
     // 관리자 권한 확인
     private boolean isAdmin(Member member) {
-        return member.getMemberRoles().stream().anyMatch(role -> role.getRole().equals(Role.ADMIN));
+        return member.getMemberRoles().stream().anyMatch(role -> role.getRole() == (Role.ADMIN));
     }
 }
