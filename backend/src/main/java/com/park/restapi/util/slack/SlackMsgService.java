@@ -6,6 +6,7 @@ import com.slack.api.webhook.Payload;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -18,7 +19,8 @@ public class SlackMsgService {
     @Value("${spring.slack.webhook}")
     private String webhookUrl;
 
-    public boolean sendMsg(CommonException e, HttpServletRequest request) {
+    @Async("slackTaskExecutor")
+    public void sendMsg(CommonException e, HttpServletRequest request) {
         Slack slack = Slack.getInstance();
         String message = buildMessage(e, request);
 
@@ -30,8 +32,6 @@ public class SlackMsgService {
             log.error("slack 메시지 발송 중 문제가 발생.");
             throw new RuntimeException(ioe);
         }
-
-        return true;
     }
 
     private String buildMessage(CommonException e, HttpServletRequest request) {
