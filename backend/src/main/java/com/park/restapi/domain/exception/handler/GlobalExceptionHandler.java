@@ -2,9 +2,11 @@ package com.park.restapi.domain.exception.handler;
 
 import com.park.restapi.domain.exception.exception.*;
 import com.park.restapi.util.response.ApiResponse;
+import com.park.restapi.util.slack.SlackMsgService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
@@ -14,13 +16,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 @Slf4j
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
+
+    private final SlackMsgService slackMsgService;
 
     // 이메일 예외처리
     @ExceptionHandler(EmailException.class)
     public ResponseEntity<ApiResponse<Void>> handleEmailException(EmailException e, HttpServletRequest request) {
-        log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(),
-                e.getLog());
+        slackMsgService.sendMsg(e, request);
+
+        log.warn("요청 실패 - 계층 : {}, 요청 경로 : {}, 이유 : {}, 로그메시지 : {}",
+                e.getClass().getName(), request.getRequestURI(), e.getException().getMessage(), e.getLog());
 
         return ResponseEntity.status(e.getException().getStatus())
                 .body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
@@ -29,8 +36,10 @@ public class GlobalExceptionHandler {
     // 유저 예외처리
     @ExceptionHandler(MemberException.class)
     public ResponseEntity<ApiResponse<Void>> handleUserException(MemberException e, HttpServletRequest request) {
-        log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(),
-                e.getLog());
+        slackMsgService.sendMsg(e, request);
+
+        log.warn("요청 실패 - 계층 : {}, 요청 경로 : {}, 이유 : {}, 로그메시지 : {}",
+                e.getClass().getName(), request.getRequestURI(), e.getException().getMessage(), e.getLog());
 
         return ResponseEntity.status(e.getException().getStatus())
                 .body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
@@ -39,8 +48,10 @@ public class GlobalExceptionHandler {
     // GPT 예외처리
     @ExceptionHandler(GPTException.class)
     public ResponseEntity<ApiResponse<Void>> handleGPTException(GPTException e, HttpServletRequest request) {
-        log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(),
-                e.getLog());
+        slackMsgService.sendMsg(e, request);
+
+        log.warn("요청 실패 - 계층 : {}, 요청 경로 : {}, 이유 : {}, 로그메시지 : {}",
+                e.getClass().getName(), request.getRequestURI(), e.getException().getMessage(), e.getLog());
 
         return ResponseEntity.status(e.getException().getStatus())
                 .body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
@@ -49,8 +60,10 @@ public class GlobalExceptionHandler {
     // 쿠폰 예외처리
     @ExceptionHandler(CouponException.class)
     public ResponseEntity<ApiResponse<Void>> handleCouponException(CouponException e, HttpServletRequest request) {
-        log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(),
-                e.getLog());
+        slackMsgService.sendMsg(e, request);
+
+        log.warn("요청 실패 - 계층 : {}, 요청 경로 : {}, 이유 : {}, 로그메시지 : {}",
+                e.getClass().getName(), request.getRequestURI(), e.getException().getMessage(), e.getLog());
 
         return ResponseEntity.status(e.getException().getStatus())
                 .body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
@@ -59,8 +72,10 @@ public class GlobalExceptionHandler {
     // 문의내역 예외처리
     @ExceptionHandler(InquiryException.class)
     public ResponseEntity<ApiResponse<Void>> handleInquiryException(InquiryException e, HttpServletRequest request) {
-        log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(),
-                e.getLog());
+        slackMsgService.sendMsg(e, request);
+
+        log.warn("요청 실패 - 계층 : {}, 요청 경로 : {}, 이유 : {}, 로그메시지 : {}",
+                e.getClass().getName(), request.getRequestURI(), e.getException().getMessage(), e.getLog());
 
         return ResponseEntity.status(e.getException().getStatus())
                 .body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
@@ -69,8 +84,10 @@ public class GlobalExceptionHandler {
     // 문의내역 답변 예외처리
     @ExceptionHandler(AnswerException.class)
     public ResponseEntity<ApiResponse<Void>> handleAnswerException(AnswerException e, HttpServletRequest request) {
-        log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(),
-                e.getLog());
+        slackMsgService.sendMsg(e, request);
+
+        log.warn("요청 실패 - 계층 : {}, 요청 경로 : {}, 이유 : {}, 로그메시지 : {}",
+                e.getClass().getName(), request.getRequestURI(), e.getException().getMessage(), e.getLog());
 
         return ResponseEntity.status(e.getException().getStatus())
                 .body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
@@ -79,8 +96,10 @@ public class GlobalExceptionHandler {
     // 게시글 예외처리
     @ExceptionHandler(PostException.class)
     public ResponseEntity<ApiResponse<Void>> handlePostException(PostException e, HttpServletRequest request) {
-        log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(),
-                e.getLog());
+        slackMsgService.sendMsg(e, request);
+
+        log.warn("요청 실패 - 계층 : {}, 요청 경로 : {}, 이유 : {}, 로그메시지 : {}",
+                e.getClass().getName(), request.getRequestURI(), e.getException().getMessage(), e.getLog());
 
         return ResponseEntity.status(e.getException().getStatus())
                 .body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
@@ -89,8 +108,10 @@ public class GlobalExceptionHandler {
     // 좋아요 예외처리
     @ExceptionHandler(PostLikeException.class)
     public ResponseEntity<ApiResponse<Void>> handlePostLikeException(PostLikeException e, HttpServletRequest request) {
-        log.warn("요청 실패 - 요청 경로 : {}, 이유 : {}, 로그메시지 : {}", request.getRequestURI(), e.getException().getMessage(),
-                e.getLog());
+        slackMsgService.sendMsg(e, request);
+
+        log.warn("요청 실패 - 계층 : {}, 요청 경로 : {}, 이유 : {}, 로그메시지 : {}",
+                e.getClass().getName(), request.getRequestURI(), e.getException().getMessage(), e.getLog());
 
         return ResponseEntity.status(e.getException().getStatus())
                 .body(ApiResponse.createError(e.getException().getCode(), e.getException().getMessage()));
@@ -99,7 +120,6 @@ public class GlobalExceptionHandler {
     // Validated 유효성 검사 실패
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ApiResponse<?>> handleConstraintViolationException(ConstraintViolationException e) {
-
         String errorMessage = e.getConstraintViolations().stream()
                 .map(ConstraintViolation::getMessage)
                 .findFirst()
