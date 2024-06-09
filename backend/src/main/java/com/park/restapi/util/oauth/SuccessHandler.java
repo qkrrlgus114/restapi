@@ -81,7 +81,7 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
 
     }
 
-    // 리다이렉트 주소ㅇ
+    // 리다이렉트 주소
     private String makeRedirectUrl() {
         return UriComponentsBuilder.fromUriString("https://restapi.store/success")
                 .encode(StandardCharsets.UTF_8)
