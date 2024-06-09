@@ -3,7 +3,6 @@ package com.park.restapi.util.slack;
 import com.park.restapi.domain.exception.exception.CommonException;
 import com.slack.api.Slack;
 import com.slack.api.webhook.Payload;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.StringJoiner;
 
 @Service
 @Slf4j
@@ -20,9 +20,9 @@ public class SlackMsgService {
     private String webhookUrl;
 
     @Async("slackTaskExecutor")
-    public void sendMsg(CommonException e, HttpServletRequest request) {
+    public void sendMsg(CommonException e, RequestInfo requestInfo) {
         Slack slack = Slack.getInstance();
-        String message = buildMessage(e, request);
+        String message = buildMessage(e, requestInfo);
 
         Payload payload = Payload.builder().text(message).build();
 
@@ -34,20 +34,21 @@ public class SlackMsgService {
         }
     }
 
-    private String buildMessage(CommonException e, HttpServletRequest request) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(":exclamation: *Exception class* :exclamation:").append("\n")
-                .append("```").append(e.getClass().getName()).append("```").append("\n")
-                .append("*Request URI*").append("\n")
-                .append("```").append(request.getRequestURI()).append("```").append("\n")
-                .append("*Request Method*").append("\n")
-                .append("```").append(request.getMethod()).append("```").append("\n")
-                .append("*발생 시간*").append("\n")
-                .append("```").append(LocalDateTime.now()).append("```").append("\n")
-                .append("*이유*").append("\n")
-                .append("```").append(e.getExceptionMessage()).append("```").append("\n")
-                .append("*로그메시지*").append("\n")
-                .append("```").append(e.getLog()).append("```");
-        return sb.toString();
+    private String buildMessage(CommonException e, RequestInfo requestInfo) {
+        StringJoiner sj = new StringJoiner("\n");
+        sj.add(":exclamation: *Exception class* :exclamation:")
+                .add("```" + e.getClass().getName() + "```")
+                .add("*Request URI*")
+                .add("```" + requestInfo.requestURI() + "```")
+                .add("*Request Method*")
+                .add("```" + requestInfo.method() + "```")
+                .add("*발생 시간*")
+                .add("```" + LocalDateTime.now() + "```")
+                .add("*이유*")
+                .add("```" + e.getExceptionMessage() + "```")
+                .add("*로그메시지*")
+                .add("```" + e.getLog() + "```");
+
+        return sj.toString();
     }
 }
