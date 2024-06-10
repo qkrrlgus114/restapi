@@ -106,7 +106,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     // 답변 이메일 전송
-    @Async("taskExecutor")
+    @Async("emailTaskExecutor")
     public void sendAnsweredMessage(String to, String inquiryTitle) throws Exception {
         MimeMessage message = createAnswerMessage(to, inquiryTitle);
         try {

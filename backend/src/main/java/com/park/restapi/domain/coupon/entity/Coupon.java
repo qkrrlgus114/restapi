@@ -35,7 +35,7 @@ public class Coupon extends BaseTimeEntity {
     }
 
     public void updateCouponQuantity(int quantity) {
-        this.remainingQuantity = quantity;
-        this.totalQuantity = quantity;
+        this.remainingQuantity += quantity;
+        this.totalQuantity += quantity;
     }
 }

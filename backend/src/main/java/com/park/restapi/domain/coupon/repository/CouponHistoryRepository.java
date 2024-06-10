@@ -18,7 +18,7 @@ public interface CouponHistoryRepository extends JpaRepository<CouponHistory, Lo
                                       @Param("member") Member member);
 
     // 유저가 여태 획득했던 쿠폰
-    @Query("select count(ch.member) from CouponHistory ch where ch.member = :member")
+    @Query("select count(*) from CouponHistory ch where ch.member = :member")
     int findByMemberTotalAcquisitionToken(@Param("member") Member member);
 
 }

@@ -4,6 +4,7 @@ import com.park.restapi.domain.api.dto.response.ApiRequestHistoryListResponseDTO
 import com.park.restapi.domain.api.service.ApiRequestService;
 import com.park.restapi.util.entity.SearchType;
 import com.park.restapi.util.response.ApiResponse;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ public class ApiRequestAdminController {
     // API 요청 이력 조회
     @GetMapping("/requests/history")
     public ResponseEntity<ApiResponse<ApiRequestHistoryListResponseDTO>> getApiRequestHistory(
-            @RequestParam(value = "page", defaultValue = "1") int page,
+            @Min(value = 1, message = "페이지 검색은 1 페이지부터 가능합니다.") @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "searchType", required = false, defaultValue = "NONE") SearchType searchType,
             @RequestParam(value = "searchKey", required = false) String keyword) {
 
