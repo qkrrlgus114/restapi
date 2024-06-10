@@ -39,6 +39,6 @@ public class AnswerController {
                                                           @RequestBody @Valid AnswerRequestDTO answerRequestDTO) {
         answerService.updateAnswer(inquiryId, answerRequestDTO);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
