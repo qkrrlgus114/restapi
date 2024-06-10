@@ -40,7 +40,7 @@ public class ApiResponse<T> {
         return new ApiResponse<>(FAIL_STATUS, null, message);
     }
 
-    // 예외 발생으로 API 호출 실패시 반환 (클라이언트 에러)
+    // 예외 발생으로 API 호출 실패시 반환 (서버 에러)
     public static ApiResponse<Void> createServerError(String message) {
         return new ApiResponse<>(FAIL_STATUS, null, message);
     }

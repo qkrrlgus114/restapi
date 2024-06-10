@@ -29,36 +29,24 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // csrf 보호 비활성화
                 .csrf(AbstractHttpConfigurer::disable)
-                // cors설정 따름
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                // 세션 사용 안함(JWT 사용)
-                .sessionManagement(
-                        sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(sessionManagement ->
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                // 모든 요청 허용
-                .authorizeHttpRequests(authorize -> authorize.dispatcherTypeMatchers(DispatcherType.ERROR)
-                        .permitAll()
+                .authorizeHttpRequests(authorize -> authorize
+                        .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         .requestMatchers("/api/authentications/**", "/api/email/**", "/api/members/login",
-                                "/oauth2/authorization/kakao", "/login/oauth2/code/kakao", "/ws")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/posts/**")
-                        .hasAnyAuthority("GUEST", "USER", "ADMIN")
-                        .requestMatchers("/api/admin/**", "/api/gpt/admin/**", "/api/answers/**")
-                        .hasAuthority("ADMIN")
-                        .requestMatchers("/api/**")
-                        .hasAuthority("USER")
-                        .anyRequest()
-                        .authenticated())
-                // oauth 로그인
-                .oauth2Login(oauth -> {
-                    oauth.successHandler(successHandler);
-                    oauth.failureHandler(failureHandler);
-                    // oauth 로그인 성공 후 사용자 정보를 가져오기 위함.
-                    // 즉 code -> accessToken 과정을 거친 후 동작.
-                    oauth.userInfoEndpoint(userInfo -> userInfo.userService(principalOAuth2UserService));
-                });
+                                "/oauth2/authorization/kakao", "/login/oauth2/code/kakao", "/ws").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/posts/**").hasAnyAuthority("GUEST", "USER", "ADMIN")
+                        .requestMatchers("/api/admin/**", "/api/gpt/admin/**", "/api/answers/**").hasAuthority("ADMIN")
+                        .requestMatchers("/api/**").hasAuthority("USER")
+                        .anyRequest().authenticated())
+                .oauth2Login(oauth -> oauth
+                        .successHandler(successHandler)
+                        .failureHandler(failureHandler)
+                        .userInfoEndpoint(userInfo -> userInfo.userService(principalOAuth2UserService))
+                );
         return http.build();
     }
 }
