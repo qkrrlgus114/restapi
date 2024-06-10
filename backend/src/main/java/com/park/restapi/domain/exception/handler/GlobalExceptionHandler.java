@@ -125,7 +125,7 @@ public class GlobalExceptionHandler {
                 .map(ConstraintViolation::getMessage)
                 .findFirst()
                 .orElse("");
-        log.error("유효성 검사 실패 예외 발생 : ", errorMessage);
+        log.warn("유효성 검사 실패 예외 발생 : ", errorMessage);
 
         return ResponseEntity.status(400).body(ApiResponse.createClientError(errorMessage));
     }
@@ -133,13 +133,12 @@ public class GlobalExceptionHandler {
     // Valid 유효성 검사 실패
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<?>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-
         String errorMessage = e.getBindingResult().getAllErrors().stream()
                 .map(ObjectError::getDefaultMessage)
                 .findFirst() // 스트림에서 첫 번째 요소만 가져옴
                 .orElse("유효성 검사 오류 발생");
 
-        log.error("유효성 검사 실패 예외 발생 : ", errorMessage);
+        log.warn("유효성 검사 실패 예외 발생 : ", errorMessage);
 
         return ResponseEntity.status(400).body(ApiResponse.createClientError(errorMessage));
     }

@@ -8,16 +8,19 @@ import com.park.restapi.util.entity.SearchType;
 import com.park.restapi.util.entity.SortBy;
 import com.park.restapi.util.response.ApiResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/posts")
 @Slf4j
+@Validated
 public class PostController {
 
     private final PostService postService;
@@ -33,7 +36,7 @@ public class PostController {
     // 모든 게시글 가져오기
     @GetMapping()
     public ResponseEntity<ApiResponse<ApiRecommendPostsListResponseDTO>> getGptApiRecommendPost(
-            @RequestParam(value = "page", defaultValue = "1") int page,
+            @Min(value = 1, message = "페이지 검색은 1 페이지부터 가능합니다.") @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "searchType", required = false, defaultValue = "NONE") SearchType searchType,
             @RequestParam(value = "searchKey", required = false, defaultValue = "") String searchKey,
             @RequestParam(value = "sortBy", required = false, defaultValue = "NONE") SortBy sortBy) {
