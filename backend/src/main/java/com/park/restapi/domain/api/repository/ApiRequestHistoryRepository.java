@@ -21,7 +21,7 @@ public interface ApiRequestHistoryRepository
     Page<ApiRequestHistory> findAll(Pageable pageable);
 
     // 유저가 여태 사용했던 모든 토큰의 개수
-    @Query("select count(api.member) from ApiRequestHistory api where api.member = :member")
+    @Query("select count(*) from ApiRequestHistory api where api.member = :member")
     int findByTotalUseToken(@Param("member") Member member);
 
 }

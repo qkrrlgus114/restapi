@@ -15,18 +15,21 @@ public class MemberFindService {
     private final MemberRepository memberRepository;
     private final JwtService jwtService;
 
+    // 현재 유저 가져오기
     public Member getCurrentMember() {
         Long currentUserId = jwtService.getCurrentUserId();
         return memberRepository.findById(currentUserId)
                 .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 
+    // 유저와 권한 함께 가져오기
     public Member getCurrentMemberFetchJoinRoles() {
         Long currentUserId = jwtService.getCurrentUserId();
         return memberRepository.findByIdFetchRole(currentUserId)
                 .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 
+    // 현재 유저 가져오기(null 리턴)
     public Member getCurrentMemberNull() {
         Long currentUserId = jwtService.getCurrentUserId();
         if (currentUserId == null) {

@@ -4,6 +4,7 @@ import com.park.restapi.domain.board.dto.request.ApiRecommendPostRequestDTO;
 import com.park.restapi.domain.board.dto.response.ApiRecommendPostResponseDTO;
 import com.park.restapi.domain.board.dto.response.ApiRecommendPostsListResponseDTO;
 import com.park.restapi.domain.board.dto.response.ApiRecommendPostsResponseDTO;
+import com.park.restapi.domain.board.dto.response.TargetPostInfo;
 import com.park.restapi.domain.board.entity.BoardType;
 import com.park.restapi.domain.board.entity.Post;
 import com.park.restapi.domain.board.entity.PostLike;
@@ -67,20 +68,20 @@ public class PostServiceImpl implements PostService {
     public ApiRecommendPostResponseDTO getGptApiRecommendPost(Long postId) {
         Member currentMember = memberFindService.getCurrentMemberNull();
 
-        Post post = postRepository.findByIdWriteLockFetchJoinMember(postId)
+        TargetPostInfo targetPostInfo = postRepository.findByIdWriteLockFetchJoinMemberDTO(postId)
                 .orElseThrow(() -> new PostException(PostExceptionInfo.NOT_FOUND_POST, postId + "번 게시글이 존재하지 않습니다."));
 
-        post.incrementViewCount();
+        postRepository.findByIdUpdateViewCount(postId);
 
         // 좋아요 여부 찾기
         boolean isLiked = false;
         if (currentMember != null) {
-            Optional<PostLike> byMemberAndPost = postLikeRepository.findByMemberAndPost(currentMember, post);
+            Optional<PostLike> byMemberAndPost = postLikeRepository.findByMemberAndPostId(currentMember, postId);
             if (byMemberAndPost.isPresent()) isLiked = true;
         }
 
         return ApiRecommendPostResponseDTO.builder()
-                .postId(post.getId()).nickname(post.getMember().getNickname()).title(post.getTitle()).content(post.getContent())
-                .createdDate(post.getCreatedDate()).likeCount(post.getLikeCount()).viewCount(post.getViewCount()).isLiked(isLiked).build();
+                .postId(targetPostInfo.getId()).nickname(targetPostInfo.getNickname()).title(targetPostInfo.getTitle()).content(targetPostInfo.getContent())
+                .createdDate(targetPostInfo.getCreatedDate()).likeCount(targetPostInfo.getLikeCount()).viewCount(targetPostInfo.getViewCount()).isLiked(isLiked).build();
     }
 }

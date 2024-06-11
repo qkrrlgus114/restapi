@@ -144,7 +144,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public void deactivateGeneralMember(DeactivateRequestDTO deactivateRequestDTO) {
-        Member currentMember = memberFindService.getCurrentMember();
+        Member currentMember = memberFindService.getCurrentMemberFetchJoinRoles();
 
         if (!encoder.matches(deactivateRequestDTO.password(), currentMember.getPassword())) {
             throw new MemberException(MemberExceptionInfo.NOT_MATCH_PASSWORD, currentMember.getEmail() + " 유저 비밀번호 불일치 발생(회원 탈퇴)");

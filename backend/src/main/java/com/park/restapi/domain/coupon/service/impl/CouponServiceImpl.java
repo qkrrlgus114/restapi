@@ -52,7 +52,7 @@ public class CouponServiceImpl implements CouponService {
         CouponHistory byCouponHistory = couponHistoryRepository.findByCouponHistory(startOfDay, endOfDay, currentMember);
 
         if (byCouponHistory != null) {
-            throw new MemberException(MemberExceptionInfo.ALREADY_GET_COUPON, "이미 쿠폰 획득 완료.");
+            throw new MemberException(MemberExceptionInfo.ALREADY_GET_COUPON, currentMember.getId() + "번 유저 데일리 쿠폰 중복 획득 시도");
         }
 
         // 쿠폰이 남아있는지 확인
