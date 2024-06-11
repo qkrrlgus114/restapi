@@ -36,8 +36,8 @@ public class SecurityConfig {
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
-                        .requestMatchers("/api/authentications/**", "/api/email/**", "/api/members/login",
-                                "/oauth2/authorization/kakao", "/login/oauth2/code/kakao", "/ws").permitAll()
+                        .requestMatchers("/api/authentications/**", "/api/email/**", "/api/members/login", "/api/members",
+                                "/oauth2/authorization/kakao", "/login/oauth2/code/kakao", "/ws", "/api/members/logout").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/posts/**").hasAnyAuthority("GUEST", "USER", "ADMIN")
                         .requestMatchers("/api/admin/**", "/api/gpt/admin/**", "/api/answers/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/**").hasAuthority("USER")

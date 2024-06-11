@@ -16,7 +16,7 @@ public record MemberInfoResponseDTO(
 ) {
 
     public static MemberInfoResponseDTO toDTO(Member member) {
-        boolean social = member.getSocialType().equals(SocialType.KAKAO);
+        boolean social = member.getSocialType().equals(SocialType.GENERAL) ? false : true;
 
         List<String> roles = member.getMemberRoles().stream()
                 .map(memberRole -> memberRole.getRole().name())

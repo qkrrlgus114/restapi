@@ -38,8 +38,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
         return path.startsWith("/api/authentications/send") || path.startsWith("/api/email")
                 || path.startsWith("/login") || path.startsWith("/api/auth/refresh-token")
-                || path.startsWith("/api/members/login") || path.startsWith("/oauth2/authorization/kakao")
-                || path.startsWith("/ws");
+                || path.startsWith("/oauth2/authorization/kakao") || path.startsWith("/ws")
+                || path.startsWith("/api/members/login") || path.startsWith("/api/members/logout");
     }
 
     @Override
@@ -114,7 +114,7 @@ public class JwtFilter extends OncePerRequestFilter {
     // 유저 인증
     private boolean authenticateUser(HttpServletRequest request, HttpServletResponse response, Long userId) throws
             IOException {
-        Optional<Member> byIdLogin = memberRepository.findByIdLogin(userId);
+        Optional<Member> byIdLogin = memberRepository.findByIdFetchRole(userId);
         if (byIdLogin.isEmpty()) {
             log.info("유저 데이터 없음");
             sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "유저 데이터 없음");

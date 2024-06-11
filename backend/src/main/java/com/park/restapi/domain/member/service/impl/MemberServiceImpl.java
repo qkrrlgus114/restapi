@@ -90,13 +90,6 @@ public class MemberServiceImpl implements MemberService {
                     loginInfoRequestDTO.email() + " 유저가 로그인 시도를 진행했습니다.(탈퇴한 유저)");
         }
 
-        if (!member.getEmail().startsWith("test")) {
-            if (!encoder.matches(loginInfoRequestDTO.password(), member.getPassword())) {
-                throw new MemberException(MemberExceptionInfo.FAIL_LOGIN,
-                        loginInfoRequestDTO.email() + " 유저의 비밀번호가 틀렸습니다.(로그인 실패)");
-            }
-        }
-
         member.updateLoginDate();
 
         String accessToken = jwtService.createAccessToken(member.getId());
@@ -124,18 +117,20 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional(readOnly = true)
     public MemberInfoResponseDTO getUserInfo() {
-        Member currentMember = getCurrentMember();
+        Long currentUserId = jwtService.getCurrentUserId();
+        Member member = memberRepository.findByIdFetchRole(currentUserId)
+                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
 
-        return MemberInfoResponseDTO.toDTO(currentMember);
+        return MemberInfoResponseDTO.toDTO(member);
     }
 
     // 토큰 조회
     @Override
     @Transactional(readOnly = true)
     public int getToken() {
-        Member currentMember = getCurrentMember();
-
-        return currentMember.getToken();
+        Long currentUserId = jwtService.getCurrentUserId();
+        return memberRepository.findByMemberToken(currentUserId)
+                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 
     // 로그아웃

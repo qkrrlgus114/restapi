@@ -26,10 +26,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("select m from Member m where m.email = :email")
     Optional<Member> findByMemberLogin(@Param("email") String email);
 
-    // 소셜 로그인 회원가입
-    @Query("select m from Member m join fetch m.memberRoles where m.id = :id")
-    Optional<Member> findByIdLogin(@Param("id") Long id);
-
     // 탈퇴한지 30일 지난 유저 탐색
     @Query("select m from Member m where m.withdrawalDate is not null and  m.withdrawalDate <= :thirtyDaysAgo")
     List<Member> findByWithdrawalMember(@Param("thirtyDaysAgo") LocalDateTime thirtyDaysAgo);
@@ -37,4 +33,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select m from Member m where m.id = :id")
     Optional<Member> findByIdLock(@Param("id") Long id);
+
+    // 토큰 개수 반환
+    @Query("select m.token from Member m where m.id = :id")
+    Optional<Integer> findByMemberToken(@Param("id") Long id);
 }
