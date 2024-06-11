@@ -1,9 +1,7 @@
 package com.park.restapi.domain.inquiry.service.impl;
 
 import com.park.restapi.domain.exception.exception.InquiryException;
-import com.park.restapi.domain.exception.exception.MemberException;
 import com.park.restapi.domain.exception.info.InquiryExceptionInfo;
-import com.park.restapi.domain.exception.info.MemberExceptionInfo;
 import com.park.restapi.domain.inquiry.dto.request.InquiryRequestDTO;
 import com.park.restapi.domain.inquiry.dto.response.InquiryInfoResponseDTO;
 import com.park.restapi.domain.inquiry.dto.response.InquiryListResponseDTO;
@@ -16,6 +14,7 @@ import com.park.restapi.domain.member.entity.Member;
 import com.park.restapi.domain.member.entity.Role;
 import com.park.restapi.domain.member.repository.MemberRepository;
 import com.park.restapi.util.jwt.JwtService;
+import com.park.restapi.util.service.MemberFindService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,6 +31,7 @@ public class InquiryServiceImpl implements InquiryService {
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
     private final InquiryRepository inquiryRepository;
+    private final MemberFindService memberFindService;
 
     private static final int DEFAULT_DATA_COUNT = 5;
 
@@ -39,7 +39,7 @@ public class InquiryServiceImpl implements InquiryService {
     @Override
     @Transactional
     public void inquiryRegister(InquiryRequestDTO inquiryRequestDTO) {
-        Member currentMember = getCurrentMember();
+        Member currentMember = memberFindService.getCurrentMember();
 
         Inquiry inquiry = Inquiry.toEntity(inquiryRequestDTO, currentMember);
         inquiryRepository.save(inquiry);
@@ -49,7 +49,7 @@ public class InquiryServiceImpl implements InquiryService {
     @Override
     @Transactional(readOnly = true)
     public InquiryListResponseDTO getMyInquiries(int page) {
-        Member currentMember = getCurrentMemberFetchJoinMemberRoles();
+        Member currentMember = memberFindService.getCurrentMemberFetchJoinRoles();
 
         PageRequest pageRequest = PageRequest.of(page, DEFAULT_DATA_COUNT, Sort.Direction.DESC, "createDate");
         Page<InquiryResponseDTO> inquires = inquiryRepository.findByInquires(currentMember, pageRequest, isAdmin(currentMember));
@@ -64,7 +64,7 @@ public class InquiryServiceImpl implements InquiryService {
     @Override
     @Transactional(readOnly = true)
     public InquiryInfoResponseDTO getTargetInquiry(Long inquiryId) {
-        Member currentMember = getCurrentMemberFetchJoinMemberRoles();
+        Member currentMember = memberFindService.getCurrentMemberFetchJoinRoles();
         Answer answer = null;
 
         Inquiry inquiry = inquiryRepository.findByInquiryFetchJoinMember(inquiryId).
@@ -79,21 +79,6 @@ public class InquiryServiceImpl implements InquiryService {
         }
 
         return InquiryInfoResponseDTO.toDTO(answer, inquiry);
-    }
-
-    // 현재 로그인 유저 찾기(유저 권한 FetchJoin)
-    private Member getCurrentMemberFetchJoinMemberRoles() {
-        Long currentUserId = jwtService.getCurrentUserId();
-
-        return memberRepository.findByIdFetchRole(currentUserId).
-                orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
-    }
-
-    // 현재 로그인 유저 찾기
-    private Member getCurrentMember() {
-        Long currentUserId = jwtService.getCurrentUserId();
-        return memberRepository.findById(currentUserId)
-                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 
     // 관리자 권한 확인

@@ -17,6 +17,7 @@ import com.park.restapi.domain.exception.info.MemberExceptionInfo;
 import com.park.restapi.domain.member.entity.Member;
 import com.park.restapi.domain.member.repository.MemberRepository;
 import com.park.restapi.util.jwt.JwtService;
+import com.park.restapi.util.service.MemberFindService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,12 +38,13 @@ public class CouponServiceImpl implements CouponService {
     private final CouponSettingRepository couponSettingRepository;
     private final MemberRepository memberRepository;
     private final JwtService jwtService;
+    private final MemberFindService memberFindService;
 
     // 쿠폰 획득
     @Override
     @Transactional
     public void acquisitionCoupon() {
-        Member currentMember = getCurrentMember();
+        Member currentMember = memberFindService.getCurrentMember();
 
         // 오늘 획득한 이력이 있으면 중복 불가.
         LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
@@ -50,7 +52,7 @@ public class CouponServiceImpl implements CouponService {
         CouponHistory byCouponHistory = couponHistoryRepository.findByCouponHistory(startOfDay, endOfDay, currentMember);
 
         if (byCouponHistory != null) {
-            throw new MemberException(MemberExceptionInfo.ALREADY_GET_COUPON, "이미 쿠폰 획득 완료.");
+            throw new MemberException(MemberExceptionInfo.ALREADY_GET_COUPON, currentMember.getId() + "번 유저 데일리 쿠폰 중복 획득 시도");
         }
 
         // 쿠폰이 남아있는지 확인
@@ -125,12 +127,5 @@ public class CouponServiceImpl implements CouponService {
         }
 
         return coupon.getRemainingQuantity();
-    }
-
-    // 현재 로그인 유저 찾기
-    private Member getCurrentMember() {
-        Long currentUserId = jwtService.getCurrentUserId();
-        return memberRepository.findById(currentUserId)
-                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 }

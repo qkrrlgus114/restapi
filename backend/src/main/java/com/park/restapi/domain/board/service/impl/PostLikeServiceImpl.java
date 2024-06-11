@@ -5,15 +5,12 @@ import com.park.restapi.domain.board.entity.PostLike;
 import com.park.restapi.domain.board.repository.PostLikeRepository;
 import com.park.restapi.domain.board.repository.PostRepository;
 import com.park.restapi.domain.board.service.PostLikeService;
-import com.park.restapi.domain.exception.exception.MemberException;
 import com.park.restapi.domain.exception.exception.PostException;
 import com.park.restapi.domain.exception.exception.PostLikeException;
-import com.park.restapi.domain.exception.info.MemberExceptionInfo;
 import com.park.restapi.domain.exception.info.PostExceptionInfo;
 import com.park.restapi.domain.exception.info.PostLikeExceptionInfo;
 import com.park.restapi.domain.member.entity.Member;
-import com.park.restapi.domain.member.repository.MemberRepository;
-import com.park.restapi.util.jwt.JwtService;
+import com.park.restapi.util.service.MemberFindService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -29,14 +26,13 @@ public class PostLikeServiceImpl implements PostLikeService {
 
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
-    private final JwtService jwtService;
-    private final MemberRepository memberRepository;
+    private final MemberFindService memberFindService;
 
     // 좋아요 누르기
     @Override
     @Transactional
     public void likePost(Long postId) {
-        Member currentMember = getCurrentMember();
+        Member currentMember = memberFindService.getCurrentMember();
         Post post = postRepository.findByIdWriteLockFetchJoinMember(postId)
                 .orElseThrow(() -> new PostException(PostExceptionInfo.NOT_FOUND_POST, postId + "번 게시글을 찾지 못했습니다."));
 
@@ -65,7 +61,7 @@ public class PostLikeServiceImpl implements PostLikeService {
     @Override
     @Transactional
     public void unlikePost(Long postId) {
-        Member currentMember = getCurrentMember();
+        Member currentMember = memberFindService.getCurrentMember();
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostExceptionInfo.NOT_FOUND_POST, postId + "번 게시글을 찾지 못했습니다."));
@@ -79,13 +75,6 @@ public class PostLikeServiceImpl implements PostLikeService {
         postLikeRepository.delete(byMemberAndPost.get());
 
         post.decrementLikeCount();
-    }
-
-    // 현재 로그인 유저 찾기
-    private Member getCurrentMember() {
-        Long currentUserId = jwtService.getCurrentUserId();
-        return memberRepository.findById(currentUserId)
-                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 
 }
