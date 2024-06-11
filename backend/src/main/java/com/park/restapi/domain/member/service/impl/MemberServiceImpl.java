@@ -15,6 +15,7 @@ import com.park.restapi.domain.member.repository.MemberRoleRepository;
 import com.park.restapi.domain.member.repository.WithdrawalMemberRepository;
 import com.park.restapi.domain.member.service.MemberService;
 import com.park.restapi.util.jwt.JwtService;
+import com.park.restapi.util.service.MemberFindService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ public class MemberServiceImpl implements MemberService {
     private final ApiRequestHistoryRepository apiRequestHistoryRepository;
     private final CouponHistoryRepository couponHistoryRepository;
     private final WithdrawalMemberRepository withdrawalMemberRepository;
+    private final MemberFindService memberFindService;
     private final JwtService jwtService;
     private final BCryptPasswordEncoder encoder;
 
@@ -103,7 +105,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public void socialLogin(HttpServletResponse response) {
-        Member currentMember = getCurrentMember();
+        Member currentMember = memberFindService.getCurrentMember();
 
         currentMember.updateLoginDate();
 
@@ -117,11 +119,9 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional(readOnly = true)
     public MemberInfoResponseDTO getUserInfo() {
-        Long currentUserId = jwtService.getCurrentUserId();
-        Member member = memberRepository.findByIdFetchRole(currentUserId)
-                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
+        Member currentMember = memberFindService.getCurrentMemberFetchJoinRoles();
 
-        return MemberInfoResponseDTO.toDTO(member);
+        return MemberInfoResponseDTO.toDTO(currentMember);
     }
 
     // 토큰 조회
@@ -144,7 +144,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public void deactivateGeneralMember(DeactivateRequestDTO deactivateRequestDTO) {
-        Member currentMember = getCurrentMember();
+        Member currentMember = memberFindService.getCurrentMember();
 
         if (!encoder.matches(deactivateRequestDTO.password(), currentMember.getPassword())) {
             throw new MemberException(MemberExceptionInfo.NOT_MATCH_PASSWORD, currentMember.getEmail() + " 유저 비밀번호 불일치 발생(회원 탈퇴)");
@@ -159,7 +159,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public void deactivateSocialMember() {
-        Member currentMember = getCurrentMember();
+        Member currentMember = memberFindService.getCurrentMember();
 
         if (isAdmin(currentMember))
             throw new MemberException(MemberExceptionInfo.NOT_WITHDRAWAL_ADMIN, currentMember.getEmail() + " 관리자 계정 탈퇴 시도.");
@@ -171,8 +171,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public void bannedMember(Long id) {
-        Member currentMember = memberRepository.findById(id)
-                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, id + "를 가진 유저가 존재하지 않습니다.(추방)"));
+        Member currentMember = memberFindService.getCurrentMember();
 
         // 추방 시간 추가
         currentMember.updateBannedDate();
@@ -182,7 +181,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional(readOnly = true)
     public MyInfoResponseDTO getMemberInfo() {
-        Member currentMember = getCurrentMember();
+        Member currentMember = memberFindService.getCurrentMember();
 
         // 유저가 여태 사용했던 토큰 개수
         int totalUseToken = apiRequestHistoryRepository.findByTotalUseToken(currentMember);
@@ -232,13 +231,6 @@ public class MemberServiceImpl implements MemberService {
         cookie.setMaxAge(0);
         cookie.setPath("/");
         response.addCookie(cookie);
-    }
-
-    // 현재 로그인 유저 찾기
-    private Member getCurrentMember() {
-        Long currentUserId = jwtService.getCurrentUserId();
-        return memberRepository.findById(currentUserId)
-                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 
     // 관리자 권한 확인

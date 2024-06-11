@@ -133,10 +133,10 @@ const sendAuthenticationNumber = async () => {
 // 인증번호 확인
 const checkAuthenticationNumber = async () => {
   try {
-    const data = await apiPost("/api/email/authentications/verify", {
+    const data = await apiPost("/api/email/authentication/verify", {
       authenticationNumber: authenticationNumber.value,
     });
-    alert(data.message);
+    alert("인증이 완료되었습니다.");
     isDisabled.value = true;
     isCheckAuthentication.value = true;
   } catch (error) {}
@@ -152,7 +152,7 @@ const register = async () => {
       password: password.value,
       nickname: nickname.value,
     });
-    alert(data.message);
+    alert("회원가입이 완료되었습니다.");
     router.push("/login");
   } catch (error) {}
 };

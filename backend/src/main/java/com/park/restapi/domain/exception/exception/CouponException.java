@@ -10,7 +10,7 @@ public class CouponException extends RuntimeException implements CommonException
     private CouponExceptionInfo exception;
     // 개발자에게 보여지는 로그
     private String log;
-    
+
     @Override
     public String getExceptionMessage() {
         return exception.getMessage();

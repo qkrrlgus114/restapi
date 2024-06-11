@@ -10,8 +10,6 @@ import com.park.restapi.domain.inquiry.entity.Inquiry;
 import com.park.restapi.domain.inquiry.repository.AnswerRepository;
 import com.park.restapi.domain.inquiry.repository.InquiryRepository;
 import com.park.restapi.domain.inquiry.service.AnswerService;
-import com.park.restapi.domain.member.repository.MemberRepository;
-import com.park.restapi.util.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,10 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class AnswerServiceImpl implements AnswerService {
 
-    private final MemberRepository memberRepository;
     private final AnswerRepository answerRepository;
     private final InquiryRepository inquiryRepository;
-    private final JwtService jwtService;
 
     // 문의내역 답변 등록하기
     @Override
