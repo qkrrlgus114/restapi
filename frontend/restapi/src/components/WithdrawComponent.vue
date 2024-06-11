@@ -86,7 +86,7 @@ const withdrawAPI = async () => {
       password: password.value,
     });
 
-    alert(data.message);
+    alert("정상적으로 탈퇴되었습니다.");
     store.logout();
     router.push("/login");
   } catch (error) {}

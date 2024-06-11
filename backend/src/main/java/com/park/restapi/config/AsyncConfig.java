@@ -11,11 +11,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class AsyncConfig {
 
     private static final int EMAIL_CORE_POOL_SIZE = 10;
-    private static final int EMAIL_MAX_POOL_SIZE = 30;
+    private static final int EMAIL_MAX_POOL_SIZE = 40;
     private static final int EMAIL_QUEUE_CAPACITY = 20;
 
     private static final int SLACK_CORE_POOL_SIZE = 20;
-    private static final int SLACK_MAX_POOL_SIZE = 50;
+    private static final int SLACK_MAX_POOL_SIZE = 150;
     private static final int SLACK_QUEUE_CAPACITY = 100;
 
     @Bean

@@ -15,9 +15,8 @@ import com.park.restapi.domain.exception.info.GPTExceptionInfo;
 import com.park.restapi.domain.exception.info.MemberExceptionInfo;
 import com.park.restapi.domain.member.entity.Member;
 import com.park.restapi.domain.member.entity.Role;
-import com.park.restapi.domain.member.repository.MemberRepository;
 import com.park.restapi.util.entity.SearchType;
-import com.park.restapi.util.jwt.JwtService;
+import com.park.restapi.util.service.MemberFindService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,9 +39,8 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     private final RestTemplate restTemplate;
     @Value("${openai.url.prompt}")
     private String URL;
-    private final MemberRepository memberRepository;
     private final ApiRequestHistoryRepository apiRequestHistoryRepository;
-    private final JwtService jwtService;
+    private final MemberFindService memberFindService;
 
     private static final Semaphore semaphore = new Semaphore(5);
 
@@ -54,7 +52,7 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     public ChatGPTResponseDTO chatGpt(ApiRequestDTO apiRequestDTO) {
         Member member = null;
         try {
-            member = getCurrentMember();
+            member = memberFindService.getCurrentMember();
 
             semaphore.acquire();
 
@@ -112,7 +110,7 @@ public class ApiRequestServiceImpl implements ApiRequestService {
     @Override
     @Transactional(readOnly = true)
     public ApiRequestHistoryListResponseDTO getApiRequestHistory(int page, SearchType searchType, String keyword) {
-        Member currentMember = getCurrentMember();
+        Member currentMember = memberFindService.getCurrentMemberFetchJoinRoles();
         if (!isAdmin(currentMember)) {
             throw new MemberException(MemberExceptionInfo.USER_NOT_ADMIN, currentMember.getEmail() + " 유저가 api 요청 이력 조회를 시도했습니다.(관리자 아님)");
         }
@@ -131,13 +129,6 @@ public class ApiRequestServiceImpl implements ApiRequestService {
                 .currentPage(apiRequestHistories.getNumber())
                 .totalPages(apiRequestHistories.getTotalPages())
                 .build();
-    }
-
-    // 현재 로그인 유저 찾기
-    private Member getCurrentMember() {
-        Long currentUserId = jwtService.getCurrentUserId();
-        return memberRepository.findById(currentUserId)
-                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
     }
 
     // 관리자 권한 확인

@@ -4,21 +4,19 @@ import com.park.restapi.domain.board.dto.request.ApiRecommendPostRequestDTO;
 import com.park.restapi.domain.board.dto.response.ApiRecommendPostResponseDTO;
 import com.park.restapi.domain.board.dto.response.ApiRecommendPostsListResponseDTO;
 import com.park.restapi.domain.board.dto.response.ApiRecommendPostsResponseDTO;
+import com.park.restapi.domain.board.dto.response.TargetPostInfo;
 import com.park.restapi.domain.board.entity.BoardType;
 import com.park.restapi.domain.board.entity.Post;
 import com.park.restapi.domain.board.entity.PostLike;
 import com.park.restapi.domain.board.repository.PostLikeRepository;
 import com.park.restapi.domain.board.repository.PostRepository;
 import com.park.restapi.domain.board.service.PostService;
-import com.park.restapi.domain.exception.exception.MemberException;
 import com.park.restapi.domain.exception.exception.PostException;
-import com.park.restapi.domain.exception.info.MemberExceptionInfo;
 import com.park.restapi.domain.exception.info.PostExceptionInfo;
 import com.park.restapi.domain.member.entity.Member;
-import com.park.restapi.domain.member.repository.MemberRepository;
 import com.park.restapi.util.entity.SearchType;
 import com.park.restapi.util.entity.SortBy;
-import com.park.restapi.util.jwt.JwtService;
+import com.park.restapi.util.service.MemberFindService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,8 +33,7 @@ public class PostServiceImpl implements PostService {
 
     private final PostLikeRepository postLikeRepository;
     private final PostRepository postRepository;
-    private final JwtService jwtService;
-    private final MemberRepository memberRepository;
+    private final MemberFindService memberFindService;
 
     private final static int DEFAULT_DATA_COUNT = 10;
 
@@ -44,7 +41,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public void apiRecommendDataPost(ApiRecommendPostRequestDTO apiRecommendPostRequestDTO) {
-        Member currentMember = getCurrentMember();
+        Member currentMember = memberFindService.getCurrentMemberNull();
 
         // 게시글 생성
         Post post = apiRecommendPostRequestDTO.toEntity(currentMember, BoardType.SHARE, apiRecommendPostRequestDTO.methodType());
@@ -69,36 +66,22 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public ApiRecommendPostResponseDTO getGptApiRecommendPost(Long postId) {
-        Member currentMember = getCurrentMember();
+        Member currentMember = memberFindService.getCurrentMemberNull();
 
-        System.out.println("들어옴3");
-        Post post = postRepository.findByIdWriteLockFetchJoinMember(postId)
+        TargetPostInfo targetPostInfo = postRepository.findByIdWriteLockFetchJoinMemberDTO(postId)
                 .orElseThrow(() -> new PostException(PostExceptionInfo.NOT_FOUND_POST, postId + "번 게시글이 존재하지 않습니다."));
 
-        post.incrementViewCount();
+        postRepository.findByIdUpdateViewCount(postId);
 
         // 좋아요 여부 찾기
         boolean isLiked = false;
         if (currentMember != null) {
-            Optional<PostLike> byMemberAndPost = postLikeRepository.findByMemberAndPost(currentMember, post);
+            Optional<PostLike> byMemberAndPost = postLikeRepository.findByMemberAndPostId(currentMember, postId);
             if (byMemberAndPost.isPresent()) isLiked = true;
         }
 
         return ApiRecommendPostResponseDTO.builder()
-                .postId(post.getId()).nickname(post.getMember().getNickname()).title(post.getTitle()).content(post.getContent())
-                .createdDate(post.getCreatedDate()).likeCount(post.getLikeCount()).viewCount(post.getViewCount()).isLiked(isLiked).build();
+                .postId(targetPostInfo.getId()).nickname(targetPostInfo.getNickname()).title(targetPostInfo.getTitle()).content(targetPostInfo.getContent())
+                .createdDate(targetPostInfo.getCreatedDate()).likeCount(targetPostInfo.getLikeCount()).viewCount(targetPostInfo.getViewCount()).isLiked(isLiked).build();
     }
-
-    // 현재 로그인 유저 찾기
-    private Member getCurrentMember() {
-        Long currentUserId = jwtService.getCurrentUserId();
-        if (currentUserId == null) {
-            return null;
-        }
-
-        return memberRepository.findById(currentUserId)
-                .orElseThrow(() -> new MemberException(MemberExceptionInfo.NOT_FOUND_MEMBER, currentUserId + "번 유저를 찾지 못했습니다."));
-    }
-
-
 }

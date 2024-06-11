@@ -34,7 +34,6 @@ public class PostRepositoryImpl implements PostCustomRepository {
 
         OrderSpecifier<?>[] orderSpecifier = getOrderSpecifier(sortBy);
 
-        Long startTime = System.currentTimeMillis();
         List<Long> postIds = queryFactory
                 .select(post.id)
                 .from(post)
@@ -52,8 +51,6 @@ public class PostRepositoryImpl implements PostCustomRepository {
                 .where(post.id.in(postIds))
                 .orderBy(orderSpecifier)
                 .fetch();
-        Long endTime = System.currentTimeMillis();
-        log.info("소요 시간 : {}", endTime - startTime);
 
         long total = queryFactory
                 .select(post.count())

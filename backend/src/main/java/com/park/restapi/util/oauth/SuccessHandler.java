@@ -8,7 +8,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -35,7 +34,6 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
 
     // oauth 성공 핸들러
     @Override
-    @Transactional
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         log.info("oauth 성공 핸들러 동작");
@@ -78,7 +76,6 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
         String url = makeRedirectUrl();
 
         redirectStrategy.sendRedirect(request, response, url);
-
     }
 
     // 리다이렉트 주소

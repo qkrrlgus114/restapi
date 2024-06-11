@@ -117,9 +117,9 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+    // 회원가입 인증번호 전송
     @Transactional
     public boolean sendSimpleMessageRegist(String email) throws Exception {
-
         Optional<WithdrawalMember> withdrawalMemberRepositoryByEmail = withdrawalMemberRepository.findByEmail(email);
         if (withdrawalMemberRepositoryByEmail.isPresent()) {
             throw new MemberException(MemberExceptionInfo.WITHDRAWAL_MEMBER, email + "로 회원가입을 시도했습니다.(탈퇴 유저)");
@@ -146,8 +146,9 @@ public class EmailServiceImpl implements EmailService {
         return true;
     }
 
+    // 회원가입 인증번호 확인
     @Override
-    //    @Transactional
+    @Transactional
     public void checkCertificationCode(String code) {
         EmailConfirm confirm = emailConfirmRepository.checkCode(code)
                 .orElseThrow(() -> new EmailException(EmailExceptionInfo.NO_MATCH_CERTIFICATION_CODE, "인증번호 일치하지 않음"));

@@ -149,6 +149,11 @@ router.beforeEach((to, from, next) => {
   const store = useMainStore();
   const isLoggedIn = store.getLoginState;
   const isAdmin = store.getAdminRole; // 관리자 권한 확인
+  const page = parseInt(to.params.page);
+  if (page <= 0) {
+    alert("1 페이지부터 검색 가능합니다.");
+    next({ name: "Chat" });
+  }
 
   // 로그인이 필요한 페이지인 경우
   if (to.matched.some((record) => record.meta.requiresAuth && !isLoggedIn)) {
