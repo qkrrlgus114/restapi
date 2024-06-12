@@ -54,7 +54,6 @@ import { apiGet, apiPost, apiPatch } from "@/utils/api";
 import Modal from "./Modal.vue";
 
 const store = useMainStore();
-const router = useRouter();
 
 const dailyCouponQuantity = ref(0);
 const isDailyCouponGenerate = ref(false);
@@ -103,7 +102,7 @@ const applySettings = async () => {
       isDailyCouponGenerate: isDailyCouponGenerate.value,
       dailyCouponQuantity: dailyCouponQuantity.value,
     });
-    alert(data.message);
+    alert("설정이 변경되었습니다.");
     originDailyCouponQuantity.value = dailyCouponQuantity.value;
     originIsDailyCouponGenerate.value = isDailyCouponGenerate.value;
   } catch (error) {}
@@ -125,7 +124,7 @@ const immediatelyCoupon = async () => {
     const data = await apiPost("/api/admin/coupons", {
       dailyCouponQuantity: dailyCouponQuantity.value,
     });
-    alert(data.message);
+    alert("쿠폰이 발급되었습니다.");
     store.updateCoupon(dailyCouponQuantity.value);
   } catch (error) {
     // 오류 처리
