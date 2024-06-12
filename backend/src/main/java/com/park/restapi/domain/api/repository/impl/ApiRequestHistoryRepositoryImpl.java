@@ -29,15 +29,21 @@ public class ApiRequestHistoryRepositoryImpl implements ApiRequestHistoryCustomR
     @Override
     public Page<ApiRequestHistoryResponseDTO> searchApiRequestHistory(Pageable pageable) {
 
+        List<Long> apiRequestsIds = queryFactory.select(apiRequestHistory.id)
+                .from(apiRequestHistory)
+                .orderBy(apiRequestHistory.requestDate.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
         List<ApiRequestHistoryResponseDTO> results = queryFactory.select(
                         Projections.constructor(ApiRequestHistoryResponseDTO.class, apiRequestHistory.member.id,
                                 apiRequestHistory.requestDate, member.email, apiRequestHistory.methodType,
                                 apiRequestHistory.requestContent, apiRequestHistory.responseContent))
                 .from(apiRequestHistory)
                 .leftJoin(apiRequestHistory.member, member)
+                .where(apiRequestHistory.id.in(apiRequestsIds))
                 .orderBy(apiRequestHistory.requestDate.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
                 .fetch();
 
         long total = queryFactory.select(apiRequestHistory.count())
@@ -53,16 +59,22 @@ public class ApiRequestHistoryRepositoryImpl implements ApiRequestHistoryCustomR
                                                                                  String keyword) {
         BooleanExpression searchCondition = searchCondition(searchType, keyword);
 
+        List<Long> apiRequestsIds = queryFactory.select(apiRequestHistory.id)
+                .from(apiRequestHistory)
+                .where(searchCondition)
+                .orderBy(apiRequestHistory.requestDate.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
         List<ApiRequestHistoryResponseDTO> results = queryFactory.select(
                         Projections.constructor(ApiRequestHistoryResponseDTO.class, apiRequestHistory.member.id,
                                 apiRequestHistory.requestDate, member.email, apiRequestHistory.methodType,
                                 apiRequestHistory.requestContent, apiRequestHistory.responseContent))
                 .from(apiRequestHistory)
-                .leftJoin(apiRequestHistory.member, member)
-                .where(searchCondition)
+                .innerJoin(apiRequestHistory.member, member)
+                .where(apiRequestHistory.id.in(apiRequestsIds))
                 .orderBy(apiRequestHistory.requestDate.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
                 .fetch();
 
         long total = queryFactory.select(apiRequestHistory.count())
