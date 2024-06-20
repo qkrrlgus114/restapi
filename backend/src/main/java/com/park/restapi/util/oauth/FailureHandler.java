@@ -31,7 +31,7 @@ public final class FailureHandler implements AuthenticationFailureHandler {
         redirectStrategy.sendRedirect(request, response, url);
     }
 
-    // 리다이렉트 주소
+    // 리다이렉트 주소 ㅇ
     private String makeRedirectUrl() {
         return UriComponentsBuilder.fromUriString("https://restapi.store/failure")
                 .encode(StandardCharsets.UTF_8)
