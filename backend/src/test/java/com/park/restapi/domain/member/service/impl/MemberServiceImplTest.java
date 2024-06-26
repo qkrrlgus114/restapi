@@ -30,6 +30,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -307,6 +308,32 @@ class MemberServiceImplTest {
 
         // then
         verify(mockingMember).updateBannedDate();
+    }
+
+    @Test
+    @DisplayName("유저 토큰 초기화 진행 성공(스케줄러)")
+    void successTokenReset() {
+        // given
+        Member member = Member.builder()
+                .email("test2@naver.com")
+                .password("1234")
+                .nickname("asdasd")
+                .socialType(SocialType.GENERAL)
+                .loginLastDate(LocalDateTime.now()).build();
+        member.useToken();
+        mockMember.useToken();
+        List<Member> list = List.of(member, mockMember);
+
+        when(memberRepository.findAll()).thenReturn(list);
+
+        // when
+        memberService.resetAllTokens();
+
+        // then
+        for (int i = 0; i < list.size(); i++) {
+            assertEquals(10, list.get(i).getToken());
+        }
+        verify(memberRepository).findAll();
     }
 
     private static class CookieMatcher implements ArgumentMatcher<Cookie> {
