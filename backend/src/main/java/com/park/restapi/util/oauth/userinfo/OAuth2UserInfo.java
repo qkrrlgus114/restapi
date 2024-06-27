@@ -1,4 +1,6 @@
-package com.park.restapi.util.oauth;
+package com.park.restapi.util.oauth.userinfo;
+
+import com.park.restapi.util.oauth.RegistrationId;
 
 /*
  * 다른 oauth에서 유저 정보를 가져오기 위한 메서드를 정의해놓은 인터페이스.
@@ -8,6 +10,8 @@ public interface OAuth2UserInfo {
     String getProviderId();
 
     String getProvider();
+
+    RegistrationId getRegistrationId();
 
     String getEmail();
 

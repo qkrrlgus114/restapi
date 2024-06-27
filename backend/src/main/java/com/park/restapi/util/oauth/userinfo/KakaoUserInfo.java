@@ -1,13 +1,17 @@
-package com.park.restapi.util.oauth;
+package com.park.restapi.util.oauth.userinfo;
+
+import com.park.restapi.util.oauth.RegistrationId;
 
 import java.util.Map;
 
 public class KakaoUserInfo implements OAuth2UserInfo {
 
     private Map<String, Object> attributes;
+    private RegistrationId registrationId;
 
-    public KakaoUserInfo(Map<String, Object> attributes) {
+    public KakaoUserInfo(Map<String, Object> attributes, RegistrationId registrationId) {
         this.attributes = attributes;
+        this.registrationId = registrationId;
     }
 
     @Override
@@ -21,15 +25,18 @@ public class KakaoUserInfo implements OAuth2UserInfo {
     }
 
     @Override
+    public RegistrationId getRegistrationId() {
+        return registrationId;
+    }
+
+    @Override
     public String getEmail() {
         return (String) ((Map) attributes.get("kakao_account")).get("email");
     }
 
     @Override
     public String getNickname() {
-        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
-        Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
-        return (String) profile.get("nickname");
+        return (String) ((Map) ((Map) attributes.get("kakao_account")).get("profile")).get("nickname");
     }
 
 }

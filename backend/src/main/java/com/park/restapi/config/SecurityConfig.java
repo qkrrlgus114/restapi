@@ -1,9 +1,9 @@
 package com.park.restapi.config;
 
 import com.park.restapi.util.jwt.JwtFilter;
-import com.park.restapi.util.oauth.FailureHandler;
 import com.park.restapi.util.oauth.PrincipalOAuth2UserService;
-import com.park.restapi.util.oauth.SuccessHandler;
+import com.park.restapi.util.oauth.handler.FailureHandler;
+import com.park.restapi.util.oauth.handler.SuccessHandler;
 import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
