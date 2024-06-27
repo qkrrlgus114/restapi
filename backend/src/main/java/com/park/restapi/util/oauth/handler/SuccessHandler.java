@@ -1,4 +1,4 @@
-package com.park.restapi.util.oauth;
+package com.park.restapi.util.oauth.handler;
 
 import com.park.restapi.domain.member.entity.Member;
 import com.park.restapi.domain.member.repository.MemberRepository;

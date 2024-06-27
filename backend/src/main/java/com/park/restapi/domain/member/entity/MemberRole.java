@@ -33,6 +33,11 @@ public class MemberRole {
         this.role = Role.USER;
     }
 
+    public MemberRole(Member member, Role role) {
+        this.member = member;
+        this.role = role;
+    }
+
     @Override
     public String toString() {
         return "UserRole{" +

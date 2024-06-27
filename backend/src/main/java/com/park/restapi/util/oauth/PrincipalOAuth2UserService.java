@@ -7,6 +7,7 @@ import com.park.restapi.domain.member.entity.WithdrawalMember;
 import com.park.restapi.domain.member.repository.MemberRepository;
 import com.park.restapi.domain.member.repository.MemberRoleRepository;
 import com.park.restapi.domain.member.repository.WithdrawalMemberRepository;
+import com.park.restapi.util.oauth.userinfo.OAuth2UserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -18,10 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-/*
- * 해당 서비스 안에 들어오면 유저 접근 권한을 얻은 상태.
- * 해당 유저 여부를 판단하고 없으면 유저 정보 생성
- * */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -31,32 +28,19 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
     private final MemberRoleRepository memberRoleRepository;
     private final WithdrawalMemberRepository withdrawalMemberRepository;
 
+    private static final String KICKED_MEMBER_ERROR = "kicked_member";
+    private static final String WITHDRAWAL_MEMBER_ERROR = "withdrawal_member";
+    private static final String INVALID_REGISTRATION_ID_ERROR = "invalid_registration_id";
+    private static final String WITHDRAWAL_EMAIL_ERROR = "withdrawal_email";
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        // 소셜 타입에 맞게 유동적으로 담을 인터페이스 변수 생성
-        OAuth2UserInfo oAuth2UserInfo = null;
-
-        String registrationId = userRequest.getClientRegistration().getRegistrationId();
-
-        /*
-         * 확장성을 위함.
-         * kakao, naver, google 등등 다양한 타입에 맞게 수정만 해주면 됨.
-         * */
-        if ("kakao".equals(registrationId)) {
-            oAuth2UserInfo = new KakaoUserInfo(oAuth2User.getAttributes());
-        }
+        OAuth2UserInfo oAuth2UserInfo = createOAuth2UserInfo(userRequest, oAuth2User);
 
         String email = oAuth2UserInfo.getEmail();
-        // 블랙리스트에 있는지 확인
-        Optional<WithdrawalMember> byEmail = withdrawalMemberRepository.findByEmail(email);
-        if (byEmail.isPresent()) {
-            OAuth2Error error = new OAuth2Error("탈퇴한", email + " 유저가 로그인 시도를 진행했습니다.(탈퇴한 유저, 카카오)", null);
-            throw new OAuth2AuthenticationException(error);
-        }
-
-        String nickname = oAuth2UserInfo.getNickname();
+        checkBlackList(email); // 블랙리스트 확인
 
         // 유저가 db에 있는지 판단.
         Optional<Member> byUser = memberRepository.findByEmail(email);
@@ -65,32 +49,60 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
          * 만약에 유저가 없으면 회원가입 진행
          * */
         if (byUser.isEmpty()) {
-            Member member = new Member(email, nickname, SocialType.KAKAO);
-            Member save = memberRepository.save(member);
-
-            MemberRole memberRole = MemberRole.builder()
-                    .member(save)
-                    .build();
-            memberRoleRepository.save(memberRole);
-
+            registerNewMember(oAuth2UserInfo, email);
         } else {
-            Member member = byUser.get();
-
-            // 추방 여부 판단
-            if (member.getBannedDate() != null) {
-                OAuth2Error error = new OAuth2Error("추방된 유저", member.getEmail() + " 유저가 로그인 시도를 진행했습니다.(추방된 유저, 카카오)",
-                        null);
-                throw new OAuth2AuthenticationException(error);
-            }
-
-            // 탈퇴 여부 판단
-            if (member.getWithdrawalDate() != null) {
-                OAuth2Error error = new OAuth2Error("탈퇴한 유저", member.getEmail() + " 유저가 로그인 시도를 진행했습니다.(탈퇴한 유저, 카카오)",
-                        null);
-                throw new OAuth2AuthenticationException(error);
-            }
+            checkExistingMember(byUser.get());
         }
 
         return oAuth2User;
+    }
+
+    // OAuth2UserInfo 생성
+    private OAuth2UserInfo createOAuth2UserInfo(OAuth2UserRequest userRequest, OAuth2User oAuth2User) {
+        String registrationId = userRequest.getClientRegistration().getRegistrationId().toUpperCase();
+        try {
+            RegistrationId regId = RegistrationId.valueOf(registrationId);
+            return regId.getOAuth2UserInfo(oAuth2User.getAttributes(), regId);
+        } catch (IllegalArgumentException e) {
+            throw new OAuth2AuthenticationException(new OAuth2Error(INVALID_REGISTRATION_ID_ERROR, "지원하지 않는 registration id: " + registrationId, null));
+        }
+    }
+
+    // 블랙리스트에 있는지 확인
+    private void checkBlackList(String email) {
+        Optional<WithdrawalMember> byEmail = withdrawalMemberRepository.findByEmail(email);
+        if (byEmail.isPresent()) {
+            OAuth2Error error = new OAuth2Error(WITHDRAWAL_EMAIL_ERROR, email + " 유저가 로그인 시도를 진행했습니다.(탈퇴한 유저)", null);
+            throw new OAuth2AuthenticationException(error);
+        }
+    }
+
+    // 새로운 유저 가입
+    private void registerNewMember(OAuth2UserInfo oAuth2UserInfo, String email) {
+        String nickname = oAuth2UserInfo.getNickname();
+        Member member = new Member(email, nickname, SocialType.valueOf(oAuth2UserInfo.getRegistrationId().name()));
+        Member savedMember = memberRepository.save(member);
+
+        MemberRole memberRole = MemberRole.builder()
+                .member(savedMember)
+                .build();
+        memberRoleRepository.save(memberRole);
+    }
+
+    // 기존 유저 판단
+    private void checkExistingMember(Member member) {
+        // 추방 여부 판단
+        if (member.getBannedDate() != null) {
+            OAuth2Error error = new OAuth2Error(KICKED_MEMBER_ERROR, member.getEmail() + " 유저가 로그인 시도를 진행했습니다.(추방된 유저)",
+                    null);
+            throw new OAuth2AuthenticationException(error);
+        }
+
+        // 탈퇴 여부 판단
+        if (member.getWithdrawalDate() != null) {
+            OAuth2Error error = new OAuth2Error(WITHDRAWAL_MEMBER_ERROR, member.getEmail() + " 유저가 로그인 시도를 진행했습니다.(탈퇴한 유저)",
+                    null);
+            throw new OAuth2AuthenticationException(error);
+        }
     }
 }
