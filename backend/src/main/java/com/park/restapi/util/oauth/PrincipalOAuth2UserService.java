@@ -32,6 +32,7 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
     private static final String WITHDRAWAL_MEMBER_ERROR = "withdrawal_member";
     private static final String INVALID_REGISTRATION_ID_ERROR = "invalid_registration_id";
     private static final String WITHDRAWAL_EMAIL_ERROR = "withdrawal_email";
+    private static final String DIFF_SOCIAL_TYPE = "diff_social_type";
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -51,7 +52,7 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
         if (byUser.isEmpty()) {
             registerNewMember(oAuth2UserInfo, email);
         } else {
-            checkExistingMember(byUser.get());
+            checkExistingMember(byUser.get(), oAuth2UserInfo);
         }
 
         return oAuth2User;
@@ -90,7 +91,13 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     // 기존 유저 판단
-    private void checkExistingMember(Member member) {
+    private void checkExistingMember(Member member, OAuth2UserInfo oAuth2UserInfo) {
+        // 동일한 소셜인지 판단
+        if (!member.getSocialType().equals(oAuth2UserInfo.getProvider())) {
+            OAuth2Error error = new OAuth2Error(DIFF_SOCIAL_TYPE, member.getEmail() + " 유저가 로그인 시도를 진행했습니다.(다른 소셜 타입)",
+                    null);
+            throw new OAuth2AuthenticationException(error);
+        }
         // 추방 여부 판단
         if (member.getBannedDate() != null) {
             OAuth2Error error = new OAuth2Error(KICKED_MEMBER_ERROR, member.getEmail() + " 유저가 로그인 시도를 진행했습니다.(추방된 유저)",

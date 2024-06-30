@@ -1,5 +1,6 @@
 package com.park.restapi.util.oauth.userinfo;
 
+import com.park.restapi.domain.member.entity.SocialType;
 import com.park.restapi.util.oauth.RegistrationId;
 
 /*
@@ -9,7 +10,7 @@ import com.park.restapi.util.oauth.RegistrationId;
 public interface OAuth2UserInfo {
     String getProviderId();
 
-    String getProvider();
+    SocialType getProvider();
 
     RegistrationId getRegistrationId();
 
