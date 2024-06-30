@@ -18,6 +18,9 @@ import java.nio.charset.StandardCharsets;
 @Component
 public final class FailureHandler implements AuthenticationFailureHandler {
 
+    private static final String LOCAL_URL = "http://localhost:5173/success";
+    private static final String SERVER_URL = "https://restapi.store/success";
+
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     @Override
@@ -31,17 +34,11 @@ public final class FailureHandler implements AuthenticationFailureHandler {
         redirectStrategy.sendRedirect(request, response, url);
     }
 
-    // 리다이렉트 주소ㅇ
+    // 리다이렉트 주소
     private String makeRedirectUrl() {
-        return UriComponentsBuilder.fromUriString("https://restapi.store/failure")
+        return UriComponentsBuilder.fromUriString(SERVER_URL)
+//        return UriComponentsBuilder.fromUriString(LOCAL_URL)
                 .encode(StandardCharsets.UTF_8)
                 .build().toUriString();
     }
-
-    // 리다이렉트 주소
-//    private String makeRedirectUrl() {
-//        return UriComponentsBuilder.fromUriString("http://localhost:5173/failure")
-//                .encode(StandardCharsets.UTF_8)
-//                .build().toUriString();
-//    }
 }

@@ -1,5 +1,6 @@
 package com.park.restapi.util.oauth.userinfo;
 
+import com.park.restapi.domain.member.entity.SocialType;
 import com.park.restapi.util.oauth.RegistrationId;
 
 import java.util.Map;
@@ -20,8 +21,8 @@ public class KakaoUserInfo implements OAuth2UserInfo {
     }
 
     @Override
-    public String getProvider() {
-        return "kakao";
+    public SocialType getProvider() {
+        return SocialType.KAKAO;
     }
 
     @Override
