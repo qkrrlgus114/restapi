@@ -22,7 +22,7 @@ public class NaverUserInfo implements OAuth2UserInfo {
 
     @Override
     public String getProviderId() {
-        return String.valueOf((getResponse().get(ID)));
+        return getResponse(ID);
     }
 
     @Override
@@ -37,15 +37,15 @@ public class NaverUserInfo implements OAuth2UserInfo {
 
     @Override
     public String getEmail() {
-        return String.valueOf((getResponse().get(EMAIL)));
+        return getResponse(EMAIL);
     }
 
     @Override
     public String getNickname() {
-        return String.valueOf((getResponse().get(NICKNAME)));
+        return getResponse(NICKNAME);
     }
 
-    private Map<String, Object> getResponse() {
-        return (Map) attributes.get(RESPONSE);
+    private String getResponse(String target) {
+        return String.valueOf(((Map) attributes.get(RESPONSE)).get(target));
     }
 }
