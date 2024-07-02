@@ -8,12 +8,8 @@ ARG JAR_FILE=/build/libs/restapi-0.0.1-SNAPSHOT.jar
 
 COPY ${JAR_FILE} /restapi.jar
 
-ENTRYPOINT [
-  "java",
-  "-javaagent:/usr/local/pinpoint-agent-3.0.0/pinpoint-bootstrap-3.0.0.jar",
-  "-Dpinpoint.applicationName=restapi",
-  "-Dpinpoint.config=/usr/local/pinpoint-agent-3.0.0/pinpoint-root.config",
-  "-Dspring.profiles.active=prod",
-  "-jar",
-  "/restapi.jar"
-]
+ENTRYPOINT java -javaagent:/usr/local/pinpoint-agent-3.0.0/pinpoint-bootstrap-3.0.0.jar \
+    -Dpinpoint.applicationName=restapi \
+    -Dpinpoint.config=/usr/local/pinpoint-agent-3.0.0/pinpoint-root.config \
+    -Dspring.profiles.active=prod \
+    -jar /restapi.jar
