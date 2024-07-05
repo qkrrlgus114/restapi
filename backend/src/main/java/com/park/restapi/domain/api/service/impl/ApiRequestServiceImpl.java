@@ -26,7 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 import java.util.List;
 import java.util.concurrent.Semaphore;
@@ -36,7 +36,7 @@ import java.util.concurrent.Semaphore;
 @Slf4j
 public class ApiRequestServiceImpl implements ApiRequestService {
 
-    private final RestTemplate restTemplate;
+    private final RestClient restClient;
     @Value("${openai.url.prompt}")
     private String URL;
     private final ApiRequestHistoryRepository apiRequestHistoryRepository;
@@ -86,7 +86,11 @@ public class ApiRequestServiceImpl implements ApiRequestService {
 
             ChatGPTRequestDTO requestDTO = ChatGPTRequestDTO.builder().model(model).messages(messages).build();
 
-            ChatGPTResponseDTO chatGPTResponseDTO = restTemplate.postForObject(URL, requestDTO, ChatGPTResponseDTO.class);
+            ChatGPTResponseDTO chatGPTResponseDTO = restClient.post()
+                    .uri(URL)
+                    .body(requestDTO)
+                    .retrieve()
+                    .body(ChatGPTResponseDTO.class);
 
             // 응답이 왔다면
             ApiRequestHistory apiRequestHistory = apiRequestDTO.toEntity(chatGPTResponseDTO, member, true);
