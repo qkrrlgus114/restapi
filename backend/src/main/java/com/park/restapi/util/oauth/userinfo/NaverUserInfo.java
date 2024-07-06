@@ -7,6 +7,11 @@ import java.util.Map;
 
 public class NaverUserInfo implements OAuth2UserInfo {
 
+    private static final String ID = "id";
+    private static final String EMAIL = "email";
+    private static final String NICKNAME = "nickname";
+    private static final String RESPONSE = "response";
+
     private Map<String, Object> attributes;
     private RegistrationId registrationId;
 
@@ -17,7 +22,7 @@ public class NaverUserInfo implements OAuth2UserInfo {
 
     @Override
     public String getProviderId() {
-        return String.valueOf(((Map) attributes.get("response")).get("id"));
+        return getResponse(ID);
     }
 
     @Override
@@ -32,11 +37,15 @@ public class NaverUserInfo implements OAuth2UserInfo {
 
     @Override
     public String getEmail() {
-        return String.valueOf(((Map) attributes.get("response")).get("email"));
+        return getResponse(EMAIL);
     }
 
     @Override
     public String getNickname() {
-        return String.valueOf(((Map) attributes.get("response")).get("nickname"));
+        return getResponse(NICKNAME);
+    }
+
+    private String getResponse(String target) {
+        return String.valueOf(((Map) attributes.get(RESPONSE)).get(target));
     }
 }

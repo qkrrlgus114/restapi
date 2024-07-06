@@ -22,7 +22,12 @@
       />
     </div>
     <div class="button-group">
-      <a @click="kakaoLogin"><img src="/kakao_login_medium_narrow.png" /></a>
+      <a @click="kakaoLogin" class="social-button"
+        ><img src="/kakao_login_medium_narrow.png"
+      /></a>
+      <!-- <a @click="naverLogin" class="social-button"
+        ><img src="/naver_login_medium_narrow.png"
+      /></a> -->
       <button @click="login" class="group">로그인</button>
       <button @click="register" class="group">회원가입</button>
     </div>
@@ -61,6 +66,12 @@ const kakaoLogin = () => {
   const baseUrl = getBaseURL();
   window.location.href = `${baseUrl}/oauth2/authorization/kakao`;
 };
+
+// 네이버 로그인 함수
+// const naverLogin = () => {
+//   const baseUrl = getBaseURL();
+//   window.location.href = `${baseUrl}/oauth2/authorization/naver`;
+// };
 
 // 로그인 함수
 const login = async () => {
@@ -120,6 +131,19 @@ h1 {
   color: #2c3e50;
   margin-bottom: 1.5rem;
   font-weight: 300;
+}
+
+.social-button {
+  display: inline-block;
+  width: 150px;
+  overflow: hidden;
+  text-align: center;
+}
+
+.social-button img {
+  max-width: 100%;
+  max-height: 100%;
+  vertical-align: middle;
 }
 
 .form-group {
