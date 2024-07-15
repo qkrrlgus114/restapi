@@ -34,7 +34,6 @@ public class PostRepositoryImpl implements PostCustomRepository {
 
         OrderSpecifier<?>[] orderSpecifier = getOrderSpecifier(sortBy);
 
-        Long start = System.nanoTime();
         List<Long> postIds = queryFactory
                 .select(post.id)
                 .from(post)
@@ -43,10 +42,7 @@ public class PostRepositoryImpl implements PostCustomRepository {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-        Long end = System.nanoTime();
-        System.out.println("걸린 시간(1) : " + String.valueOf(end - start));
 
-        start = System.nanoTime();
         List<ApiRecommendPostsResponseDTO> apiRecommendPostsResponseDTOS = queryFactory
                 .select(Projections.constructor(ApiRecommendPostsResponseDTO.class,
                         post.id, post.methodType, post.title, member.nickname, post.likeCount, post.viewCount))
@@ -55,17 +51,12 @@ public class PostRepositoryImpl implements PostCustomRepository {
                 .where(post.id.in(postIds))
                 .orderBy(orderSpecifier)
                 .fetch();
-        end = System.nanoTime();
-        System.out.println("걸린 시간(2) : " + String.valueOf(end - start));
 
-        start = System.nanoTime();
         long total = queryFactory
                 .select(post.count())
                 .from(post)
                 .where(searchCondition(searchType, searchKey))
                 .fetchOne();
-        end = System.nanoTime();
-        System.out.println("걸린 시간(3) : " + String.valueOf(end - start));
 
         return new PageImpl<>(apiRecommendPostsResponseDTOS, pageable, total);
     }
