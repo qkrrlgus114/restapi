@@ -209,10 +209,11 @@ public class MemberServiceImpl implements MemberService {
         LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
         List<Member> byWithdrawalMember = memberRepository.findByWithdrawalMember(thirtyDaysAgo);
 
-        for (Member m : byWithdrawalMember) {
-            memberRepository.delete(m);
-            withdrawalMemberRepository.save(WithdrawalMember.builder().email(m.getEmail()).build());
-        }
+        byWithdrawalMember.stream()
+                .forEach(member -> {
+                    memberRepository.delete(member);
+                    withdrawalMemberRepository.save(WithdrawalMember.builder().email(member.getEmail()).build());
+                });
     }
 
     // 쿠키 저장
