@@ -198,9 +198,8 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void resetAllTokens() {
         List<Member> all = memberRepository.findAll();
-        for (Member u : all) {
-            u.resetToken();
-        }
+        all.stream()
+                .forEach(member -> member.resetToken());
     }
 
     // 유저 탈퇴 판단(스케줄러)
