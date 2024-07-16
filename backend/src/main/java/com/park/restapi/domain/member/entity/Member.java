@@ -70,12 +70,16 @@ public class Member extends BaseTimeEntity {
         this.socialType = socialType;
     }
 
-    public Member(String email, String nickname, SocialType socialType) {
+    private Member(String email, String nickname, SocialType socialType) {
         this.email = email;
         this.nickname = nickname;
         this.socialType = socialType;
         this.password = String.valueOf(email.hashCode() + nickname.hashCode());
         this.loginLastDate = LocalDateTime.now();
+    }
+
+    public static Member OAuthMember(String email, String nickname, SocialType socialType) {
+        return new Member(email, nickname, socialType);
     }
 
     public void useToken() {
