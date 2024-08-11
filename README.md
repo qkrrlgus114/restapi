@@ -1,6 +1,6 @@
 ![image](https://github.com/qkrrlgus114/restapi/assets/121294224/67b51fe3-1f48-4874-b1f9-b5769406dbc9)
 
-[곧 서비스 닫을 예정입니다.]
+# [2024.08.11 RESTFUL API 경로 추천 서비스 잠들다.(서비스 종료)]
 
 # RESTFUL API 경로 추천 서비스
 
