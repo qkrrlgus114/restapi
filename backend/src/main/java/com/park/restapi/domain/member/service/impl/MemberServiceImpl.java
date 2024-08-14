@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -208,6 +209,8 @@ public class MemberServiceImpl implements MemberService {
     public void withdrawalMember() {
         LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
         List<Member> byWithdrawalMember = memberRepository.findByWithdrawalMember(thirtyDaysAgo);
+
+        Arrays.sort()
 
         byWithdrawalMember.stream()
                 .forEach(member -> {
