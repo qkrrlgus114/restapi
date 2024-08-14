@@ -40,10 +40,7 @@ public class PostController {
             @RequestParam(value = "searchType", required = false, defaultValue = "NONE") SearchType searchType,
             @RequestParam(value = "searchKey", required = false, defaultValue = "") String searchKey,
             @RequestParam(value = "sortBy", required = false, defaultValue = "NONE") SortBy sortBy) {
-        Long start = System.nanoTime();
         ApiRecommendPostsListResponseDTO apiRecommendPostsListResponseDTO = postService.getGptApiRecommendPosts(page - 1, searchType, searchKey, sortBy);
-        Long end = System.nanoTime();
-        System.out.println("걸린 시간(4) : " + String.valueOf(end - start));
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(apiRecommendPostsListResponseDTO, "모든 공유 게시글 가져오기 성공"));
     }

@@ -81,7 +81,7 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
     // 새로운 유저 가입
     private void registerNewMember(OAuth2UserInfo oAuth2UserInfo, String email) {
         String nickname = oAuth2UserInfo.getNickname();
-        Member member = new Member(email, nickname, SocialType.valueOf(oAuth2UserInfo.getRegistrationId().name()));
+        Member member = Member.OAuthMember(email, nickname, SocialType.valueOf(oAuth2UserInfo.getRegistrationId().name()));
         Member savedMember = memberRepository.save(member);
 
         MemberRole memberRole = MemberRole.builder()

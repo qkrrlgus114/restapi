@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -111,6 +112,7 @@ public class MemberServiceImpl implements MemberService {
 
         String accessToken = jwtService.createAccessToken(currentMember.getId());
         String refreshToken = jwtService.createRefreshToken(currentMember.getId(), false, accessToken);
+
         saveCookie(response, "accessToken", accessToken);
         saveCookie(response, "refreshToken", refreshToken);
     }
@@ -197,9 +199,8 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void resetAllTokens() {
         List<Member> all = memberRepository.findAll();
-        for (Member u : all) {
-            u.resetToken();
-        }
+        all.stream()
+                .forEach(member -> member.resetToken());
     }
 
     // 유저 탈퇴 판단(스케줄러)
@@ -209,10 +210,13 @@ public class MemberServiceImpl implements MemberService {
         LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
         List<Member> byWithdrawalMember = memberRepository.findByWithdrawalMember(thirtyDaysAgo);
 
-        for (Member m : byWithdrawalMember) {
-            memberRepository.delete(m);
-            withdrawalMemberRepository.save(WithdrawalMember.builder().email(m.getEmail()).build());
-        }
+        Arrays.sort()
+
+        byWithdrawalMember.stream()
+                .forEach(member -> {
+                    memberRepository.delete(member);
+                    withdrawalMemberRepository.save(WithdrawalMember.builder().email(member.getEmail()).build());
+                });
     }
 
     // 쿠키 저장
